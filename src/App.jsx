@@ -108,12 +108,12 @@ function App() {
         pageLinkClassName="text-sm"
         activeClassName="bg-gray-200 text-white"
         previousLabel={
-          <button className="hover:bg-custom-blue px-4 py-2 rounded-full mr-2">
+          <button className="hover:bg-custom-blue hover:text-white px-4 py-2 rounded-full mr-2">
             Previous
           </button>
         }
         nextLabel={
-          <button className="hover:bg-custom-blue px-4 py-2 rounded-full">
+          <button className="hover:bg-custom-blue hover:text-white px-4 py-2 rounded-full">
             Next
           </button>
         }
