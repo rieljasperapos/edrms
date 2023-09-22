@@ -7,13 +7,14 @@ import LogoutIcon from '../assets/logout-icon.png';
 
 const Navbar = () => {
     return (
-        <div className="navbar-menu bg-custom-blue text-white w-64 fixed h-screen overflow-auto shadow-lg flex flex-col">
+        <div className="navbar-menu bg-custom-blue text-white w-64 fixed h-screen overflow-auto shadow-2xl flex flex-col">
             <div className="flex-grow flex flex-col justify-center">
                 <img src={Logo} className="h-24 mx-auto my-6" alt="Page Logo" />
                 <div className="ml-6 space-y-4">
                     <NavItem icon={FolderIcon} text="Patient Records" />
                     <NavItem icon={CalendarIcon} text="Calendar" />
                     <NavItem icon={AddIcon} text="Add Patient" />
+                    <NavItem icon={AddIcon} text="Add Appointment"/>
                 </div>
                 <div id="menu-logout" className="cursor-pointer mt-auto mb-10 pb-8 ml-8 flex space-x-2">
                     <img src={LogoutIcon} className="w-6 h-6" alt="Logout Icon" />
