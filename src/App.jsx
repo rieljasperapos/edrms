@@ -21,9 +21,9 @@ function App() {
   return (
     <div className='flex'>
       <Navbar />
-      <div className='flex items-center justify-center flex-grow'>
+      <div className='flex flex-grow'>
       <Box>
-        <div>
+        {/* <div>
           <h1 className="text-2xl font-medium mb-4 uppercase">Patient Records</h1>
           <hr />
         </div>
@@ -117,7 +117,7 @@ function App() {
             Next
         </button>
         }
-        />
+        /> */}
       </Box>
         
       </div>

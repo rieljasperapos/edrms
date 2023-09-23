@@ -8,6 +8,7 @@ export default {
     extend: {
       backgroundColor: {
         'custom-blue': '#189AB4',
+        'custom-gray': 'E4E4E4',
       }
     },
   },
