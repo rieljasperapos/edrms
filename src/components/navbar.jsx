@@ -22,7 +22,7 @@ const Navbar = () => {
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
 const NavItem = ({ icon, text }) => {
