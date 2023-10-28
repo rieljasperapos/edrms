@@ -12,7 +12,7 @@ const Navbar = () => {
                 <img src={Logo} className="h-24 mx-auto my-6" alt="Page Logo" />
             </div>
             <div className="flex-grow flex flex-col items-center justify-center bg-white text-black">
-                <div className="grid m-auto mt-8">
+                <div className="grid m-auto mt-4">
                     <NavItem icon={FolderIcon} text="Patient Records" />
                     <NavItem icon={AddIcon} text="Add Record" />
                     <NavItem icon={CalendarIcon} text="Calendar" />
