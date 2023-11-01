@@ -13,6 +13,7 @@ export default {
       },
       fontFamily: {
         'Monsterrat': ['Montserrat', 'sans-serif'],
+        'Karla': ['Karla','sans-serif'],
       },
       boxShadow: {
         'inner-dark': 'inset 2px 2px 6px 0 rgba(0, 0, 0, 0.2)',
