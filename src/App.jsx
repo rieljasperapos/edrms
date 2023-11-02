@@ -1,10 +1,17 @@
 import Navbar from './components/navbar'
+import Contents from './components/contents'
+import Calendar from './components/calendar'
 
 function App() {
 
   return (
     <>
-      <Navbar />
+      <div>
+        <Navbar />
+        <Contents>
+          <Calendar />
+        </Contents>
+      </div>
     </>
   )
 }
