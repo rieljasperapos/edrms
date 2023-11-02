@@ -10,12 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-table": "^8.10.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.12.0",
-    "react-paginate": "^8.2.0",
-    "react-router-dom": "^6.18.0"
+    "react-icons": "^4.11.0",
+    "react-paginate": "^8.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -27,8 +25,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8.4.29",
-    "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.3.3",
     "vite": "^4.4.5"
   }
