@@ -26,7 +26,7 @@ const Calendar = () => {
         <>
             <div className="flex justify-between items-center p-6 border-b">
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
-                <button className="bg-primary-green text-white font-medium rounded-lg p-2">Add appointment</button>
+                <button className="bg-primary-green text-white font-medium rounded-lg p-4">Add appointment</button>
             </div>
 
             <div className="p-8">
