@@ -1,18 +1,17 @@
 import Navbar from './components/navbar'
 import AddRecord from './pages/AddRecord.jsx'
+import Contents from './components/contents'
 import './index.css'
 
 function App() {
 
   return (
     <>
-        <div className='flex'>
-            <div className='basis'>
-                <Navbar />
-            </div>
-            <div className="flex flex-col shrink justify-center p-20">
+        <div>
+            <Navbar />
+            <Contents>
                 <AddRecord />
-            </div>
+            </Contents>
         </div>
     </>
   )

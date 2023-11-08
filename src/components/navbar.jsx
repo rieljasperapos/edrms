@@ -8,7 +8,7 @@ import LogoutIcon from '../assets/logout-icon.png';
 
 const Navbar = () => {
     return (
-        <div className="navbar-menu bg-custom-blue text-white w-28 h-full overflow-auto shadow-2xl flex flex-col ">
+        <div className="navbar-menu fixed font-Monsterrat bg-custom-blue text-white w-28 h-screen overflow-auto shadow-2xl flex flex-col ">
             <div>
                 <img src={Logo} className="h-24 mx-auto my-6" alt="Page Logo" />
             </div>
