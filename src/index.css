@@ -7,6 +7,13 @@
 *{
   margin: 0;
 }
+
 body {
-  background-color: #dddddd;
+  background-color: #ffffff;
+}
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
 }
