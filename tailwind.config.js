@@ -6,6 +6,16 @@ export default {
   ],
   theme: {
     extend: {
+      spacing: {
+        '128': '32rem',
+        '192': '48rem',
+        '216': '52rem',
+      },
+      borderColor: {
+        'custom-blue': '#189AB4',
+        'custom-gray': '#F0F0F0',
+        'custom-green': '#6ED178',
+      },
       backgroundColor: {
         'custom-blue': '#189AB4',
         'custom-gray': '#F0F0F0',
