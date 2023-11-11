@@ -12,21 +12,21 @@ function AddRecord() {
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Last Name</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'> First Name</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Middle Name</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
@@ -40,14 +40,14 @@ function AddRecord() {
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Age</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="number"
                             min="0"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Sex</label>
-                        <select id="countries" className="border-2 border-custom-blue text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                        <select className="px-3 rounded-lg border-2 border-custom-blue h-12">
                             <option selected>Select</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -56,28 +56,28 @@ function AddRecord() {
                     <div className="flex flex-col col-span-4 font-Karla text-lg">
                         <label className='mb-3'>Address</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12 "
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>City</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Contact Number</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Email</label>
                         <input
-                            className="pl-3 rounded-lg border-2 border-custom-blue h-12"
+                            className="px-3 rounded-lg border-2 border-custom-blue h-12"
                             type="text"
                         />
                     </div>
