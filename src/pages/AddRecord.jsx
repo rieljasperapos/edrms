@@ -4,11 +4,11 @@ import '../index.css'
 function AddRecord() {
     return (
         <>
-            <div className="flex justify-between items-center pt-8 pb-4 pl-12 border-b">
+            <div className="flex justify-between items-center pt-8 pb-4 px-12 border-b">
                 <h1 className="text-black font-bold font-Monsterrat text-3xl uppercase">Add Record</h1>
             </div>
 
-            <div className="grid grid-cols-6 flex-col justify-between gap-x-6 gap-y-10 py-8 px-12">
+            <div className="grid grid-cols-6 flex-col justify-between gap-x-6 gap-y-10 py-8 px-12 mb-8">
                     <div className="flex flex-col col-span-2 font-Karla text-lg">
                         <label className='mb-3'>Last Name</label>
                         <input
