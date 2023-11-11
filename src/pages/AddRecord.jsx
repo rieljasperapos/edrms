@@ -4,7 +4,7 @@ import '../index.css'
 function AddRecord() {
     return (
         <>
-            <div className="flex justify-between items-center p-6 border-b">
+            <div className="flex justify-between items-center pt-8 pb-4 pl-12 border-b">
                 <h1 className="text-black font-bold font-Monsterrat text-3xl uppercase">Add Record</h1>
             </div>
 
@@ -50,7 +50,7 @@ function AddRecord() {
                         </div>
                         <div className="my-5 flex flex-col">
                             <label className='mb-3'>Sex</label>
-                            <select id="countries" className="border-2 border-custom-blue w-60 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <select id="countries" className="border-2 border-custom-blue w-60 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                                 <option selected>Select</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
@@ -90,7 +90,7 @@ function AddRecord() {
                         </div>
                     </div>
                     <div className='flex w-full justify-center mb-10'>
-                        <button className="rounded-lg border-2 h-12 w-60 text-2xl bg-custom-green hover:bg-green-600 text-white">
+                        <button className="rounded-lg border-2 h-14 w-60 font-bold text-2xl bg-custom-green hover:bg-green-600 text-white">
                             Add
                         </button>
                     </div>

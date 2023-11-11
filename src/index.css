@@ -11,9 +11,3 @@
 body {
   background-color: #ffffff;
 }
-
-@layer components {
-  .all-\[unset\] {
-    all: unset;
-  }
-}

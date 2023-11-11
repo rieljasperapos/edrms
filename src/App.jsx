@@ -1,5 +1,6 @@
 import Navbar from './components/navbar'
 import AddRecord from './pages/AddRecord.jsx'
+import PatientRecord from './pages/PatientRecord.jsx'
 import Contents from './components/contents'
 import './index.css'
 
@@ -10,7 +11,8 @@ function App() {
         <div>
             <Navbar />
             <Contents>
-                <AddRecord />
+                {/*<AddRecord />*/}
+                <PatientRecord />
             </Contents>
         </div>
     </>
