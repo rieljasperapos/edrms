@@ -1,11 +1,11 @@
-const Contents = ({children}) => {
-    return (
-        <div className="ml-28 flex h-screen justify-center items-center">
-            <div className="w-11/12 overflow-x-auto border bg-white h-95 rounded-lg shadow-xl">
-                {children}
-            </div>
-        </div>
-    )
-}
+const Contents = ({ children }) => {
+  return (
+    <div className="ml-28 flex min-h-screen items-center justify-center">
+      <div className="max-h-216 min-h-max w-11/12 overflow-x-auto rounded-lg border bg-white shadow-xl">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 export default Contents;
