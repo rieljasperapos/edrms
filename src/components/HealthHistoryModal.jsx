@@ -7,7 +7,7 @@ function HealthHistory() {
     <>
       <div className="col-span-1 flex w-full flex-col rounded-lg border-2">
         <div className="flex flex-wrap items-center justify-between border-b px-8 pb-2 pt-4">
-          <h1 className="font-Monsterrat text-xl font-bold uppercase">
+          <h1 className="font-Montserrat text-xl font-bold uppercase">
             HEALTH HISTORY
           </h1>
           <button className=" font-Karla text-xl text-green-500 underline">

@@ -5,7 +5,7 @@ function AddRecord() {
   return (
     <>
       <div className="flex items-center justify-between border-b px-12 pb-4 pt-8">
-        <h1 className="font-Monsterrat text-3xl font-bold uppercase text-black">
+        <h1 className="font-Montserrat text-3xl font-bold uppercase text-black">
           Add Record
         </h1>
       </div>

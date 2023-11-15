@@ -22,7 +22,7 @@ export default {
         'custom-green': '#6ED178',
       },
       fontFamily: {
-        'Monsterrat': ['Montserrat', 'sans-serif'],
+        'Montserrat': ['Montserrat', 'sans-serif'],
         'Karla': ['Karla','sans-serif'],
       },
       boxShadow: {

@@ -6,7 +6,7 @@ function PatientRecord() {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-4 pl-12 pr-16 pt-8">
-        <h1 className=" font-Monsterrat text-3xl font-bold uppercase text-white">
+        <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
           PASCO, JERICHO
         </h1>
         <div className="flex flex-wrap gap-8">
@@ -31,7 +31,7 @@ function PatientRecord() {
       <div className="grid w-full justify-center gap-4 border-2  px-12 py-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
         <div className="flex w-full flex-col rounded-lg border-2 sm:col-span-1 md:col-span-1 lg:col-span-3">
           <div className="flex flex-wrap items-center justify-between border-b px-8 pb-2 pt-4">
-            <h1 className="font-Monsterrat text-xl font-bold uppercase">
+            <h1 className="font-Montserrat text-xl font-bold uppercase">
               Personal Information
             </h1>
             <button className=" font-Karla text-xl text-green-500 underline">
@@ -104,7 +104,7 @@ function PatientRecord() {
         </div>
         <div className="flex w-full flex-col rounded-lg border-2 sm:col-span-1 md:col-span-1 lg:col-span-1">
           <div className="flex flex-wrap items-center justify-between border-b px-8 pb-2 pt-4">
-            <h1 className="font-Monsterrat text-xl font-bold uppercase">
+            <h1 className="font-Montserrat text-xl font-bold uppercase">
               RECENT VISIT
             </h1>
             <button className=" font-Karla text-xl text-green-500 underline">
