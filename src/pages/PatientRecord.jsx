@@ -20,11 +20,11 @@ function PatientRecord() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-4 pl-12 pr-16 pt-8">
+      <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-6 pl-12 pr-16 pt-8">
         <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
           PASCO, JERICHO
         </h1>
-        <button className="inline-flex items-center font-Karla text-xl font-bold text-rose-500 underline">
+        <button className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline">
           <MdOutlineDeleteForever className="mr-2" />
           Delete
         </button>
@@ -36,7 +36,7 @@ function PatientRecord() {
             <h1 className="font-Montserrat text-xl font-bold uppercase">
               Personal Information
             </h1>
-            <button className=" font-Karla text-xl text-green-500 underline">
+            <button className=" font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
               Edit
             </button>
           </div>
@@ -109,7 +109,7 @@ function PatientRecord() {
             <h1 className="font-Montserrat text-xl font-bold uppercase">
               RECENT VISIT
             </h1>
-            <button className=" font-Karla text-xl text-green-500 underline">
+            <button className=" font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
               View More
             </button>
           </div>
@@ -157,13 +157,13 @@ function PatientRecord() {
         </div>
         <div className="flex flex-col flex-wrap gap-4 sm:col-span-1 md:col-span-1 lg:col-span-2">
           <div className="flex flex-wrap justify-center gap-8">
-            <button className=" font-Karla text-3xl text-green-500 underline">
+            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
               VISITS
             </button>
-            <button className=" font-Karla text-3xl text-green-500 underline">
+            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
               TEETH CHART
             </button>
-            <button className=" font-Karla text-3xl text-green-500 underline">
+            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
               Health History
             </button>
           </div>

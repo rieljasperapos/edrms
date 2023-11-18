@@ -48,7 +48,7 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
       header: "Image",
       cell: (props) => (
         <button
-          className="text-blue-500 underline"
+          className="text-blue-500 hover:text-blue-900 hover:underline"
           onClick={() => handleImageClick(props.row.original)}
         >
           View
@@ -113,7 +113,7 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 font-Karla text-green-500 underline ">
+                  <button className="mx-4 font-Karla text-green-500 hover:text-green-800 hover:underline">
                     Edit
                   </button>
                 </td>

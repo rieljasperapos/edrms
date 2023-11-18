@@ -114,7 +114,7 @@ function InsuranceInfoDataTable() {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 font-Karla text-green-500 underline ">
+                  <button className="mx-4 font-Karla text-green-500 hover:text-green-800 hover:underline">
                     Edit
                   </button>
                 </td>
