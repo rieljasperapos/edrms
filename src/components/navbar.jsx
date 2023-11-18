@@ -5,6 +5,7 @@ import AddIcon from "../assets/add-icon.png";
 import CalendarIcon from "../assets/calendar-icon.png";
 import FolderIcon from "../assets/folder-icon.png";
 import LogoutIcon from "../assets/logout-icon.png";
+import { AiOutlineFolderOpen } from "react-icons/ai";
 
 const Navbar = () => {
   return (
@@ -18,12 +19,12 @@ const Navbar = () => {
           <NavItem icon={AddIcon} text="Add Record" />
           <NavItem icon={CalendarIcon} text="Calendar" />
         </div>
-        <div
+        <button
           id="menu-logout"
-          className="mb-10 mt-auto flex cursor-pointer space-x-2 pb-8"
+          className="mb-10 mt-auto flex cursor-pointer space-x-2 p-1 hover:bg-custom-gray"
         >
           <img src={LogoutIcon} className="h-6 w-6" alt="Logout Icon" />
-        </div>
+        </button>
       </div>
     </div>
   );
