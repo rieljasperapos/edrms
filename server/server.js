@@ -8,6 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+// Sign up logic (password encryption)
 app.post('/signup', (req, res) => {
     console.log(req.body);
     if (!req.body.userName || !req.body.password || !req.body.firstName || !req.body.lastName || !req.body.middleName || !req.body.birthDate) {
@@ -36,6 +38,32 @@ app.get('/signup', (req, res) => {
     const sql = `SELECT * FROM account`;
     connection.query(sql, (err, rows) => {
         res.send(rows);
+    })
+})
+
+
+// Sign in logic (inputs here are just temporary must be changed to req.body.username)
+app.get('/signin', (req, res) => {
+    const sql = `SELECT * FROM account WHERE username = ?`;
+    const username = "jerichopasco";
+    const password = "jerichopasco";
+
+    connection.query(sql, [username], (err, rows) => {
+        if (rows.length === 0) {
+            res.send({message: "User not found"});
+            return;
+        }
+
+        console.log(rows[0].password);
+        console.log(password);
+
+        bcrypt.compare(password, rows[0].password, (err, isPasswordMatch) => {
+            if(isPasswordMatch) {
+                res.send({message: "Login Successful"});
+            } else {
+                res.send({message: "Invalid Credentials"});
+            }
+        })
     })
 })
 
