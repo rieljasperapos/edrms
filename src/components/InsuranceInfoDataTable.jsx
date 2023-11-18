@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
+import { FaEdit } from "react-icons/fa";
 
 function InsuranceInfoDataTable() {
   const [data, setData] = useState(InsuranceInfoData);
@@ -114,7 +115,8 @@ function InsuranceInfoDataTable() {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 font-Karla text-green-500 hover:text-green-800 hover:underline">
+                  <button className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline">
+                    <FaEdit />
                     Edit
                   </button>
                 </td>

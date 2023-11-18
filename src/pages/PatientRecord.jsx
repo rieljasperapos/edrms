@@ -13,6 +13,10 @@ import XRaysDataTable from "../components/XRaysDataTable.jsx";
 import { AiOutlinePlus } from "react-icons/ai";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import ModalImageXray from "../components/ModalImageXray.jsx";
+import { FaEdit } from "react-icons/fa";
+import { MdViewList } from "react-icons/md";
+import { FaTooth } from "react-icons/fa6";
+import { FaHeartbeat } from "react-icons/fa";
 
 function PatientRecord() {
   const [modalXrayData, setModalXrayData] = useState({});
@@ -36,7 +40,8 @@ function PatientRecord() {
             <h1 className="font-Montserrat text-xl font-bold uppercase">
               Personal Information
             </h1>
-            <button className=" font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
+            <button className="flex items-center gap-1 font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
+              <FaEdit />
               Edit
             </button>
           </div>
@@ -109,7 +114,8 @@ function PatientRecord() {
             <h1 className="font-Montserrat text-xl font-bold uppercase">
               RECENT VISIT
             </h1>
-            <button className=" font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
+            <button className=" flex items-center gap-1 font-Karla text-xl text-blue-500 hover:text-blue-800 hover:underline">
+              <MdViewList />
               View More
             </button>
           </div>
@@ -156,15 +162,18 @@ function PatientRecord() {
           </div>
         </div>
         <div className="flex flex-col flex-wrap gap-4 sm:col-span-1 md:col-span-1 lg:col-span-2">
-          <div className="flex flex-wrap justify-center gap-8">
-            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
+          <div className="flex flex-wrap justify-evenly gap-8">
+            <button className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline">
+              <MdViewList />
               VISITS
             </button>
-            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
+            <button className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline">
+              <FaTooth />
               TEETH CHART
             </button>
-            <button className=" font-Karla text-3xl text-green-500 hover:text-green-800 hover:underline">
-              Health History
+            <button className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline">
+              <FaHeartbeat />
+              HEALTH HISTORY
             </button>
           </div>
           <div className="flex h-auto w-full flex-col rounded-lg border-2">

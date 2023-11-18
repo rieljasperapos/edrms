@@ -10,8 +10,8 @@ function App() {
       <div>
         <Navbar />
         <Contents>
-          {/*<AddRecord />*/}
-          <PatientRecord />
+          <AddRecord />
+          {/*<PatientRecord />*/}
         </Contents>
       </div>
     </>

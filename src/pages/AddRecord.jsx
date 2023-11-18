@@ -4,8 +4,8 @@ import "../index.css";
 function AddRecord() {
   return (
     <>
-      <div className="flex items-center justify-between border-b px-12 pb-4 pt-8">
-        <h1 className="font-Montserrat text-3xl font-bold uppercase text-black">
+      <div className="flex items-center justify-between border-b bg-custom-blue px-12 pb-6 pt-8">
+        <h1 className="font-Montserrat text-3xl font-bold uppercase text-white">
           Add Record
         </h1>
       </div>

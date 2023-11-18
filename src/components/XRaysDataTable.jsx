@@ -11,6 +11,8 @@ import {
 } from "@tanstack/react-table";
 
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
+import { FaEdit } from "react-icons/fa";
+import { MdViewList } from "react-icons/md";
 
 function XRaysDataTable({ propModalVisible, propXrayData }) {
   const [data, setData] = useState(XraysData);
@@ -48,9 +50,10 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
       header: "Image",
       cell: (props) => (
         <button
-          className="text-blue-500 hover:text-blue-900 hover:underline"
+          className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
           onClick={() => handleImageClick(props.row.original)}
         >
+          <MdViewList />
           View
         </button>
       ),
@@ -113,7 +116,8 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 font-Karla text-green-500 hover:text-green-800 hover:underline">
+                  <button className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline">
+                    <FaEdit />
                     Edit
                   </button>
                 </td>
