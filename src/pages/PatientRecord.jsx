@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-table";
 import InsuranceInfoDataTable from "../components/InsuranceInfoDataTable.jsx";
 import XRaysDataTable from "../components/XRaysDataTable.jsx";
+import PersonalInfoEditModal from "../components/PersonalInfoEditModal.jsx";
 import { AiOutlinePlus } from "react-icons/ai";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import ModalImageXray from "../components/ModalImageXray.jsx";
@@ -21,6 +22,12 @@ import { FaHeartbeat } from "react-icons/fa";
 function PatientRecord() {
   const [modalXrayData, setModalXrayData] = useState({});
   const [modalImageVisible, setModalImageVisible] = useState(false);
+  const [modalPIEditVisible, setmodalPIEditVisible] = useState(false);
+
+  const handleClickEditPI = () => {
+    // Set the modal visibility to true and store the clicked image path
+    setmodalPIEditVisible(true);
+  };
 
   return (
     <>
@@ -40,13 +47,16 @@ function PatientRecord() {
             <h1 className="font-Montserrat text-xl font-bold uppercase">
               Personal Information
             </h1>
-            <button className="flex items-center gap-1 font-Karla text-xl text-green-500 hover:text-green-800 hover:underline">
+            <button
+              className="flex items-center gap-1 font-Karla text-xl text-green-500 hover:text-green-800 hover:underline"
+              onClick={handleClickEditPI}
+            >
               <FaEdit />
               Edit
             </button>
           </div>
 
-          <div className="grid gap-x-4 gap-y-5 px-8 py-4 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12">
+          <div className="grid gap-x-4 gap-y-5 px-8 py-4 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-11">
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
               <div className="mb-1 font-Karla text-base font-bold text-black ">
                 First Name
@@ -209,6 +219,11 @@ function PatientRecord() {
           </div>
         </div>
       </div>
+
+      {modalPIEditVisible && (
+        <PersonalInfoEditModal propSetModalVisible={setmodalPIEditVisible} />
+      )}
+
       {modalImageVisible && (
         <ModalImageXray
           propModalXrayData={modalXrayData}
