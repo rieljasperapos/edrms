@@ -11,6 +11,10 @@ export default {
         'custom-gray': '#F0F0F0',
         'custom-green': '#6ED178',
       },
+      textColor: {
+        'custom-blue': '#189AB4',
+      },
+      
       fontFamily: {
         'Monsterrat': ['Montserrat', 'sans-serif'],
         'Karla': ['Karla','sans-serif'],
