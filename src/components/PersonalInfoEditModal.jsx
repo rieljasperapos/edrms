@@ -16,7 +16,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
             </h1>
             <div className="">
               <button
-                className="inline-flex items-center rounded-lg px-5 py-1 text-2xl  text-gray-500 hover:text-black hover:underline "
+                className="inline-flex items-center rounded-lg px-5 py-1 text-2xl text-gray-500 hover:text-black"
                 onClick={closePIEditModal}
               >
                 <IoMdCloseCircle />
