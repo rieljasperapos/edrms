@@ -9,10 +9,6 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { IoMdCloseCircle } from "react-icons/io";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { AiOutlinePlus } from "react-icons/ai";
-import InsuranceInfoDataTable from "./InsuranceInfoDataTable.jsx";
-import XRaysDataTable from "./XRaysDataTable.jsx";
 
 function ModalImageXray({
   propModalXrayData,
