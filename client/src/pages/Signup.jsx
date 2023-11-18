@@ -1,5 +1,33 @@
+import { useState, useEffect } from 'react';
 import Logo from '../assets/dentalClinicLogo.png'
+import Matched from '../assets/icon-check.png'
+import EyeIcon from '../assets/eye-icon.png'
+
 const Signup = () => {
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [matchStatus, setMatchStatus] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [middleName, setMiddleName] = useState('');
+    const [birthDate, setBirthDate] = useState('');
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    }
+
+    useEffect(() => {
+        if (password === confirmPassword && (password != '' || confirmPassword != '')) {
+            setMatchStatus(true);
+        } else {
+            setMatchStatus(false);
+        }
+    }, [password, confirmPassword]);
+
+    console.log(matchStatus)
+
     return (
         <>
             <div className='sm:grid sm:grid-cols-2 h-screen'>
@@ -8,38 +36,68 @@ const Signup = () => {
                         <img src={Logo}></img>
                     </div>
                 </div>
-                <div className='w-auto flex flex-col justify-center mr-16 ml-16 2xl:mr-36 2xl:ml-36'>
+                <div className='w-auto flex flex-col justify-center mr-16 ml-16 2xl:mr-36 2xl:ml-36 pt-8 pb-8'>
                     <h1 className='text-custom-blue text-4xl font-semibold text-center p-10 pt-0'>Signup</h1>
                     <div className='flex justify-center items-center p-4'>
                         <div className='w-full'>
                             <p>Username</p>
-                            <input className='border p-2 w-full rounded-lg'></input>
+                            <input type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setUserName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className='flex justify-center items-center p-4'>
                         <div className='w-full'>
-                            <p>Password</p>
-                            <input className='border p-2 w-full rounded-lg'></input>
+                            <div className='flex'>
+                                <p>Password</p>
+                                {matchStatus && (<img className='h-6 ml-2' src={Matched}></img>)}
+                            </div>
+                            <div className='relative'>
+                                <input 
+                                    type={showPassword ? 'text' : 'password'} 
+                                    className='border p-2 w-full rounded-lg' 
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <div className='absolute top-2.5 right-4 cursor-pointer' onClick={togglePasswordVisibility}>
+                                    <img className='h-5' src={EyeIcon} alt={showPassword ? 'Hide' : 'Show'} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='flex justify-center items-center p-4'>
+                        <div className='w-full'>
+                            <div className='flex'>
+                                <p>Confirm Password</p>
+                                {matchStatus && (<img className='h-6 ml-2' src={Matched}></img>)}
+                            </div>
+                            <div className='relative'>
+                                <input 
+                                    type={showPassword ? 'text' : 'password'} 
+                                    className='border p-2 w-full rounded-lg' 
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                />
+                                <div className='absolute top-2.5 right-4 cursor-pointer' onClick={togglePasswordVisibility}>
+                                        <img className='h-5' src={EyeIcon} alt={showPassword ? 'Hide' : 'Show'} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className='flex flex-col sm:flex-row justify-center items-center p-4'>
                         <div className='w-full sm:mr-4 pb-4 sm:p-0'>
                             <p>First name</p>
-                            <input className='border p-2 w-full rounded-lg'></input>
+                            <input type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setFirstName(e.target.value)}></input>
                         </div>
                         <div className='w-full pt-4 sm:p-0'>
                             <p>Last name</p>
-                            <input className='border p-2 w-full rounded-lg'></input>
+                            <input type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setLastName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className='flex flex-col sm:flex-row justify-center items-center p-4'>
                         <div className='w-full sm:mr-4 pb-4 sm:p-0'>
                             <p>Middle name</p>
-                            <input className='border p-2 w-full rounded-lg'></input>
+                            <input type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setMiddleName(e.target.value)}></input>
                         </div>
                         <div className='w-full pt-4 sm:p-0'>
                             <p>Birth Date</p>
-                            <input type="date" className='border p-2 w-full rounded-lg' placeholder='dd / mm / yy'></input>
+                            <input type="date" className='border p-2 w-full rounded-lg' onChange={(e) => setBirthDate(e.target.value)} placeholder='dd / mm / yy'></input>
                         </div>
                     </div>
                     <div className='flex justify-center items-center p-4 mt-16'>
