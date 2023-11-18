@@ -12,7 +12,7 @@ import {
 
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 
-function XRaysDataTable({ propModalVisible, propImagePath }) {
+function XRaysDataTable({ propModalVisible, propXrayData }) {
   const [data, setData] = useState(XraysData);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
@@ -20,10 +20,11 @@ function XRaysDataTable({ propModalVisible, propImagePath }) {
     pageIndex: 0,
   });
 
-  const handleImageClick = (imagePath) => {
+  const handleImageClick = (indexData) => {
     // Set the modal visibility to true and store the clicked image path
-    propImagePath(imagePath);
+    propXrayData(indexData);
     propModalVisible(true);
+    console.log(indexData);
   };
 
   const columns = [
@@ -48,7 +49,7 @@ function XRaysDataTable({ propModalVisible, propImagePath }) {
       cell: (props) => (
         <button
           className="text-blue-500 underline"
-          onClick={() => handleImageClick(props.getValue())}
+          onClick={() => handleImageClick(props.row.original)}
         >
           View
         </button>

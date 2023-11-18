@@ -15,30 +15,42 @@ import InsuranceInfoDataTable from "./InsuranceInfoDataTable.jsx";
 import XRaysDataTable from "./XRaysDataTable.jsx";
 
 function ModalImageXray({
-  propModalImagePath,
+  propModalXrayData,
   propSetModalVisible,
-  propSetModalImagePath,
+  propSetModalXrayData,
 }) {
   const closeImageModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
-    propSetModalImagePath("");
+    propSetModalXrayData({});
   };
   return (
     <>
       <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70">
-        <div className="relative rounded-lg bg-white p-6">
-          <span
-            className="absolute right-4 top-4 cursor-pointer text-2xl text-black"
+        <div className="flex flex-col gap-2 rounded-lg bg-white p-6">
+          <div
+            className="self-end text-2xl text-black hover:text-green-500"
             onClick={closeImageModal}
           >
             <IoMdCloseCircle />
-          </span>
+          </div>
           <img
-            src={propModalImagePath}
-            alt="Modal"
-            className="max-w-screen max-h-screen" // Adjusted image size
+            src={propModalXrayData.path}
+            alt="Xray image"
+            className="max-w-screen mb-4 max-h-screen" // Adjusted image size
           />
+          <div className="grid grid-cols-2 font-Karla">
+            <p className="font-bold">Type</p>
+            <p>{propModalXrayData.type}</p>
+          </div>
+          <div className="grid grid-cols-2 font-Karla">
+            <p className="font-bold">Date Taken</p>
+            <p>{propModalXrayData.dateTaken}</p>
+          </div>
+          <div className="grid grid-cols-2 font-Karla">
+            <p className="font-bold">Notes</p>
+            <p>{propModalXrayData.notes}</p>
+          </div>
         </div>
       </div>
     </>

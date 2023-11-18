@@ -15,7 +15,7 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import ModalImageXray from "../components/ModalImageXray.jsx";
 
 function PatientRecord() {
-  const [modalImagePath, setModalImagePath] = useState("");
+  const [modalXrayData, setModalXrayData] = useState({});
   const [modalImageVisible, setModalImageVisible] = useState(false);
 
   return (
@@ -194,7 +194,7 @@ function PatientRecord() {
             <div className="flex flex-col gap-x-4 gap-y-5 px-8 py-4">
               <XRaysDataTable
                 propModalVisible={setModalImageVisible}
-                propImagePath={setModalImagePath}
+                propXrayData={setModalXrayData}
               />
             </div>
           </div>
@@ -202,9 +202,9 @@ function PatientRecord() {
       </div>
       {modalImageVisible && (
         <ModalImageXray
-          propModalImagePath={modalImagePath}
+          propModalXrayData={modalXrayData}
           propSetModalVisible={setModalImageVisible}
-          propSetModalImagePath={setModalImagePath}
+          propSetModalXrayData={setModalXrayData}
         />
       )}
     </>
