@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-import Contents from "../components/contents.jsx";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
+import InsuranceInfoDataTable from "../components/InsuranceInfoDataTable.jsx";
+import XRaysDataTable from "../components/XRaysDataTable.jsx";
+import { AiOutlinePlus } from "react-icons/ai";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import ModalImageXray from "../components/ModalImageXray.jsx";
 
 function PatientRecord() {
+  const [modalImagePath, setModalImagePath] = useState("");
+  const [modalImageVisible, setModalImageVisible] = useState(false);
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-4 pl-12 pr-16 pt-8">
         <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
           PASCO, JERICHO
         </h1>
-        <div className="flex flex-wrap gap-8">
-          <button className=" font-Karla text-3xl text-green-500 underline">
-            VISITS
-          </button>
-          <button className=" font-Karla text-3xl text-green-500 underline">
-            TEETH CHART
-          </button>
-          <button className=" font-Karla text-3xl text-green-500 underline">
-            Health History
-          </button>
-          <button className=" font-Karla text-3xl text-green-500 underline">
-            Health History
-          </button>
-        </div>
-        <button className=" font-Karla text-xl text-rose-500 underline">
+        <button className="inline-flex items-center font-Karla text-xl font-bold text-rose-500 underline">
+          <MdOutlineDeleteForever className="mr-2" />
           Delete
         </button>
       </div>
@@ -41,7 +43,7 @@ function PatientRecord() {
 
           <div className="grid gap-x-4 gap-y-5 px-8 py-4 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12">
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
-              <div className="mb-1 font-Karla text-base font-bold text-black">
+              <div className="mb-1 font-Karla text-base font-bold text-black ">
                 First Name
               </div>
               <div className="font-Karla text-lg">JERICHO</div>
@@ -146,14 +148,65 @@ function PatientRecord() {
               </div>
             </div>
             <div className="grid sm:grid-cols-1 lg:grid-cols-2">
-              <div className="mb-1 font-Karla text-base font-bold text-black">
+              <div className="mb-1 font-Karla text-base font-bold text-black ">
                 Balance
               </div>
               <div className="font-Karla text-lg">None</div>
             </div>
           </div>
         </div>
+        <div className="flex flex-col flex-wrap gap-4 sm:col-span-1 md:col-span-1 lg:col-span-2">
+          <div className="flex flex-wrap justify-center gap-8">
+            <button className=" font-Karla text-3xl text-green-500 underline">
+              VISITS
+            </button>
+            <button className=" font-Karla text-3xl text-green-500 underline">
+              TEETH CHART
+            </button>
+            <button className=" font-Karla text-3xl text-green-500 underline">
+              Health History
+            </button>
+          </div>
+          <div className="flex h-auto w-full flex-col rounded-lg border-2">
+            <div className="flex flex-wrap items-center justify-between border-b px-8 pb-2 pt-4">
+              <h1 className="font-Montserrat text-xl font-bold uppercase">
+                Insurance Information
+              </h1>
+              <button className="inline-flex items-center rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600">
+                <AiOutlinePlus className="mr-2" />
+                Add Info
+              </button>
+            </div>
+            <div className="flex flex-col gap-x-4 gap-y-5 px-8 py-4">
+              <InsuranceInfoDataTable />
+            </div>
+          </div>
+          <div className="flex h-auto w-full flex-col rounded-lg border-2">
+            <div className="flex flex-wrap items-center justify-between border-b px-8 pb-2 pt-4">
+              <h1 className="font-Montserrat text-xl font-bold uppercase">
+                X-RAYS
+              </h1>
+              <button className="inline-flex items-center rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600">
+                <AiOutlinePlus className="mr-2" />
+                Add X-RAY
+              </button>
+            </div>
+            <div className="flex flex-col gap-x-4 gap-y-5 px-8 py-4">
+              <XRaysDataTable
+                propModalVisible={setModalImageVisible}
+                propImagePath={setModalImagePath}
+              />
+            </div>
+          </div>
+        </div>
       </div>
+      {modalImageVisible && (
+        <ModalImageXray
+          propModalImagePath={modalImagePath}
+          propSetModalVisible={setModalImageVisible}
+          propSetModalImagePath={setModalImagePath}
+        />
+      )}
     </>
   );
 }
