@@ -1,10 +1,10 @@
 const express = require('express');
-const mysql = require('mysql');
+const connection = require('./db/db_connection');
 const cors = require('cors');
 
+const port = 3000;
 const app = express();
 app.use(cors());
-const port = 3000;
 
 app.get('/', (req, res) => {
     res.send("Hello World")
