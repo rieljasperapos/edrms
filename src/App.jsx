@@ -3,7 +3,7 @@ import AddRecord from "./pages/AddRecord.jsx";
 import PatientRecord from "./pages/PatientRecord.jsx";
 import Contents from "./components/contents";
 import "./index.css";
-
+import PatientRecordList from "./pages/PatientRecordList.jsx";
 function App() {
   return (
     <>
@@ -12,6 +12,7 @@ function App() {
         <Contents>
           {/*<AddRecord />*/}
           <PatientRecord />
+          {/*<PatientRecordList />*/}
         </Contents>
       </div>
     </>
