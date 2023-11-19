@@ -6,6 +6,11 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
   };
+
+  const submitPIEditModal = () => {
+    // Close the modal by setting its visibility to false
+    propSetModalVisible(false);
+  };
   return (
     <>
       <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70">
@@ -32,7 +37,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="JERICHO"
+                defaultValue="JERICHO"
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -42,7 +47,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="PASCO"
+                defaultValue="PASCO"
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -52,7 +57,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="CLAM"
+                defaultValue="CLAM"
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -72,7 +77,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="22"
+                defaultValue="22"
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-1">
@@ -82,7 +87,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="MALE"
+                defaultValue="MALE"
               />
             </div>
             <div className="sm:col-span-2 md:col-span-4 lg:col-span-5">
@@ -92,7 +97,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="DUNGGUAN, BARANGAY BASAK"
+                defaultValue="DUNGGUAN, BARANGAY BASAK"
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -102,7 +107,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="CEBU"
+                defaultValue="CEBU"
               />
             </div>
             <div className="sm:col-span-3 md:col-span-3 lg:col-span-2">
@@ -112,7 +117,7 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="097612345678"
+                defaultValue="097612345678"
               />
             </div>
             <div className="sm:col-span-3 md:col-span-3 lg:col-span-2">
@@ -122,14 +127,14 @@ function PersonalInfoEditModal({ propSetModalVisible }) {
               <input
                 type="text"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
-                value="jericho@gmail.com"
+                defaultValue="jericho@gmail.com"
               />
             </div>
           </div>
           <div className="mb-5 mt-3 flex w-full justify-center">
             <button
               className="rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
-              onClick={closePIEditModal}
+              onClick={submitPIEditModal}
             >
               Done
             </button>
