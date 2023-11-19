@@ -13,7 +13,7 @@ import {
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { FaEdit } from "react-icons/fa";
 
-function InsuranceInfoDataTable() {
+function InsuranceInfoDataTable({ propSetEditMode, propSetModalVisible }) {
   const [data, setData] = useState(InsuranceInfoData);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
@@ -73,6 +73,12 @@ function InsuranceInfoDataTable() {
     onPaginationChange: setPagination,
   });
 
+  const handleEditMode = () => {
+    // Close the modal by setting its visibility to false
+    propSetEditMode(true);
+    propSetModalVisible(true);
+  };
+
   return (
     <>
       <div className="flex flex-col overflow-x-auto rounded-lg border-2">
@@ -115,7 +121,10 @@ function InsuranceInfoDataTable() {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline">
+                  <button
+                    className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline"
+                    onClick={handleEditMode}
+                  >
                     <FaEdit />
                     Edit
                   </button>
