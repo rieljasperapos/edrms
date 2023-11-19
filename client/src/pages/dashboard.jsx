@@ -6,7 +6,9 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        fetch('http://localhost:3000/signout')
+        fetch('http://localhost:3000/signout', {
+            credentials: 'include',
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error (`Error ${response.status}`);
@@ -20,7 +22,9 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        fetch('http://localhost:3000/dashboard')
+        fetch('http://localhost:3000/dashboard', {
+            credentials: 'include',
+        })
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Error ${response.status}`);
@@ -28,8 +32,11 @@ const Dashboard = () => {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
-            // setName(data.username);
+            if (data.valid) {
+                setName(data.username);
+            } else {
+                navigate('/signin')
+            }
         })
         .catch((err) => {
             console.error(err.message);

@@ -1,34 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  console.log(userName);
-  console.log(password);
+  // console.log(userName);
+  // console.log(password);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // axios.post('http://localhost:3000/signin', {userName, password})
-    // .then(res => {
-    //   if (res.data.valid) {
-    //     navigate('/dashboard');
-    //   } else {
-    //     alert('No record');
-    //   }
-    //   console.log(res);
-    // })
-    // .catch(err => console.log(err));
     fetch('http://localhost:3000/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({userName, password})
     })
     .then(response => {
@@ -50,6 +40,26 @@ function Login() {
       console.error(err.message);
     })
   }
+
+  useEffect(() => {
+    fetch('http://localhost:3000/dashboard', {
+        credentials: 'include',
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data) => {
+        if (data.valid) {
+          navigate('/dashboard');
+        }
+    })
+    .catch((err) => {
+        console.error(err.message);
+    })
+}, [])
 
   return (
     <>

@@ -3,18 +3,20 @@ const session = require('express-session');
 const connection = require('./db/db_connection');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const cookieParser = require('cookie-parser');
 const {v4: uuidv4} = require('uuid');
 const port = 3000;
 const sessionSecret = uuidv4();
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET, POST"],
+    credentials: true
+}));
 app.use(express.json());
-app.use(cookieParser());
 app.use(session({
     secret: sessionSecret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         secure: false,
         maxAge: 60 * 60 * 1000,
@@ -53,6 +55,12 @@ app.get('/signup', (req, res) => {
     })
 })
 
+app.get('/signin', (req, res) => {
+    if (req.session.authorized) {
+        res.redirect('/dashboard');
+    }
+})
+
 // Sign in logic
 app.post('/signin', (req, res) => {
     const sql = `SELECT * FROM account WHERE username = ?`;
@@ -67,7 +75,8 @@ app.post('/signin', (req, res) => {
         console.log(rows[0].password);
         bcrypt.compare(req.body.password, rows[0].password, (err, isPasswordMatch) => {
             if(isPasswordMatch) {
-                req.session.user = rows[0].username;
+                req.session.authorized = true;
+                req.session.user = rows[0].username
                 // req.session.user = rows[0].username;
                 // console.log(req.session);
                 console.log('Login successful. Session after login:', req.session);
