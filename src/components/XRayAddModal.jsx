@@ -6,18 +6,18 @@ import { LuUpload } from "react-icons/lu";
 function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
   const [editMode, setEditMode] = useState(propEditMode);
 
-  const closeInsuranceModal = () => {
+  const closeXrayModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
     propSetEditMode(false);
   };
 
-  const handleSubmitInsurance = () => {
+  const handleSubmitXray = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
   };
 
-  const handleEditInsurance = () => {
+  const handleEditXray = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
     propSetEditMode(false);
@@ -32,7 +32,7 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
             </h1>
             <button
               className="inline-flex items-center rounded-lg px-5 py-1 text-2xl text-gray-500 hover:text-black"
-              onClick={closeInsuranceModal}
+              onClick={closeXrayModal}
             >
               <IoMdCloseCircle />
             </button>
@@ -86,7 +86,7 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
           <div className="mb-5 mt-3 flex w-full justify-center">
             <button
               className="rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
-              onClick={editMode ? handleEditInsurance : handleSubmitInsurance}
+              onClick={editMode ? handleEditXray : handleSubmitXray}
             >
               {editMode ? "Edit" : "Add"}
             </button>
