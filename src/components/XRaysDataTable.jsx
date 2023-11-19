@@ -14,7 +14,12 @@ import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { FaEdit } from "react-icons/fa";
 import { MdViewList } from "react-icons/md";
 
-function XRaysDataTable({ propModalVisible, propXrayData }) {
+function XRaysDataTable({
+  propModalImageVisible,
+  propXrayData,
+  propSetEditMode,
+  propSetModalVisible,
+}) {
   const [data, setData] = useState(XraysData);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
@@ -25,8 +30,14 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
   const handleImageClick = (indexData) => {
     // Set the modal visibility to true and store the clicked image path
     propXrayData(indexData);
-    propModalVisible(true);
+    propModalImageVisible(true);
     console.log(indexData);
+  };
+
+  const handleEditMode = () => {
+    // Close the modal by setting its visibility to false
+    propSetEditMode(true);
+    propSetModalVisible(true);
   };
 
   const columns = [
@@ -49,13 +60,15 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
       accessorKey: "path",
       header: "Image",
       cell: (props) => (
-        <button
-          className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
-          onClick={() => handleImageClick(props.row.original)}
-        >
-          <MdViewList />
-          View
-        </button>
+        <div className="flex w-full items-center justify-center">
+          <button
+            className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
+            onClick={() => handleImageClick(props.row.original)}
+          >
+            <MdViewList />
+            <p>View</p>
+          </button>
+        </div>
       ),
     },
   ];
@@ -116,10 +129,15 @@ function XRaysDataTable({ propModalVisible, propXrayData }) {
                 ))}
                 <td className="text-center">
                   {/* Edit Button */}
-                  <button className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline">
-                    <FaEdit />
-                    Edit
-                  </button>
+                  <div className="flex w-full items-center justify-center">
+                    <button
+                      className="mx-4 flex items-center justify-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline"
+                      onClick={handleEditMode}
+                    >
+                      <FaEdit />
+                      Edit
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
