@@ -59,7 +59,7 @@ const Signup = () => {
     return (
         <>
             <div className='sm:grid sm:grid-cols-2 h-screen'>
-                <div className="bg-custom-blue flex justify-center sm:shadow-2xl mb-12 sm:mb-0">
+                <div className="bg-custom-blue flex justify-center sm:shadow-2xl mb-12 sm:mb-0 rounded-b-2xl">
                     <div className='flex justify-center items-center'>
                         <img src={Logo}></img>
                     </div>
@@ -69,7 +69,7 @@ const Signup = () => {
                     <div className='flex justify-center items-center p-4'>
                         <div className='w-full'>
                             <p>Username</p>
-                            <input value={userName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setUserName(e.target.value)}></input>
+                            <input required value={userName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setUserName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className='flex justify-center items-center p-4'>
@@ -80,6 +80,7 @@ const Signup = () => {
                             </div>
                             <div className='relative'>
                                 <input
+                                    required
                                     value={password}
                                     type={showPassword ? 'text' : 'password'} 
                                     className='border p-2 w-full rounded-lg' 
@@ -99,6 +100,7 @@ const Signup = () => {
                             </div>
                             <div className='relative'>
                                 <input
+                                    required
                                     value={confirmPassword}
                                     type={showPassword ? 'text' : 'password'} 
                                     className='border p-2 w-full rounded-lg' 
@@ -113,21 +115,21 @@ const Signup = () => {
                     <div className='flex flex-col sm:flex-row justify-center items-center p-4'>
                         <div className='w-full sm:mr-4 pb-4 sm:p-0'>
                             <p>First name</p>
-                            <input value={firstName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setFirstName(e.target.value)}></input>
+                            <input required value={firstName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setFirstName(e.target.value)}></input>
                         </div>
                         <div className='w-full pt-4 sm:p-0'>
                             <p>Last name</p>
-                            <input value={lastName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setLastName(e.target.value)}></input>
+                            <input required value={lastName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setLastName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className='flex flex-col sm:flex-row justify-center items-center p-4'>
                         <div className='w-full sm:mr-4 pb-4 sm:p-0'>
                             <p>Middle name</p>
-                            <input value={middleName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setMiddleName(e.target.value)}></input>
+                            <input required value={middleName} type='text' className='border p-2 w-full rounded-lg' onChange={(e) => setMiddleName(e.target.value)}></input>
                         </div>
                         <div className='w-full pt-4 sm:p-0'>
                             <p>Birth Date</p>
-                            <input value={birthDate} type="date" className='border p-2 w-full rounded-lg' onChange={(e) => setBirthDate(e.target.value)} placeholder='dd / mm / yy'></input>
+                            <input required value={birthDate} type="date" className='border p-2 w-full rounded-lg' onChange={(e) => setBirthDate(e.target.value)} placeholder='dd / mm / yy'></input>
                         </div>
                     </div>
                     <div className='flex justify-center items-center p-4 mt-16'>
