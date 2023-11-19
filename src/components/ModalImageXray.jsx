@@ -25,7 +25,7 @@ function ModalImageXray({
       <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70">
         <div className="flex flex-col gap-2 rounded-lg bg-white p-6">
           <div
-            className="self-end text-2xl text-black hover:text-green-500"
+            className="self-end text-2xl text-gray-500 hover:text-black"
             onClick={closeImageModal}
           >
             <IoMdCloseCircle />
