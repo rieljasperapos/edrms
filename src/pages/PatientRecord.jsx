@@ -16,16 +16,19 @@ import { FaTooth } from "react-icons/fa6";
 import { FaHeartbeat } from "react-icons/fa";
 import XrayAddModal from "../components/XRayAddModal.jsx";
 import XrayModal from "../components/XrayModal.jsx";
+import HealthHistoryModal from "../components/HealthHistoryModal.jsx";
 
 function PatientRecord() {
-  const [modalXrayData, setModalXrayData] = useState({});
-  const [modalImageVisible, setModalImageVisible] = useState(false);
   const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
+  const [modalHealthHistoryVisible, setModalHealthHistoryVisible] =
+    useState(false);
   const [modalInsuranceAddVisible, setModalInsuranceAddVisible] =
     useState(false);
   const [editModeInsuranceModal, setEditModeInsuranceModal] = useState(false);
   const [modalXrayAddVisible, setModalXrayAddVisible] = useState(false);
   const [editModeXrayModal, setEditModeXrayModal] = useState(false);
+  const [modalXrayData, setModalXrayData] = useState({});
+  const [modalImageVisible, setModalImageVisible] = useState(false);
 
   return (
     <>
@@ -40,7 +43,7 @@ function PatientRecord() {
       </div>
 
       <div className="grid w-full justify-center gap-4 border-2  px-12 py-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
-        <PersonalInfoModal propSetmodalPIEditVisible={setModalPIEditVisible} />
+        <PersonalInfoModal propSetModalPIEditVisible={setModalPIEditVisible} />
         <RecentVisitModal />
         <div className="flex flex-col flex-wrap gap-4 sm:col-span-1 md:col-span-1 lg:col-span-2">
           <div className="flex flex-wrap justify-evenly gap-8">
@@ -52,7 +55,12 @@ function PatientRecord() {
               <FaTooth />
               TEETH CHART
             </button>
-            <button className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline">
+            <button
+              className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline"
+              onClick={() => {
+                setModalHealthHistoryVisible(true);
+              }}
+            >
               <FaHeartbeat />
               HEALTH HISTORY
             </button>
@@ -74,6 +82,12 @@ function PatientRecord() {
 
       {modalPIEditVisible && (
         <PersonalInfoEditModal propSetModalVisible={setModalPIEditVisible} />
+      )}
+
+      {modalHealthHistoryVisible && (
+        <HealthHistoryModal
+          propSetModalVisible={setModalHealthHistoryVisible}
+        />
       )}
 
       {modalInsuranceAddVisible && (

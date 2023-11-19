@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "../index.css";
 import { FaEdit } from "react-icons/fa";
 
-function PersonalInfoModal({ propSetmodalPIEditVisible }) {
+function PersonalInfoModal({ propSetModalPIEditVisible }) {
   const handleClickEditPI = () => {
     // Set the modal visibility to true and store the clicked image path
-    propSetmodalPIEditVisible(true);
+    propSetModalPIEditVisible(true);
   };
 
   return (
