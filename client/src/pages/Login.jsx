@@ -1,7 +1,56 @@
+import { useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Login() {
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  console.log(userName);
+  console.log(password);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // axios.post('http://localhost:3000/signin', {userName, password})
+    // .then(res => {
+    //   if (res.data.valid) {
+    //     navigate('/dashboard');
+    //   } else {
+    //     alert('No record');
+    //   }
+    //   console.log(res);
+    // })
+    // .catch(err => console.log(err));
+    fetch('http://localhost:3000/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({userName, password})
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`)
+      } 
+      return response.json();
+    })
+    .then(data => {
+      if (data.valid) {
+        console.log(data);
+        navigate('/dashboard');
+        alert(data.message);
+      } else {
+        alert("No record exist");
+      }
+    })
+    .catch(err => {
+      console.error(err.message);
+    })
+  }
+
   return (
     <>
       <div className="mt-24 text-center ">
@@ -14,7 +63,7 @@ function Login() {
         <h3 className="font-bold">ADMIN ACCESS ONLY</h3>
       </div>
 
-      <div className="flex flex-col items-center">
+      <form className="flex flex-col items-center" onSubmit={handleLogin}>
         {/* Username input box */}
         <div className="my-5">
           <div className="relative">
@@ -26,6 +75,7 @@ function Login() {
               className="pl-12 rounded-lg border-2 border-cyan-600 h-12 w-96"
               type="text"
               placeholder="Username"
+              onChange={(e) => setUserName(e.target.value)}
             />
           </div>
         </div>
@@ -39,19 +89,20 @@ function Login() {
             />
             <input
               className="pl-12 rounded-lg border-2 border-cyan-600 h-12 w-96"
-              type="text"
+              type="password"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         </div>
 
         {/* Log in button */}
         <div className="my-5">
-          <button className="rounded-lg border-2 h-12 w-96 bg-green-400 hover:bg-green-600 text-white">
+          <button className="rounded-lg border-2 h-12 w-96 bg-green-400 hover:bg-green-600 text-white" type="submit">
             Log in
           </button>
         </div>
-      </div>
+      </form>
     </>
   );
 }

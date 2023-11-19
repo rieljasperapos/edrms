@@ -1,13 +1,25 @@
 const express = require('express');
+const session = require('express-session');
 const connection = require('./db/db_connection');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-
+const cookieParser = require('cookie-parser');
+const {v4: uuidv4} = require('uuid');
 const port = 3000;
+const sessionSecret = uuidv4();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use(cookieParser());
+app.use(session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        maxAge: 60 * 60 * 1000,
+    },
+}))
 
 // Sign up logic (password encryption)
 app.post('/signup', (req, res) => {
@@ -41,39 +53,51 @@ app.get('/signup', (req, res) => {
     })
 })
 
-
-// Sign in logic (inputs here are just temporary must be changed to req.body.username)
-app.get('/signin', (req, res) => {
+// Sign in logic
+app.post('/signin', (req, res) => {
     const sql = `SELECT * FROM account WHERE username = ?`;
-    const username = "jerichopasco";
-    const password = "jerichopasco";
-
-    connection.query(sql, [username], (err, rows) => {
+    connection.query(sql, [req.body.userName], (err, rows) => {
         if (rows.length === 0) {
-            res.send({message: "User not found"});
+            res.send({message: "User not found", valid: false});
             return;
         }
+        
+        console.log('Before setting session:', req.session);
 
         console.log(rows[0].password);
-        console.log(password);
-
-        bcrypt.compare(password, rows[0].password, (err, isPasswordMatch) => {
+        bcrypt.compare(req.body.password, rows[0].password, (err, isPasswordMatch) => {
             if(isPasswordMatch) {
-                res.send({message: "Login Successful"});
+                req.session.user = rows[0].username;
+                // req.session.user = rows[0].username;
+                // console.log(req.session);
+                console.log('Login successful. Session after login:', req.session);
+                res.send({message: "Login successful", valid: true});
             } else {
-                res.send({message: "Invalid Credentials"});
+                res.send({message: "Invalid Credentials", valid: false});
             }
         })
     })
 })
 
 app.get('/dashboard', (req, res) => {
-    res.send({ message: "Welcome to the dashboard!" });
-});
+    console.log('Dashboard route. Session:', req.session);
+    if (req.session.user) {
+        console.log('User found in session. Username:', req.session.user);
+        res.send({valid: true, username: req.session.user});
+    } else {
+        res.send({message: "Error", valid: false})
+    }
+})
 
-
-app.get('/', (req, res) => {
-    res.send({message: "HELLO WORLD"});
+app.get('/signout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            res.send({message: `ERROR destroying the session ${err}`});
+        } else {
+            res.clearCookie('connect.sid');
+            res.send({message: "Logout Successfull"});
+        }
+    }) 
 })
 
 app.listen(port, () => {
