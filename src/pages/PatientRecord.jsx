@@ -17,6 +17,7 @@ import { FaHeartbeat } from "react-icons/fa";
 import XrayAddModal from "../components/XRayAddModal.jsx";
 import XrayModal from "../components/XrayModal.jsx";
 import HealthHistoryModal from "../components/HealthHistoryModal.jsx";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal.jsx";
 
 function PatientRecord() {
   const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
@@ -29,6 +30,7 @@ function PatientRecord() {
   const [editModeXrayModal, setEditModeXrayModal] = useState(false);
   const [modalXrayData, setModalXrayData] = useState({});
   const [modalImageVisible, setModalImageVisible] = useState(false);
+  const [DeleteModalVisible, setDeleteModalVisible] = useState(false);
 
   return (
     <>
@@ -36,7 +38,12 @@ function PatientRecord() {
         <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
           PASCO, JERICHO
         </h1>
-        <button className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline">
+        <button
+          className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline"
+          onClick={() => {
+            setDeleteModalVisible(true);
+          }}
+        >
           <MdOutlineDeleteForever className="mr-1" />
           Delete
         </button>
@@ -112,6 +119,10 @@ function PatientRecord() {
           propSetModalVisible={setModalImageVisible}
           propSetModalXrayData={setModalXrayData}
         />
+      )}
+
+      {DeleteModalVisible && (
+        <ConfirmDeleteModal propSetModalVisible={setDeleteModalVisible} />
       )}
     </>
   );
