@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 
-import XRaysDataTable from "../components/XRaysDataTable.jsx";
 import PersonalInfoEditModal from "../components/PersonalInfoEditModal.jsx";
 import PersonalInfoModal from "../components/PersonalInfoModal.jsx";
 import RecentVisitModal from "../components/RecentVisitModal.jsx";
@@ -9,7 +8,6 @@ import InsuranceInfoModal from "../components/InsuranceInfoModal.jsx";
 import ModalImageXray from "../components/ModalImageXray.jsx";
 import InsuranceInfoAddModal from "../components/InsuranceInfoAddModal.jsx";
 
-import { AiOutlinePlus } from "react-icons/ai";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { MdViewList } from "react-icons/md";
 import { FaTooth } from "react-icons/fa6";
@@ -18,6 +16,9 @@ import XrayAddModal from "../components/XRayAddModal.jsx";
 import XrayModal from "../components/XrayModal.jsx";
 import HealthHistoryModal from "../components/HealthHistoryModal.jsx";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal.jsx";
+import Contents from "../components/contents.jsx";
+import Navbar from "../components/navbar.jsx";
+import AccountSession from "../components/accountSession.jsx";
 
 function PatientRecord() {
   const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
@@ -34,6 +35,9 @@ function PatientRecord() {
 
   return (
     <>
+      <Navbar />
+      <AccountSession propUser={user}/>
+      <Contents>
       <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-6 pl-12 pr-16 pt-8">
         <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
           PASCO, JERICHO
@@ -124,6 +128,7 @@ function PatientRecord() {
       {DeleteModalVisible && (
         <ConfirmDeleteModal propSetModalVisible={setDeleteModalVisible} />
       )}
+      </Contents>
     </>
   );
 }

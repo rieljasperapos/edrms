@@ -30,7 +30,7 @@ function Login() {
     .then(data => {
       if (data.valid) {
         console.log(data);
-        navigate('/dashboard');
+        navigate('/patientRecordList');
         alert(data.message);
       } else {
         alert("No record exist");
@@ -60,6 +60,10 @@ function Login() {
         console.error(err.message);
     })
 }, [])
+
+  const handleSignUp = () => {
+    navigate('/signup');
+  }
 
   return (
     <>
@@ -111,6 +115,10 @@ function Login() {
           <button className="rounded-lg border-2 h-12 w-96 bg-green-400 hover:bg-green-600 text-white" type="submit">
             Log in
           </button>
+        </div>
+
+        <div className='flex justify-center items-center p-4'>
+          <p>Do not have an account? <span className='text-custom-blue cursor-pointer hover:text-opacity-60 hover:underline transition-transform ease-in' onClick={handleSignUp}>Sign Up</span></p>
         </div>
       </form>
     </>

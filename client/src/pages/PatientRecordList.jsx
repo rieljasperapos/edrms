@@ -16,11 +16,18 @@ import {
 } from "react-icons/rx";
 import { MdViewList } from "react-icons/md";
 import PatientListData from "../assets/PatientListData.js";
+import Contents from "../components/contents.jsx";
+import {useNavigate} from "react-router-dom";
+import Navbar from "../components/navbar.jsx";
+import AccountSession from "../components/accountSession.jsx";
 
 function PatientRecordList() {
   const [data, setData] = useState(PatientListData);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
+
+  const[user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -65,6 +72,28 @@ function PatientRecordList() {
     },
   ];
 
+  useEffect(() => {
+    fetch('http://localhost:3000/dashboard', {
+      credentials: 'include',
+    })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.valid) {
+            setUser(data);
+          } else {
+            navigate('/signin')
+          }
+        })
+        .catch((err) => {
+          console.error(err.message);
+        })
+  }, [])
+
   const table = useReactTable({
     data,
     columns,
@@ -82,6 +111,9 @@ function PatientRecordList() {
 
   return (
     <>
+      <Navbar />
+      <AccountSession propUser={user}/>
+      <Contents>
       <h1 className="border-b bg-custom-blue px-12 pb-6 pt-8 font-Montserrat text-4xl font-bold text-white">
         Patient Record
       </h1>
@@ -213,6 +245,7 @@ function PatientRecordList() {
           </div>
         </div>
       </div>
+      </Contents>
     </>
   );
 }

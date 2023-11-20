@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
+import Contents from "../components/contents.jsx";
 
 function AddRecord() {
   return (
     <>
+      <Contents>
       <div className="flex items-center justify-between border-b bg-custom-blue px-12 pb-6 pt-8">
         <h1 className="font-Montserrat text-3xl font-bold uppercase text-white">
           Add Record
@@ -87,6 +89,7 @@ function AddRecord() {
           Submit
         </button>
       </div>
+      </Contents>
     </>
   );
 }

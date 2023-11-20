@@ -6,8 +6,26 @@ import CalendarIcon from "../assets/calendar-icon.png";
 import FolderIcon from "../assets/folder-icon.png";
 import LogoutIcon from "../assets/logout-icon.png";
 import { AiOutlineFolderOpen } from "react-icons/ai";
+import {useNavigate} from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        fetch('http://localhost:3000/signout', {
+            credentials: 'include',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error (`Error ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                navigate('/signin');
+            })
+    }
+
   return (
     <div className="navbar-menu fixed flex h-screen w-28 flex-col overflow-auto bg-custom-blue font-Montserrat text-white shadow-2xl ">
       <div>
@@ -22,6 +40,7 @@ const Navbar = () => {
         <button
           id="menu-logout"
           className="mb-10 mt-auto flex cursor-pointer space-x-2 p-1 hover:bg-custom-gray"
+          onClick={handleLogout}
         >
           <img src={LogoutIcon} className="h-6 w-6" alt="Logout Icon" />
         </button>

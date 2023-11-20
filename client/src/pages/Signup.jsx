@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Logo from '../assets/dentalClinicLogo.png'
 import Matched from '../assets/icon-check.png'
 import EyeIcon from '../assets/eye-icon.png'
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
     const [userName, setUserName] = useState('');
@@ -13,6 +14,9 @@ const Signup = () => {
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [birthDate, setBirthDate] = useState('');
+
+    const navigate = useNavigate();
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -40,6 +44,7 @@ const Signup = () => {
         .then(data => {
             alert("Successfully Registered");
             console.log(data);
+            navigate('/signin')
         })
         .catch(error => {
             console.error(`Error registering user: ${error.message}`);
@@ -55,6 +60,10 @@ const Signup = () => {
     }, [password, confirmPassword]);
 
     // console.log(matchStatus)
+
+    const handleSignIn = () => {
+        navigate('/signin')
+    }
 
     return (
         <>
@@ -141,7 +150,7 @@ const Signup = () => {
                                 <div className='border-b h-2 w-64 mt-2'></div>
                             </div>
                             <div className='flex justify-center items-center p-4'>
-                                <p>Already have an account? <span className='text-custom-blue cursor-pointer hover:text-opacity-60 transition-transform ease-in'>Sign in</span></p>
+                                <p>Already have an account? <span className='text-custom-blue cursor-pointer hover:text-opacity-60 hover:underline transition-transform ease-in' onClick={handleSignIn}>Sign in</span></p>
                             </div>
                         </div>
                     </div>
