@@ -104,7 +104,7 @@ app.get('/signout', (req, res) => {
             res.send({message: `ERROR destroying the session ${err}`});
         } else {
             res.clearCookie('connect.sid');
-            res.send({message: "Logout Successfull"});
+            res.send({message: "Logout Successful"});
         }
     }) 
 })
