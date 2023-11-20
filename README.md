@@ -9,6 +9,7 @@ Electronic Dental Record Management System
 │   │   └── assets/
 │   │   │   └── .png files
 │   │   └── components/
+│   │   │   └── AddVisitTable.jsx
 │   │   │   └── navbar.jsx
 │   │   │   └── VisitTable.jsx
 │   │   └── pages/

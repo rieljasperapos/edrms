@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import AddVisitModal from "./AddVisitModal";
 import {
   useReactTable,
   getCoreRowModel,
@@ -19,6 +20,7 @@ function VisitTable() {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   // Fetch API Mock Data
   const fetchVisitData = () => {
@@ -82,10 +84,21 @@ function VisitTable() {
         <div className="flex flex-row justify-between mb-6">
           {/* Add Visit */}
           <div>
-            <button className="rounded-lg border-2 h-10 w-40 bg-green-400 hover:bg-green-600 text-white inline-flex items-center px-8">
+            <button
+              className="rounded-lg border-2 h-10 w-40 bg-green-400 hover:bg-green-600 text-white inline-flex items-center px-8"
+              onClick={() => setShowModal(true)}
+            >
               <AiOutlinePlus className="mr-2" />
               Add Visit
             </button>
+          </div>
+
+          {/* Add Visit Modal */}
+          <div>
+            <AddVisitModal
+              isVisible={showModal}
+              onClose={() => setShowModal(false)}
+            />
           </div>
 
           {/* Filtering */}
