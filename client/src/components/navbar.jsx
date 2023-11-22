@@ -5,26 +5,25 @@ import AddIcon from "../assets/add-icon.png";
 import CalendarIcon from "../assets/calendar-icon.png";
 import FolderIcon from "../assets/folder-icon.png";
 import LogoutIcon from "../assets/logout-icon.png";
-import { AiOutlineFolderOpen } from "react-icons/ai";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-    const navigate = useNavigate();
-    const handleLogout = () => {
-        fetch('http://localhost:3000/signout', {
-            credentials: 'include',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error (`Error ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                navigate('/signin');
-            })
-    }
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    fetch("http://localhost:3000/signout", {
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        navigate("/signin");
+      });
+  };
 
   return (
     <div className="navbar-menu fixed flex h-screen w-28 flex-col overflow-auto bg-custom-blue font-Montserrat text-white shadow-2xl ">
@@ -50,8 +49,18 @@ const Navbar = () => {
 };
 
 const NavItem = ({ icon, text }) => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (text === "Add Record") {
+      navigate("/addRecord");
+    } else if (text === "Patient Records") {
+      navigate("/patientRecordList");
+    } else if (text === "Calendar") {
+      navigate("/calendar");
+    }
+  };
   return (
-    <div className="cursor-pointer pl-2 pr-2">
+    <div className="cursor-pointer pl-2 pr-2" onClick={handleClick}>
       <div className="flex h-20 flex-col flex-wrap items-center justify-center rounded-xl p-2 hover:bg-custom-gray hover:shadow-inner-dark">
         <img src={icon} className="h-6 w-6" alt={`${text} Icon`} />
         <p className="text-center text-sm">{text}</p>

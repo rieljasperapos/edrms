@@ -81,7 +81,7 @@ function InsuranceInfoDataTable({ propSetEditMode, propSetModalVisible }) {
 
   return (
     <>
-      <div className="flex flex-col overflow-x-auto rounded-lg border-2">
+      <div className="flex flex-col overflow-auto rounded-lg border-2">
         <table className="divide-y divide-gray-200">
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (

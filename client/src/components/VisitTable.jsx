@@ -14,12 +14,15 @@ import {
   RxChevronLeft,
   RxChevronRight,
 } from "react-icons/rx";
+import { PiKeyReturnBold } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 
 function VisitTable() {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
 
+  const navigate = useNavigate();
   // Fetch API Mock Data
   const fetchVisitData = () => {
     const jsonFileUrl =
@@ -78,25 +81,36 @@ function VisitTable() {
 
   return (
     <>
-      <div className="mt-10 mx-12 mb-10">
-        <div className="flex flex-row justify-between mb-6">
-          {/* Add Visit */}
-          <div>
-            <button className="rounded-lg border-2 h-10 w-40 bg-green-400 hover:bg-green-600 text-white inline-flex items-center px-8">
-              <AiOutlinePlus className="mr-2" />
-              Add Visit
-            </button>
-          </div>
+      <div className="mx-12 mb-10 mt-6">
+        <div className="flex flex-col gap-2">
+          <button
+            className="hover:text-blue-900-900 inline-flex items-center gap-2 self-end text-xl text-blue-900 hover:underline"
+            onClick={() => {
+              navigate("/patientRecord");
+            }}
+          >
+            Return to Record
+            <PiKeyReturnBold className="text-2xl" />
+          </button>
+          <div className="mb-6 flex flex-row justify-between">
+            {/* Add Visit */}
+            <div>
+              <button className="inline-flex h-10 w-40 items-center rounded-lg border-2 bg-green-400 px-8 text-white hover:bg-green-600">
+                <AiOutlinePlus className="mr-2" />
+                Add Visit
+              </button>
+            </div>
 
-          {/* Filtering */}
-          <div>
-            <input
-              className="rounded-lg border-2 h-10 w-40 border-gray-300 pl-2"
-              type="text"
-              placeholder="Search"
-              value={filtering}
-              onChange={(e) => setFiltering(e.target.value)}
-            />
+            {/* Filtering */}
+            <div className="flex flex-col gap-3">
+              <input
+                className="h-10 w-80 rounded-lg border-2 border-gray-300 pl-2"
+                type="text"
+                placeholder="Search"
+                value={filtering}
+                onChange={(e) => setFiltering(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
@@ -108,13 +122,13 @@ function VisitTable() {
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
-                      className="py-3 px-3 text-center text-sm font-bold text-gray-500 uppercase tracking-wider"
+                      className="px-3 py-3 text-center text-sm font-bold uppercase tracking-wider text-gray-500"
                       key={header.id}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                       {/* Sorting */}
                       {
@@ -124,26 +138,26 @@ function VisitTable() {
                       }
                     </th>
                   ))}
-                  <th className="py-3 px-3 text-center text-sm font-bold text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-center text-sm font-bold uppercase tracking-wider text-gray-500">
                     Action
                   </th>
                 </tr>
               ))}
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <td className="px-2 py-4 text-center" key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
                   <td className="text-center">
                     {/* View Button */}
-                    <button className="border-2 rounded-lg px-2 bg-cyan-600 hover:bg-cyan-800 text-white">
+                    <button className="rounded-lg border-2 bg-cyan-600 px-2 text-white hover:bg-cyan-800">
                       View
                     </button>
                   </td>
@@ -153,7 +167,7 @@ function VisitTable() {
           </table>
         </div>
 
-        <div className="flex flex-row justify-between items-center mt-4">
+        <div className="mt-4 flex flex-row items-center justify-between">
           {/* Pagination */}
           <div className="pl-2">
             Page{" "}
@@ -166,7 +180,7 @@ function VisitTable() {
           {/* Page Results */}
           <div className="ml-4">
             <select
-              className="bg-gray-50 hover:bg-gray-300 rounded-lg px-2"
+              className="rounded-lg bg-gray-50 px-2 hover:bg-gray-300"
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
@@ -183,14 +197,14 @@ function VisitTable() {
           {/* Pagination button */}
           <div className="pr-2">
             <button
-              className="bg-gray-50 hover:bg-gray-300 rounded-l-lg border border-r-black px-2"
+              className="rounded-l-lg border border-r-black bg-gray-50 px-2 hover:bg-gray-300"
               onClick={() => table.setPageIndex(0)}
             >
               {/* First Page */}
               <RxDoubleArrowLeft size={22} />
             </button>
             <button
-              className="bg-gray-50 hover:bg-gray-300 border border-r-black px-2"
+              className="border border-r-black bg-gray-50 px-2 hover:bg-gray-300"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
             >
@@ -198,7 +212,7 @@ function VisitTable() {
               <RxChevronLeft size={22} />
             </button>
             <button
-              className="bg-gray-50 hover:bg-gray-300 border border-r-black px-2"
+              className="border border-r-black bg-gray-50 px-2 hover:bg-gray-300"
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
             >
@@ -206,7 +220,7 @@ function VisitTable() {
               <RxChevronRight size={22} />
             </button>
             <button
-              className="bg-gray-50 hover:bg-gray-300 rounded-r-lg px-2"
+              className="rounded-r-lg bg-gray-50 px-2 hover:bg-gray-300"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             >
               {/* Last Page */}
