@@ -89,7 +89,7 @@ function AddVisitModal({ isVisible, onClose }) {
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
-                  placeholder="Discount Fee"
+                  placeholder="Discount"
                 />
               </div>
               {/* Amount paid input box */}
