@@ -55,11 +55,11 @@ app.get('/signup', (req, res) => {
     })
 })
 
-app.get('/signin', (req, res) => {
-    if (req.session.authorized) {
-        res.redirect('/dashboard');
-    }
-})
+// app.get('/signin', (req, res) => {
+//     if (req.session.authorized) {
+//         res.redirect('/dashboard');
+//     }
+// })
 
 // Sign in logic
 app.post('/signin', (req, res) => {
