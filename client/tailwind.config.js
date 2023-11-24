@@ -22,6 +22,9 @@ export default {
       boxShadow: {
         'inner-dark': 'inset 2px 2px 6px 0 rgba(0, 0, 0, 0.2)',
       },
+      height: {
+        '95': '95vh'
+      }
     },
   },
   plugins: [],
