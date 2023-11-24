@@ -16,7 +16,8 @@
     "react-icons": "^4.11.0",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.19.0",
-    "react-table": "^7.8.0"
+    "react-table": "^7.8.0",
+    "tailwind-datepicker-react": "^1.4.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
