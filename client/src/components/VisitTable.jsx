@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AddVisitModal from "./AddVisitModal";
+import ViewModal from "./ViewModal";
 import {
   useReactTable,
   getCoreRowModel,
@@ -20,7 +21,10 @@ function VisitTable() {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); // AddVisitModal
+  const [showModal2, setShowModal2] = useState(false); // ViewModal
+
+  const [selectedRowData, setSelectedRowData] = useState(null);
 
   // Fetch API Mock Data
   const fetchVisitData = () => {
@@ -156,7 +160,13 @@ function VisitTable() {
                   ))}
                   <td className="text-center">
                     {/* View Button */}
-                    <button className="border-2 rounded-lg px-2 bg-cyan-600 hover:bg-cyan-800 text-white">
+                    <button
+                      className="border-2 rounded-lg px-2 bg-cyan-600 hover:bg-cyan-800 text-white"
+                      onClick={() => {
+                        setSelectedRowData(row.original);
+                        setShowModal2(true);
+                      }}
+                    >
                       View
                     </button>
                   </td>
@@ -164,6 +174,15 @@ function VisitTable() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* View modal */}
+        <div>
+          <ViewModal
+            isVisible={showModal2}
+            onClose={() => setShowModal2(false)}
+            rowData={selectedRowData}
+          />
         </div>
 
         <div className="flex flex-row justify-between items-center mt-4">

@@ -11,7 +11,9 @@ Electronic Dental Record Management System
 │   │   └── components/
 │   │   │   └── AddVisitModal.jsx
 │   │   │   └── navbar.jsx
+│   │   │   └── ViewModal.jsx
 │   │   │   └── VisitTable.jsx
+│   │   │   └── VitalSignModal.jsx
 │   │   └── pages/
 │   │   │   └── Login.jsx
 │   │   │   └── Visit.jsx
