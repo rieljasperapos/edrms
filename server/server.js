@@ -109,12 +109,40 @@ app.get('/signout', (req, res) => {
     }) 
 })
 
-// http://localhost:3000/visits
+http://localhost:3000/visits
 app.get('/visits', (req, res) => {
     connection.query("SELECT * FROM `visit`", (error, rows, fields) => {
         res.send(rows)
     })
 })
+
+// http://localhost:3000/visitsWithTreatment
+app.get('/visitsWithTreatment', (req, res) => {
+    const sqlQuery = `
+        SELECT
+            v.date_visit,
+            v.notes,
+            v.visit_purpose,
+            v.prescription,
+            COALESCE(t.treatment_name, 'No Treatment') AS treatment_name
+        FROM
+            visit v
+        LEFT JOIN
+            treatment_rendered tr ON v.visit_id = tr.visit_id
+        LEFT JOIN
+            treatment t ON tr.treatment_id = t.treatment_id;
+    `;
+
+    connection.query(sqlQuery, (error, rows, fields) => {
+        if (error) {
+            console.error('Error executing SQL query:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`App is listening to port ${port}`)

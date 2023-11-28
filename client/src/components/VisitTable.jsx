@@ -28,7 +28,7 @@ function VisitTable() {
 
   // Fetch API Mock Data
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/visits")
+    fetch("http://localhost:3000/visitsWithTreatment")
       .then((response) => {
         return response.json();
       })
@@ -56,7 +56,7 @@ function VisitTable() {
     },
     {
       header: "Treatment",
-      accessorKey: "treatment",
+      accessorKey: "treatment_name",
     },
     {
       header: "Balance",
