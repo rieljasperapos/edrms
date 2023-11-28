@@ -28,10 +28,7 @@ function VisitTable() {
 
   // Fetch API Mock Data
   const fetchVisitData = () => {
-    const jsonFileUrl =
-      "https://raw.githubusercontent.com/hello-isa/react-dental-record-management-system/main/visit-page-mock-data.json";
-
-    fetch(jsonFileUrl)
+    fetch("http://localhost:3000/visits")
       .then((response) => {
         return response.json();
       })
@@ -51,7 +48,7 @@ function VisitTable() {
   const columns = [
     {
       header: "Date",
-      accessorKey: "date",
+      accessorKey: "date_visit",
     },
     {
       header: "Visit Purpose",

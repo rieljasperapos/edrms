@@ -109,6 +109,13 @@ app.get('/signout', (req, res) => {
     }) 
 })
 
+// http://localhost:3000/visits
+app.get('/visits', (req, res) => {
+    connection.query("SELECT * FROM `visit`", (error, rows, fields) => {
+        res.send(rows)
+    })
+})
+
 app.listen(port, () => {
     console.log(`App is listening to port ${port}`)
 })

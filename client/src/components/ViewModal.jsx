@@ -25,7 +25,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
               {/* Display data */}
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Date:</strong> {rowData.date}
+                  <strong>Date:</strong> {rowData.date_visit}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
