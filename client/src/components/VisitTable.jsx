@@ -26,7 +26,7 @@ function VisitTable() {
 
   const [selectedRowData, setSelectedRowData] = useState(null);
 
-  // Fetch API Mock Data
+  // Fetch data from the database
   const fetchVisitData = () => {
     fetch("http://localhost:3000/visits")
       .then((response) => {

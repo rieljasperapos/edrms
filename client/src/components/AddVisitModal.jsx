@@ -29,12 +29,18 @@ function AddVisitModal({ isVisible, onClose }) {
           <div className="bg-white p-4 rounded-md ">
             <div className="grid grid-cols-2 gap-4">
               {/* Date picker */}
-              <div className=" w-72 mr-3 pr-4">
+              {/* <div className=" w-72 mr-3 pr-4">
                 <Datepicker
                   options={{}}
                   onChange={handleChange}
                   show={showDatePicker}
                   setShow={handleCloseDatePicker}
+                />
+              </div> */}
+              <div>
+                <input
+                  className="w-full pl-3 rounded-lg border border-gray-300 h-10"
+                  type="date"
                 />
               </div>
               {/* Visit purpose input box */}
@@ -102,14 +108,14 @@ function AddVisitModal({ isVisible, onClose }) {
                 />
               </div>
               {/* Balance input box */}
-              <div>
+              {/* <div>
                 <input
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
                   placeholder="Balance"
                 />
-              </div>
+              </div> */}
             </div>
             {/* Submit button */}
             <div className="my-5 flex justify-center">

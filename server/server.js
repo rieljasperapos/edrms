@@ -150,6 +150,29 @@ app.get('/visits', (req, res) => {
     });
 });
 
+// For the vital sign modal
+// http://localhost:3000/addVitalSigns
+app.post('/addVitalSigns', (req, res) => {
+    const { visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken } = req.body;
+
+    // Insert data into vital_signs table
+    connection.query(
+        'INSERT INTO vital_signs (visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken, is_deleted) VALUES (?, ?, ?, ?, ?, ?, 0)',
+        [visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken],
+        (error, results, fields) => {
+            if (error) {
+                console.error('Error inserting vital signs data: ' + error.stack);
+                res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+            } else {
+                res.status(200).send({ message: 'Vital signs added successfully.' });
+            }
+        }
+    );
+});
+
+// For the add visit modal
+// http://localhost:3000/addVisit
+
 
 app.listen(port, () => {
     console.log(`App is listening to port ${port}`)

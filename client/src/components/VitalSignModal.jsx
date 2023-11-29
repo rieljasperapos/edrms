@@ -1,8 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 
-function VitalSignModal({ isVisible, onClose }) {
+function VitalSignModal({ isVisible, onClose, visitId }) {
   if (!isVisible) return null;
+
+  const [formData, setFormData] = useState({
+    temperature: "",
+    pulse_rate: "",
+    systolic_bp: "",
+    diastolic_bp: "",
+    time_taken: "",
+    visit_id: visitId,
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.vale });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/addVitalSigns", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      console.log("Vital signs added successfully");
+    } catch (error) {
+      console.error("Error adding vital signs:", error.message);
+    }
+  };
 
   return (
     <>
@@ -65,7 +98,10 @@ function VitalSignModal({ isVisible, onClose }) {
 
             {/* Submit button */}
             <div className="mt-5 flex justify-center">
-              <button className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white">
+              <button
+                className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white"
+                onClick={handleSubmit}
+              >
                 Submit
               </button>
             </div>
