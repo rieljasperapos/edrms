@@ -28,7 +28,7 @@ function VisitTable() {
 
   // Fetch API Mock Data
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/visitsWithTreatment")
+    fetch("http://localhost:3000/visits")
       .then((response) => {
         return response.json();
       })

@@ -109,30 +109,9 @@ app.get('/signout', (req, res) => {
     }) 
 })
 
-http://localhost:3000/visits
+// For the visit table and view modal
+// http://localhost:3000/visits
 app.get('/visits', (req, res) => {
-    connection.query("SELECT * FROM `visit`", (error, rows, fields) => {
-        res.send(rows)
-    })
-})
-
-// http://localhost:3000/visitsWithTreatment
-app.get('/visitsWithTreatment', (req, res) => {
-    // const sqlQuery = `
-    //     SELECT
-    //         v.date_visit,
-    //         v.notes,
-    //         v.visit_purpose,
-    //         v.prescription,
-    //         COALESCE(t.treatment_name, 'No Treatment') AS treatment_name
-    //     FROM
-    //         visit v
-    //     LEFT JOIN
-    //         treatment_rendered tr ON v.visit_id = tr.visit_id
-    //     LEFT JOIN
-    //         treatment t ON tr.treatment_id = t.treatment_id;
-    // `;
-
     const sqlQuery = `
     SELECT
         v.date_visit,
@@ -142,13 +121,13 @@ app.get('/visitsWithTreatment', (req, res) => {
         v.additional_fees,
         v.amount_paid,
         v.discount,
-        (v.additional_fees + v.discount) - v.amount_paid AS balance,
+        (COALESCE(SUM(t.treatment_fee), 0) + v.additional_fees - v.amount_paid - v.discount) AS balance,
         vs.temperature,
         vs.pulse_rate,
         vs.systolic_bp,
         vs.diastolic_bp,
         vs.time_taken,
-        COALESCE(t.treatment_name, 'No Treatment') AS treatment_name
+        COALESCE(GROUP_CONCAT(t.treatment_name SEPARATOR ', '), 'No Treatment') AS treatment_name
     FROM
         visit v
     LEFT JOIN
@@ -156,8 +135,10 @@ app.get('/visitsWithTreatment', (req, res) => {
     LEFT JOIN
         treatment t ON tr.treatment_id = t.treatment_id
     LEFT JOIN
-        vital_signs vs ON v.visit_id = vs.visit_id;
-`;
+        vital_signs vs ON v.visit_id = vs.visit_id
+    GROUP BY
+        v.visit_id;
+    `;
 
     connection.query(sqlQuery, (error, rows, fields) => {
         if (error) {
