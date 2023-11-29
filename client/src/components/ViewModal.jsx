@@ -55,7 +55,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
             <div className="grid grid-cols-2 gap-4">
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Total Fee:</strong> {rowData.total_fee}
+                  <strong>Additional Fee:</strong> {rowData.additional_fees}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
@@ -90,22 +90,27 @@ function ViewModal({ isVisible, onClose, rowData }) {
             <div className="grid grid-cols-2 gap-4">
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Temperature:</strong>
+                  <strong>Temperature:</strong> {rowData.temperature}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Pulse Rate:</strong>
+                  <strong>Pulse Rate:</strong> {rowData.pulse_rate}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Blood Pressure:</strong>
+                  <strong>Systolic BP:</strong> {rowData.systolic_bp}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Time:</strong>
+                  <strong>Diastolic BP:</strong> {rowData.diastolic_bp}
+                </p>
+              </div>
+              <div className=" border border-gray-300 p-2 rounded-lg">
+                <p>
+                  <strong>Time:</strong> {rowData.time_taken}
                 </p>
               </div>
             </div>

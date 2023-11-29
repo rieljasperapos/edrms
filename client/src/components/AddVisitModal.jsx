@@ -74,13 +74,13 @@ function AddVisitModal({ isVisible, onClose }) {
             <hr className="my-2 border-gray-300 my-6" />
 
             <div className="grid grid-cols-2 gap-4">
-              {/* Total fee input box */}
+              {/* Additional fee input box */}
               <div>
                 <input
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
-                  placeholder="Total Fee"
+                  placeholder="Additional Fee"
                 />
               </div>
               {/* Discount input box */}
