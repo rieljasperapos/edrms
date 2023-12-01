@@ -26,10 +26,10 @@ Electronic Dental Record Management System (EDRMS) is a purpose-built applicatio
 
 # Technologies used
 
-<span style="font-size: larger;">[React - used for creating the user interface](https://website-name.com)</span>  
-<span style="font-size: larger;">[Express/Node - used for building robust server-side applications](https://website-name.com)</span>  
-<span style="font-size: larger;">[MySQL - used for storing and retrieving data](https://website-name.com)</span>  
-<span style="font-size: larger;">[Vercel - used for deploying and hosting web applications](https://website-name.com)</span>
+<span style="font-size: larger;">[React - used for creating the user interface](https://react.dev/)</span>  
+<span style="font-size: larger;">[Express/Node - used for building robust server-side applications](https://expressjs.com/)</span>  
+<span style="font-size: larger;">[MySQL - used for storing and retrieving data](https://dev.mysql.com/doc/)</span>  
+<span style="font-size: larger;">[Vercel - used for deploying and hosting web applications](https://vercel.com/docs)</span>
 
 
 <br>
