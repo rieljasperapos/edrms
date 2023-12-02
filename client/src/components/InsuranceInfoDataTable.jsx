@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-import InsuranceInfoData from "../assets/InsuranaceInfoData.js";
+// import InsuranceInfoData from "../assets/InsuranaceInfoData.js";
 import {
   useReactTable,
   getCoreRowModel,
@@ -13,27 +13,47 @@ import {
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { FaEdit } from "react-icons/fa";
 
-function InsuranceInfoDataTable({ propSetEditMode, propSetModalVisible }) {
-  const [data, setData] = useState(InsuranceInfoData);
+function InsuranceInfoDataTable({
+  propSetEditMode,
+  propSetModalVisible,
+  propPatientId,
+}) {
+  const [data, setData] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: 3,
     pageIndex: 0,
   });
 
+  const fetchInsuranceList = () => {
+    fetch(`http://localhost:3000/patientInsuranceList/${propPatientId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        setData(item);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    console.log(propPatientId);
+    fetchInsuranceList();
+  }, []);
+
   const columns = [
     {
-      accessorKey: "insuranceCompany",
+      accessorKey: "insurance_company",
       header: "Insurance Company",
       cell: (props) => <p>{props.getValue()}</p>,
     },
     {
-      accessorKey: "insuranceIdNumber",
+      accessorKey: "insurance_id_num",
       header: "Insurance ID Number",
       cell: (props) => <p>{props.getValue()}</p>,
     },
     {
-      accessorKey: "expirationDate",
+      accessorKey: "expiration_date",
       header: "Expiration Data",
       cell: (props) => <p>{props.getValue()}</p>,
     },
@@ -43,17 +63,17 @@ function InsuranceInfoDataTable({ propSetEditMode, propSetModalVisible }) {
       cell: (props) => (
         <p
           className={
-            props.getValue() === "VALID"
+            props.getValue() === 0
               ? "font-bold text-green-500"
               : "font-bold text-red-500"
           }
         >
-          {props.getValue()}
+          {props.getValue() === 0 ? "VALID" : "EXPIRED"}
         </p>
       ),
     },
     {
-      accessorKey: "company",
+      accessorKey: "company_employed",
       header: "Company",
       cell: (props) => <p>{props.getValue()}</p>,
     },

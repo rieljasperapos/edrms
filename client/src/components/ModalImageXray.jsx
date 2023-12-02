@@ -10,15 +10,34 @@ import {
 } from "@tanstack/react-table";
 import { IoMdCloseCircle } from "react-icons/io";
 
-function ModalImageXray({
-  propModalXrayData,
-  propSetModalVisible,
-  propSetModalXrayData,
-}) {
+function ModalImageXray({ propSetModalVisible, propXrayId }) {
+  const [xrayData, setXrayData] = useState({});
+
+  const fetchXrayData = () => {
+    fetch(`http://localhost:3000/patientXrayData/${propXrayId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        const itemData = {
+          type: item.type,
+          dateTaken: item.date_taken,
+          notes: item.notes,
+          image: item.image_path,
+        };
+        console.log(itemData);
+        setXrayData(itemData);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    console.log(propXrayId);
+    fetchXrayData();
+  }, []);
   const closeImageModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
-    propSetModalXrayData({});
   };
   return (
     <>
@@ -31,21 +50,21 @@ function ModalImageXray({
             <IoMdCloseCircle />
           </div>
           <img
-            src={propModalXrayData.path}
+            src={`http://localhost:3000/xrayImages/${xrayData.image}`}
             alt="Xray image"
             className="max-w-screen mb-4 max-h-screen" // Adjusted image size
           />
-          <div className="grid grid-cols-2 font-Karla">
+          <div className="grid grid-cols-2 gap-16 font-Karla">
             <p className="font-bold">Type</p>
-            <p>{propModalXrayData.type}</p>
+            <p>{xrayData.type}</p>
           </div>
-          <div className="grid grid-cols-2 font-Karla">
+          <div className="grid grid-cols-2 gap-16 font-Karla">
             <p className="font-bold">Date Taken</p>
-            <p>{propModalXrayData.dateTaken}</p>
+            <p>{xrayData.dateTaken}</p>
           </div>
-          <div className="grid grid-cols-2 font-Karla">
+          <div className="grid grid-cols-2 gap-16 font-Karla">
             <p className="font-bold">Notes</p>
-            <p>{propModalXrayData.notes}</p>
+            <p>{xrayData.notes}</p>
           </div>
         </div>
       </div>

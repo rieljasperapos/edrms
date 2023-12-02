@@ -1,7 +1,35 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { MdViewList } from "react-icons/md";
-function RecentVisitModal({ propSetModalVisible }) {
+function RecentVisitModal({ propPatientId }) {
+  const [recentVisitInfo, setRecentVisitInfo] = useState({});
+  const fetchRecentVisitInfo = () => {
+    fetch(`http://localhost:3000/patientRecordRecentVisit/${propPatientId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        const details = {
+          date: item.date_visit,
+          visitPurpose: item.visit_purpose,
+          treatment:
+            item.treatment !== undefined && item.treatment !== null
+              ? item.treatment.split(", ")
+              : [],
+          prescription: item.prescription,
+          notes: item.notes,
+          balance: item.balance,
+        };
+        setRecentVisitInfo(details);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchRecentVisitInfo();
+    console.log(recentVisitInfo);
+  }, []);
+
   return (
     <>
       <div className="flex w-full flex-col rounded-lg border-2 sm:col-span-1 md:col-span-1 lg:col-span-1">
@@ -20,14 +48,14 @@ function RecentVisitModal({ propSetModalVisible }) {
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Date
             </div>
-            <div className="font-Karla text-lg">10/23/2023</div>
+            <div className="font-Karla text-lg">{recentVisitInfo.date}</div>
           </div>
           <div className="flex flex-col">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Visit Purpose
             </div>
             <div className="font-Karla text-lg">
-              Tooth check up due to tooth pain on a molar tooth
+              {recentVisitInfo.visitPurpose}
             </div>
           </div>
           <div className="flex flex-col">
@@ -35,24 +63,34 @@ function RecentVisitModal({ propSetModalVisible }) {
               Treatments Rendered
             </div>
             <ul className="font-Karla text-lg">
-              <li>Check up</li>
-              <li>Cleaning</li>
+              {recentVisitInfo.treatment ? (
+                recentVisitInfo.treatment.map((item) => (
+                  <li key={item}>{item}</li>
+                ))
+              ) : (
+                <li>No treatment information available</li>
+              )}
             </ul>
+          </div>
+          <div className="flex flex-col">
+            <div className="mb-1 font-Karla text-base font-bold text-black">
+              Prescription
+            </div>
+            <div className="font-Karla text-lg">
+              {recentVisitInfo.prescription}
+            </div>
           </div>
           <div className="flex flex-col">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Notes
             </div>
-            <div className="font-Karla text-lg">
-              Scheduled for a tooth extraction on November 2, 2023. Prescribed
-              with a medicine for tooth infection
-            </div>
+            <div className="font-Karla text-lg">{recentVisitInfo.notes}</div>
           </div>
           <div className="grid sm:grid-cols-1 lg:grid-cols-2">
             <div className="mb-1 font-Karla text-base font-bold text-black ">
               Balance
             </div>
-            <div className="font-Karla text-lg">None</div>
+            <div className="font-Karla text-lg">{recentVisitInfo.balance}</div>
           </div>
         </div>
       </div>

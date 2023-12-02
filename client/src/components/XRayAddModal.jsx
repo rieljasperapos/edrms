@@ -1,10 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
 import { LuUpload } from "react-icons/lu";
 
-function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
+function XrayAddModal({
+  propSetModalVisible,
+  propEditMode,
+  propSetEditMode,
+  propPatientId,
+}) {
   const [editMode, setEditMode] = useState(propEditMode);
+
+  const [type, setType] = useState("");
+  const [dateTaken, setDateTaken] = useState("");
+  const [notes, setNotes] = useState("");
+  const fileInputRef = useRef(null);
+  const [uploadedFileName, setUploadedFileName] = useState("");
+
+  const handleInputChange = (event, setterFunction) => {
+    setterFunction(event.target.value);
+  };
 
   const closeXrayModal = () => {
     // Close the modal by setting its visibility to false
@@ -12,9 +27,54 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
     propSetEditMode(false);
   };
 
+  const handleFileChange = () => {
+    const selectedFile = fileInputRef.current.files[0];
+    if (selectedFile) {
+      setUploadedFileName(selectedFile.name);
+    } else {
+      setUploadedFileName("");
+    }
+  };
+
   const handleSubmitXray = () => {
-    // Close the modal by setting its visibility to false
-    propSetModalVisible(false);
+    const xrayInfoPartial = {
+      type: type,
+      dateTaken: dateTaken,
+      notes: notes,
+    };
+
+    const selectedFile = fileInputRef.current.files[0];
+    const xrayImage = new FormData();
+
+    // Append the image first
+    xrayImage.append("image", selectedFile);
+
+    // Append xrayInfoPartial properties to the FormData
+    Object.entries(xrayInfoPartial).forEach(([key, value]) => {
+      xrayImage.append(key, value);
+    });
+
+    fetch(`http://localhost:3000/patientRecordXray/${propPatientId}`, {
+      method: "POST",
+      body: xrayImage,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}`);
+        }
+        return response.json;
+      })
+      .then((data) => {
+        console.log("Successfully Uploaded");
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(`Error uploading Xray: ${error.message}`);
+      })
+      .finally(() => {
+        // Close the modal by setting its visibility to false
+        propSetModalVisible(false);
+      });
   };
 
   const handleEditXray = () => {
@@ -42,8 +102,12 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
               <div className="mb-1 font-Karla text-base font-bold text-black ">
                 Type
               </div>
-              <select className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla">
-                <option defaultValue="select">Select</option>
+              <select
+                className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
+                value={type}
+                onChange={(event) => handleInputChange(event, setType)}
+              >
+                <option value="">Select</option>
                 <option value="panoramic">Panoramic</option>
                 <option value="periapical">Periapical</option>
                 <option value="others">Others</option>
@@ -56,6 +120,8 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
               <input
                 type="date"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
+                value={dateTaken}
+                onChange={(event) => handleInputChange(event, setDateTaken)}
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -66,6 +132,8 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
                 className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                 rows="5"
                 cols="50"
+                value={notes}
+                onChange={(event) => handleInputChange(event, setNotes)}
               />
             </div>
             <div className="flex sm:col-span-1 md:col-span-2 lg:col-span-2">
@@ -73,14 +141,24 @@ function XrayAddModal({ propSetModalVisible, propEditMode, propSetEditMode }) {
                 htmlFor="fileInput"
                 className="flex w-full cursor-pointer items-center gap-2 font-Karla"
               >
-                <span className="text-custom-blue ml-2 text-2xl">
+                <span className="ml-2 text-2xl text-custom-blue">
                   <LuUpload />
                 </span>
-                <span className="text-base font-bold text-black">
-                  Upload X-ray Image
+                <span
+                  className={`text-base font-bold ${
+                    uploadedFileName ? "text-blue-800 underline" : "text-black"
+                  }`}
+                >
+                  {uploadedFileName ? uploadedFileName : "Upload X-ray Image"}
                 </span>
               </label>
-              <input type="file" className="hidden" id="fileInput" />
+              <input
+                type="file"
+                className="hidden"
+                id="fileInput"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
             </div>
           </div>
           <div className="mb-5 mt-3 flex w-full justify-center">

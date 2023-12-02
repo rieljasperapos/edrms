@@ -5,14 +5,11 @@ import XRaysDataTable from "./XRaysDataTable.jsx";
 
 function XrayModal({
   propSetModalImageVisible,
-  propSetModalXrayData,
   propSetModalXrayAddVisible,
   propSetEditModeXrayModal,
+  propPatientId,
+  propSetModalXrayId,
 }) {
-  const handleClickAddXray = () => {
-    // Set the modal visibility to true and store the clicked image path
-    propSetModalXrayAddVisible(true);
-  };
   return (
     <>
       <div className="flex h-auto w-full flex-col rounded-lg border-2">
@@ -22,7 +19,9 @@ function XrayModal({
           </h1>
           <button
             className="inline-flex items-center rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
-            onClick={handleClickAddXray}
+            onClick={() => {
+              propSetModalXrayAddVisible(true);
+            }}
           >
             <AiOutlinePlus className="mr-2" />
             Add X-RAY
@@ -31,9 +30,12 @@ function XrayModal({
         <div className="flex flex-col gap-x-4 gap-y-5 px-8 py-4">
           <XRaysDataTable
             propModalImageVisible={propSetModalImageVisible}
-            propXrayData={propSetModalXrayData}
-            propSetModalVisible={handleClickAddXray}
+            propSetModalVisible={() => {
+              propSetModalXrayAddVisible(true);
+            }}
             propSetEditMode={propSetEditModeXrayModal}
+            propPatientId={propPatientId}
+            propSetXrayId={propSetModalXrayId}
           />
         </div>
       </div>

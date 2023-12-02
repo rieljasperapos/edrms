@@ -2,11 +2,42 @@ import React, { useState, useEffect } from "react";
 import "../index.css";
 import { FaEdit } from "react-icons/fa";
 
-function PersonalInfoModal({ propSetModalPIEditVisible }) {
+function PersonalInfoModal({ propSetModalPIEditVisible, propPatientId }) {
   const handleClickEditPI = () => {
     // Set the modal visibility to true and store the clicked image path
     propSetModalPIEditVisible(true);
   };
+
+  const [personalInfo, setPersonalInfo] = useState({});
+
+  const fetchPersonalInfo = () => {
+    fetch(`http://localhost:3000/patientInfo/${propPatientId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        const itemPersonalInfo = {
+          lastName: item.last_name,
+          firstName: item.first_name,
+          middleName: item.middle_name,
+          birthdate: item.birthdate,
+          age: item.age,
+          sex: item.sex,
+          address: item.street_address,
+          city: item.city,
+          contactNumber: item.contact_number,
+          email: item.email,
+        };
+        setPersonalInfo(itemPersonalInfo);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchPersonalInfo();
+    console.log(propPatientId);
+    console.log(personalInfo);
+  }, []);
 
   return (
     <>
@@ -29,61 +60,79 @@ function PersonalInfoModal({ propSetModalPIEditVisible }) {
             <div className="mb-1 font-Karla text-base font-bold text-black ">
               First Name
             </div>
-            <div className="font-Karla text-lg">JERICHO</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.firstName}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Last Name
             </div>
-            <div className="font-Karla text-lg">PASCO</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.lastName}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Middle Name
             </div>
-            <div className="font-Karla text-lg">CLAM</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.middleName}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Birthdate
             </div>
-            <div className="font-Karla text-lg">12/31/2000</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.birthdate}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-1">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Age
             </div>
-            <div className="font-Karla text-lg">22</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.age}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-1">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Sex
             </div>
-            <div className="font-Karla text-lg">MALE</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.sex}
+            </div>
           </div>
           <div className="sm:col-span-2 md:col-span-4 lg:col-span-5">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               Address
             </div>
-            <div className="font-Karla text-lg">DUNGGUAN, BARANGAY BASAK</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.address}
+            </div>
           </div>
           <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               City
             </div>
-            <div className="font-Karla text-lg">CEBU</div>
+            <div className="font-Karla text-lg uppercase">
+              {personalInfo.city}
+            </div>
           </div>
           <div className="sm:col-span-3 md:col-span-3 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black">
               CONTACT NUMBER
             </div>
-            <div className="font-Karla] text-lg">097612345678</div>
+            <div className="font-Karla] text-lg uppercase">
+              {personalInfo.contactNumber}
+            </div>
           </div>
           <div className="sm:col-span-3 md:col-span-3 lg:col-span-2">
             <div className="mb-1 font-Karla text-base font-bold text-black ">
               EMAIL
             </div>
-            <div className="font-Karla text-lg">jericho@gmail.com</div>
+            <div className="font-Karla text-lg">{personalInfo.email}</div>
           </div>
         </div>
       </div>

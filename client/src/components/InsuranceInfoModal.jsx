@@ -6,6 +6,7 @@ import InsuranceInfoDataTable from "./InsuranceInfoDataTable.jsx";
 function InsuranceInfoModal({
   propSetModalInsuranceAddVisible,
   propSetEditModeInsuranceModal,
+  propPatientId,
 }) {
   const handleClickAddInsurance = () => {
     // Set the modal visibility to true and store the clicked image path
@@ -30,6 +31,7 @@ function InsuranceInfoModal({
           <InsuranceInfoDataTable
             propSetEditMode={propSetEditModeInsuranceModal}
             propSetModalVisible={propSetModalInsuranceAddVisible}
+            propPatientId={propPatientId}
           />
         </div>
       </div>

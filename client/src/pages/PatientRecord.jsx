@@ -19,7 +19,7 @@ import ConfirmDeleteModal from "../components/ConfirmDeleteModal.jsx";
 import Contents from "../components/contents.jsx";
 import Navbar from "../components/navbar.jsx";
 import AccountSession from "../components/accountSession.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function PatientRecord() {
   const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
@@ -30,11 +30,35 @@ function PatientRecord() {
   const [editModeInsuranceModal, setEditModeInsuranceModal] = useState(false);
   const [modalXrayAddVisible, setModalXrayAddVisible] = useState(false);
   const [editModeXrayModal, setEditModeXrayModal] = useState(false);
-  const [modalXrayData, setModalXrayData] = useState({});
+  const [modalXrayId, setModalXrayId] = useState(0);
   const [modalImageVisible, setModalImageVisible] = useState(false);
   const [DeleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const navigate = useNavigate();
+
+  const [patientId, setPatientId] = useState(parseInt(useParams().patientId));
+  const [patientName, setPatientName] = useState({});
+
+  const fetchPatientName = () => {
+    fetch(`http://localhost:3000/patientName/${patientId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        const itemName = {
+          lastName: item.last_name,
+          firstName: item.first_name,
+        };
+        setPatientName(itemName);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchPatientName();
+    console.log(patientId);
+    console.log(patientName);
+  }, []);
 
   return (
     <>
@@ -43,7 +67,7 @@ function PatientRecord() {
       <Contents>
         <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-6 pl-12 pr-16 pt-8">
           <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
-            PASCO, JERICHO
+            {patientName.lastName}, {patientName.firstName}
           </h1>
           <button
             className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline"
@@ -59,8 +83,9 @@ function PatientRecord() {
         <div className="grid w-full justify-center gap-4 border-2  px-12 py-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
           <PersonalInfoModal
             propSetModalPIEditVisible={setModalPIEditVisible}
+            propPatientId={patientId}
           />
-          <RecentVisitModal />
+          <RecentVisitModal propPatientId={patientId} />
           <div className="flex flex-col flex-wrap gap-4 sm:col-span-1 md:col-span-1 lg:col-span-2">
             <div className="flex flex-wrap justify-evenly gap-8">
               <button
@@ -90,13 +115,15 @@ function PatientRecord() {
             <InsuranceInfoModal
               propSetModalInsuranceAddVisible={setModalInsuranceAddVisible}
               propSetEditModeInsuranceModal={setEditModeInsuranceModal}
+              propPatientId={patientId}
             />
 
             <XrayModal
-              propSetModalXrayData={setModalXrayData}
               propSetEditModeXrayModal={setEditModeXrayModal}
               propSetModalImageVisible={setModalImageVisible}
               propSetModalXrayAddVisible={setModalXrayAddVisible}
+              propPatientId={patientId}
+              propSetModalXrayId={setModalXrayId}
             />
           </div>
         </div>
@@ -124,14 +151,15 @@ function PatientRecord() {
             propSetModalVisible={setModalXrayAddVisible}
             propEditMode={editModeXrayModal}
             propSetEditMode={setEditModeXrayModal}
+            propPatientId={patientId}
           />
         )}
 
         {modalImageVisible && (
           <ModalImageXray
-            propModalXrayData={modalXrayData}
             propSetModalVisible={setModalImageVisible}
-            propSetModalXrayData={setModalXrayData}
+            propSetModalXrayId={setModalXrayId}
+            propXrayId={modalXrayId}
           />
         )}
 

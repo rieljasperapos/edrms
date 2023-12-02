@@ -43,6 +43,11 @@ function PatientRecordList() {
     fetchList();
   }, []);
 
+  const handleViewClick = (patientId) => {
+    console.log("View clicked for patientId:", patientId);
+    navigate(`/patientRecord/${patientId}`);
+  };
+
   const columns = [
     {
       header: "Last Name",
@@ -71,12 +76,12 @@ function PatientRecordList() {
     },
     {
       header: "",
-      accessorKey: "patientId",
+      accessorKey: "patient_id",
       cell: (props) => (
         <div className="flex w-full items-center justify-center">
           <button
             className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
-            onClick={() => console.log(props.getValue)}
+            onClick={() => handleViewClick(props.getValue())}
           >
             <MdViewList />
             <p>View</p>

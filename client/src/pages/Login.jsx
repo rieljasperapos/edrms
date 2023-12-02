@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 
 function Login() {
   const [userName, setUserName] = useState("");

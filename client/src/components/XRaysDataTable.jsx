@@ -16,26 +16,42 @@ import { MdViewList } from "react-icons/md";
 
 function XRaysDataTable({
   propModalImageVisible,
-  propXrayData,
   propSetEditMode,
   propSetModalVisible,
+  propPatientId,
+  propSetXrayId,
 }) {
-  const [data, setData] = useState(XraysData);
+  const [data, setData] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: 3,
     pageIndex: 0,
   });
 
-  const handleImageClick = (indexData) => {
+  const fetchXrayList = () => {
+    fetch(`http://localhost:3000/patientXrayList/${propPatientId}`)
+      .then((response) => response.json())
+      .then((item) => {
+        setData(item);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
+  };
+
+  useEffect(() => {
+    console.log(propPatientId);
+    fetchXrayList();
+  }, []);
+
+  const handleImageClick = (id) => {
     // Set the modal visibility to true and store the clicked image path
-    propXrayData(indexData);
+    propSetXrayId(id);
     propModalImageVisible(true);
-    console.log(indexData);
+    console.log(id);
   };
 
   const handleEditMode = () => {
-    // Close the modal by setting its visibility to false
     propSetEditMode(true);
     propSetModalVisible(true);
   };
@@ -47,7 +63,7 @@ function XRaysDataTable({
       cell: (props) => <p>{props.getValue()}</p>,
     },
     {
-      accessorKey: "dateTaken",
+      accessorKey: "date_taken",
       header: "Date Taken",
       cell: (props) => <p>{props.getValue()}</p>,
     },
@@ -57,13 +73,13 @@ function XRaysDataTable({
       cell: (props) => <p>{props.getValue()}</p>,
     },
     {
-      accessorKey: "path",
+      accessorKey: "xray_id",
       header: "Image",
       cell: (props) => (
         <div className="flex w-full items-center justify-center">
           <button
             className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
-            onClick={() => handleImageClick(props.row.original)}
+            onClick={() => handleImageClick(props.getValue())}
           >
             <MdViewList />
             <p>View</p>

@@ -16,18 +16,14 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/signup" element={<Signup />} />
-          <Route exact path="/signin" element={<Login />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
-          <Route exact path="/addRecord" element={<AddRecord />} />
-          <Route
-            exact
-            path="/patientRecordList"
-            element={<PatientRecordList />}
-          />
-          <Route exact path="/patientRecord" element={<PatientRecord />} />
-          <Route exact path={"/visit"} element={<Visit />} />
-          <Route exact path={"/calendar"} element={<Calendar />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/addRecord" element={<AddRecord />} />
+          <Route path="/patientRecordList" element={<PatientRecordList />} />
+          <Route path="/patientRecord/:patientId" element={<PatientRecord />} />
+          <Route path="/visit" element={<Visit />} />
+          <Route path="/calendar" element={<Calendar />} />
         </Routes>
       </BrowserRouter>
     </>
