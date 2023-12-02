@@ -4,12 +4,15 @@ import dayjs from "dayjs";
 import cn from "../utils/cn";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import AddAppointment from './addAppointmentsModal';
 
 const calendarMonthView = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const currentDate = dayjs();
     const [today, setToday] = useState(currentDate);
     const [selectDate, setSelectDate] = useState(currentDate);
+    const [showModal, setShowModal] = useState(false);
+    console.log(showModal);
 
     const days = [
         'Sun',
@@ -36,15 +39,25 @@ const calendarMonthView = () => {
     // console.log(`Today: ${today.hour()} : ${today.minute()}`);
     // console.log(selectDate);
     // console.log(`Today.month: ${today.month()}`)
-    console.log(currentDate.month());
-    console.log(today);
+    // console.log(currentDate.month());
+    // console.log(today);
 
     return (
         <>
             {/* <Navbar /> */}
             <div className="flex justify-between items-center p-6 border-b">
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
-                <button className="bg-custom-green text-white font-medium rounded-lg p-3">Add appointment</button>
+                <button 
+                    className="bg-custom-green text-white font-medium rounded-lg p-3"
+                    onClick={() => {setShowModal(true)}}
+                    >
+                        Add appointment
+                    </
+                button>
+                <AddAppointment
+                    isVisible={showModal}
+                    handleClose={() => setShowModal(false)}
+                />
             </div>
 
             <div className="p-8">

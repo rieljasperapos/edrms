@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import AddAppointment from './addAppointmentsModal';
 
 const CalendarWeekView = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [currentWeek, setCurrentWeek] = useState(dayjs().startOf('week'));
-
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const currentDate = dayjs();
     const [today, setToday] = useState(currentDate);
@@ -53,7 +54,9 @@ const CalendarWeekView = () => {
         <>
             <div className="flex justify-between items-center p-6 border-b">
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
-                <button className="bg-custom-green text-white font-medium rounded-lg p-3">Add appointment</button>
+                <button className="bg-custom-green text-white font-medium rounded-lg p-3" onClick={() => setShowModal(true)}>Add appointment</button>
+
+                <AddAppointment isVisible={showModal} handleClose={() => setShowModal(false)} />
             </div>
 
             <div className="p-8">
@@ -115,7 +118,7 @@ const CalendarWeekView = () => {
                                     <th key={day.format('YYYY-MM-DD')} className={`px-6 py-3 bg-gray-50 text-left leading-4 font-medium text-gray-500 uppercase tracking-wider`}>
                                         <div className='flex gap-2 items-center'>
                                             <p>{day.format('ddd')}</p>
-                                            <p className={`${day.isSame(today, 'day') ? 'bg-red-500 text-white' : ''} rounded-full p-2`}>{day.format('D')}</p>
+                                            <p className={`${day.isSame(today, 'day') ? 'bg-red-500 text-white' : ''} rounded-full p-4`}>{day.format('D')}</p>
                                         </div>
                                     </th>
                                 ))}
