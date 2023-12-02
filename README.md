@@ -2,7 +2,6 @@
 
 Electronic Dental Record Management System (EDRMS) is a purpose-built application aimed at enhancing the efficiency of dental clinics by providing a streamlined solution for managing patient records. The primary objectives of EDRMS include ensuring quick and secure access to comprehensive patient information, fostering informed decision-making for dentists, and promoting collaborative care among healthcare professionals within the clinic. Additionally, EDRMS aims to integrate seamlessly with advanced diagnostic technologies to keep dental practices at the forefront of digital dentistry.
 
-<br>
 
 # Features
 
@@ -22,7 +21,6 @@ Electronic Dental Record Management System (EDRMS) is a purpose-built applicatio
 
 * Technological Integration: With a focus on staying at the forefront of digital dentistry, EDRMS aims to integrate with cutting-edge technologies to enhance the overall capabilities and efficiency of dental practices.
 
-<br>
 
 # Technologies used
 
@@ -79,7 +77,6 @@ cd server
 npm start
 ```
 
-<br>
 
 # File Structure
 
