@@ -42,7 +42,7 @@ export const generateDate = (
 			date: lastDateOfMonth.date(i),
 		});
 	}
-	console.log(arrayOfDate);
+	// console.log(arrayOfDate);
 	return arrayOfDate;
 };
 
