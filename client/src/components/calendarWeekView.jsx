@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ const CalendarWeekView = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [currentWeek, setCurrentWeek] = useState(dayjs().startOf('week'));
     const [showModal, setShowModal] = useState(false);
+    const [appointments, setAppointments] = useState([]);
     const navigate = useNavigate();
     const currentDate = dayjs();
     const [today, setToday] = useState(currentDate);
@@ -49,6 +50,33 @@ const CalendarWeekView = () => {
     console.log(daysOfWeek);
     console.log(today);
     console.log(today.format("HH:mm"))
+    console.log(staticAppointments);
+
+    useEffect(() => {
+
+        fetch('http://localhost:3000/appointments', {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`)
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    // console.log(data);
+                    setAppointments(data);
+                } else {
+                    console.log("No data found");
+                }
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }, [showModal])
+
+    console.log(appointments);
 
     return (
         <>
@@ -128,14 +156,22 @@ const CalendarWeekView = () => {
                             <tr>
                                 {daysOfWeek.map(day => (
                                     <td key={day.format('YYYY-MM-DD')} className='px-6 py-4 whitespace-no-wrap border-gray-200'>
-                                        {staticAppointments
-                                            .filter(event => day.isSame((event.date), 'day'))
-                                            .map((event, index) => (
-                                                <div key={index} className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44'>
-                                                    <p className='mb-2'>{today.format("HH:mm")}</p>
-                                                    <p>{event.title}</p>
-                                                </div>
-                                            ))}
+                                        {appointments
+                                            .filter(event => day.isSame((event.date_schedule), 'day'))
+                                            .map((event, index) => {
+                                                const timeParts = event.time_schedule.split(':');
+                                                const hours = parseInt(timeParts[0], 10);
+                                                const minutes = timeParts[1];
+                                                const amPm = hours >= 12 ? 'PM' : 'AM';
+                                                const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+                                                const formattedTime = `${formattedHours}:${minutes}`;
+                                                return (
+                                                    <div key={index} className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44'>
+                                                        <p className='mb-2'>{today.format("HH:mm")}</p>
+                                                        <p>{event.purpose}</p>
+                                                    </div>
+                                                )
+                                        })}
                                     </td>
                                 ))}
                             </tr>

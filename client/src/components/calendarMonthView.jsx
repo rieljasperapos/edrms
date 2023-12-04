@@ -2,7 +2,7 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { generateDate, months } from "../utils/calendar";
 import dayjs from "dayjs";
 import cn from "../utils/cn";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import AddAppointment from './addAppointmentsModal';
 
@@ -12,7 +12,8 @@ const calendarMonthView = () => {
     const [today, setToday] = useState(currentDate);
     const [selectDate, setSelectDate] = useState(currentDate);
     const [showModal, setShowModal] = useState(false);
-    console.log(showModal);
+    const [appointments, setAppointments] = useState([]);
+    // console.log(showModal);
 
     const days = [
         'Sun',
@@ -34,6 +35,42 @@ const calendarMonthView = () => {
         navigate('/calendar/week')
     }
 
+    const handleClose = () => {
+        setShowModal(false);
+    }
+
+    useEffect(() => {
+
+        fetch('http://localhost:3000/appointments', {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`)
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    // console.log(data);
+                    setAppointments(data);
+                } else {
+                    console.log("No data found");
+
+                }
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }, [showModal])
+
+    console.log(appointments);
+    appointments.map(event => {
+        console.log(event.date_schedule);
+    })
+
+    console.log(showModal);
+
     // console.log(`Current Date: ${currentDate.format("HH:mm")}`);
     // console.log(hours);
     // console.log(`Today: ${today.hour()} : ${today.minute()}`);
@@ -47,16 +84,18 @@ const calendarMonthView = () => {
             {/* <Navbar /> */}
             <div className="flex justify-between items-center p-6 border-b">
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
-                <button 
+                <button
                     className="bg-custom-green text-white font-medium rounded-lg p-3"
-                    onClick={() => {setShowModal(true)}}
-                    >
-                        Add appointment
-                    </
+                    onClick={() => {
+                        setShowModal(true);
+                    }}
+                >
+                    Add appointment
+                </
                 button>
                 <AddAppointment
                     isVisible={showModal}
-                    handleClose={() => setShowModal(false)}
+                    handleClose={handleClose}
                 />
             </div>
 
@@ -77,8 +116,8 @@ const calendarMonthView = () => {
                                 setToday(today.month(today.month() + 1));
                             }}
                         />
-                        <button 
-                            className='border py-2 px-4 bg-white rounded-lg hover:bg-gray-100 cursor-pointer' 
+                        <button
+                            className='border py-2 px-4 bg-white rounded-lg hover:bg-gray-100 cursor-pointer'
                             onClick={() => {
                                 setToday(currentDate);
                             }}>
@@ -133,6 +172,8 @@ const calendarMonthView = () => {
 
                 <div className="grid grid-cols-7">
                     {generateDate(today.month(), today.year()).map(({ date, currentMonth, today }, indx) => {
+                        // console.log(today);
+                        // console.log(date);
                         return (
                             <div key={indx} className="flex flex-col border pr-8 pb-20 pl-4">
                                 <h1 className={cn(
@@ -147,10 +188,24 @@ const calendarMonthView = () => {
                                 >{date.date()}
                                 </h1>
                                 <div className="p-2">
-                                    <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment, ${currentDate.format("HH:mm")}` : "")}</p>
-                                    <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment 1, ${currentDate.format("HH:mm")}` : "")}</p>
-                                    <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment 2, ${currentDate.format("HH:mm")}` : "")}</p>
-                                    <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment 3, ${currentDate.format("HH:mm")}` : "")}</p>
+                                    {appointments
+                                        .filter(event => date.isSame(event.date_schedule), 'day')
+                                        .map((event, index) => {
+                                            const timeParts = event.time_schedule.split(':');
+                                            const hours = parseInt(timeParts[0], 10);
+                                            const minutes = timeParts[1];
+                                            const amPm = hours >= 12 ? 'PM' : 'AM';
+                                            const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+                                            const formattedTime = `${formattedHours}:${minutes}`;
+                                            return (
+                                                <div className="flex flex-col gap-2 text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in p-2">
+                                                    <p className="font-semibold">{formattedTime} {amPm}</p>
+                                                    <p>{event.purpose}</p>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                    {/* <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment, ${currentDate.format("HH:mm")}` : "")}</p> */}
                                 </div>
                             </div>
                         )

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const addAppointmentsModal = ({ handleClose, isVisible }) => {
     const [date, setDate] = useState('');
@@ -6,15 +7,46 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
     const [timeSchedule, setTimeSchedule] = useState('');
     const [purpose, setPurpose] = useState('');
     const [name, setName] = useState('');
+    const navigate = useNavigate();
 
-    console.log(contactNumber)
-    console.log(timeSchedule)
-    console.log(date)
-    console.log(purpose);
-    console.log(name);
+    // console.log(contactNumber)
+    // console.log(timeSchedule)
+    // console.log(date)
+    // console.log(purpose);
+    // console.log(name);
+
+    const handleClick = (e) => {
+        e.preventDefault();
+        fetch('http://localhost:3000/addAppointment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ date, timeSchedule, name, contactNumber, purpose })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`)
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    console.log(data);
+                    handleClose();
+                } else {
+                    
+                }
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }
+
     return (
         <>
-            {isVisible && (<div id="default-modal" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full backdrop-blur-sm md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            {isVisible && (<div id="default-modal" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full backdrop-brightness-50 md:inset-0 h-[calc(100%)] max-h-full">
                 <div className="relative p-4 w-full max-w-3xl max-h-full">
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         {/* Modal header */}
@@ -31,28 +63,30 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
                         </div>
                         {/* Modal Body */}
                         <div className="flex justify-center items-center flex-wrap gap-5 py-12 px-2">
-                            <div>
+                            <div className="flex flex-col gap-1">
                                 <p>Date</p>
                                 <input value={date} type="date" className="p-4 w-96 rounded-lg border" onChange={(e) => setDate(e.target.value)}></input>
                             </div>
-                            <div>
-                                <p>Contact Number</p>
-                                <input value={contactNumber} type="text" className="p-4 w-96 rounded-lg border" placeholder="09XXXXXXXXX" onChange={(e) => setContactNumber(e.target.value)}></input>
-                            </div>
-                            <div>
+                            <div className="flex flex-col gap-1">
                                 <p>Time</p>
                                 <input value={timeSchedule} type="time" className="p-4 w-96 rounded-lg border" onChange={(e) => setTimeSchedule(e.target.value)}></input>
                             </div>
-                            <div>
+                            <div className="flex flex-col gap-1">
                                 <p>Name</p>
                                 <input value={name} type="text" className="p-4 w-96 rounded-lg border" placeholder="e.g John Doe" onChange={(e) => setName(e.target.value)}></input>
                             </div>
-                            <div>
+                            <div className="flex flex-col gap-1">
+                                <p>Contact Number</p>
+                                <input value={contactNumber} type="text" className="p-4 w-96 rounded-lg border" placeholder="09XXXXXXXXX" onChange={(e) => setContactNumber(e.target.value)}></input>
+                            </div>
+                            <div className="flex flex-col gap-1">
                                 <p>Purpose</p>
                                 <textarea value={purpose} rows="4" type="text" className="p-4 w-96 rounded-lg border" placeholder="e.g Monthly teeth cleaning" onChange={(e) => setPurpose(e.target.value)}></textarea>
                             </div>
+                            <div className="mt-10">
+                                <button className="bg-custom-green hover:bg-green-300 text-white p-4 rounded-lg w-96" onClick={handleClick}>Add</button>
+                            </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>)}
