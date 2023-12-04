@@ -107,6 +107,29 @@ app.post('/signin', (req, res) => {
     })
 })
 
+app.post('/addAppointment', (req, res) => {
+    console.log(req.body);
+    const sql = `INSERT INTO appointment (date_schedule, time_schedule, name, contact_number, purpose) VALUES (?, ?, ?, ?, ?)`;
+    connection.query(sql, [req.body.date, req.body.timeSchedule, req.body.name, req.body.contactNumber, req.body.purpose], (err, rows) => {
+        if (err) {
+            res.send({message: "Error cannot add appointment"});
+        } else {
+            res.send({message: "Successfully Added"})
+        }
+    })
+})
+
+app.get('/appointments', (req, res) => {
+    const sql = `SELECT * FROM appointment`;
+    connection.query(sql, (err, rows) => {
+        if (err) {
+            res.send({message: "Error fetching the data"});
+        } else {
+            res.send(rows);
+        }
+    })
+})
+
 app.get('/dashboard', (req, res) => {
     console.log('Dashboard route. Session:', req.session);
     if (req.session.user) {
