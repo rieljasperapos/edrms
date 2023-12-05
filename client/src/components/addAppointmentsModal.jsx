@@ -17,7 +17,7 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
 
     const handleClick = (e) => {
         e.preventDefault();
-        fetch('http://localhost:3000/addAppointment', {
+        fetch('http://localhost:3000/appointments/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
