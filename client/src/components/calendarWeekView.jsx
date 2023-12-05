@@ -167,7 +167,7 @@ const CalendarWeekView = () => {
                                                 const formattedTime = `${formattedHours}:${minutes}`;
                                                 return (
                                                     <div key={index} className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44'>
-                                                        <p className='mb-2'>{today.format("HH:mm")}</p>
+                                                        <p className='mb-2'>{formattedTime} {amPm}</p>
                                                         <p>{event.purpose}</p>
                                                     </div>
                                                 )
