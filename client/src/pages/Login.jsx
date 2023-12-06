@@ -42,7 +42,7 @@ function Login() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3000/dashboard', {
+    fetch('http://localhost:3000/session', {
         credentials: 'include',
     })
     .then((response) => {

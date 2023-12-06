@@ -137,15 +137,15 @@ app.use('/appointments', appointmentRoutes);
 //     })
 // })
 
-app.get('/dashboard', (req, res) => {
-    console.log('Dashboard route. Session:', req.session);
-    if (req.session.user) {
-        console.log('User found in session. Username:', req.session.user);
-        res.send({ valid: true, username: req.session.user });
-    } else {
-        res.send({ message: "Error", valid: false })
-    }
-})
+// app.get('/dashboard', (req, res) => {
+//     console.log('Dashboard route. Session:', req.session);
+//     if (req.session.user) {
+//         console.log('User found in session. Username:', req.session.user);
+//         res.send({ valid: true, username: req.session.user });
+//     } else {
+//         res.send({ message: "Error", valid: false })
+//     }
+// })
 
 // app.get('/signout', (req, res) => {
 //     req.session.destroy(err => {
