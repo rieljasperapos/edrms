@@ -3,41 +3,18 @@ import "../index.css";
 import { FaEdit } from "react-icons/fa";
 import PersonalInfoEditModal from "./PersonalInfoEditModal.jsx";
 
-function PersonalInfoModal({ propPatientId }) {
+function PersonalInfoModal({ propPersonalInfo, propFetchPersoanlInfo }) {
   const [personalInfo, setPersonalInfo] = useState({});
   const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
   const handleClickEditPI = () => {
     // Set the modal visibility to true and store the clicked image path
+    console.log(personalInfo.patientId);
     setModalPIEditVisible(true);
-  };
-  const fetchPersonalInfo = () => {
-    fetch(`http://localhost:3000/patientInfo/${propPatientId}`)
-      .then((response) => response.json())
-      .then((item) => {
-        const itemPersonalInfo = {
-          lastName: item.last_name,
-          firstName: item.first_name,
-          middleName: item.middle_name,
-          birthdate: item.birthdate,
-          age: item.age,
-          sex: item.sex,
-          address: item.street_address,
-          city: item.city,
-          contactNumber: item.contact_number,
-          email: item.email,
-        };
-        setPersonalInfo(itemPersonalInfo);
-      })
-      .catch((error) => {
-        console.error("Error fetching contact data:", error);
-      });
   };
 
   useEffect(() => {
-    fetchPersonalInfo();
-    console.log(propPatientId);
-    console.log(personalInfo);
-  }, []);
+    setPersonalInfo(propPersonalInfo);
+  }, [propPersonalInfo]);
 
   return (
     <>
@@ -138,7 +115,11 @@ function PersonalInfoModal({ propPatientId }) {
       </div>
 
       {modalPIEditVisible && (
-        <PersonalInfoEditModal propSetModalVisible={setModalPIEditVisible} />
+        <PersonalInfoEditModal
+          propSetModalVisible={setModalPIEditVisible}
+          propPersonalInfo={personalInfo}
+          propFetchPersonalInfo={propFetchPersoanlInfo}
+        />
       )}
     </>
   );

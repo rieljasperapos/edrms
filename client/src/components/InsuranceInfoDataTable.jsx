@@ -16,8 +16,8 @@ import { FaEdit } from "react-icons/fa";
 function InsuranceInfoDataTable({
   propSetEditMode,
   propSetModalVisible,
-  propPatientId,
   propInsuranceList,
+  propSetInsuranceInfoId,
 }) {
   const [data, setData] = useState(propInsuranceList);
   const [sorting, setSorting] = useState([]);
@@ -27,7 +27,6 @@ function InsuranceInfoDataTable({
   });
 
   useEffect(() => {
-    console.log(propPatientId);
     setData(propInsuranceList);
   }, [propInsuranceList]);
 
@@ -67,6 +66,19 @@ function InsuranceInfoDataTable({
       header: "Company",
       cell: (props) => <p>{props.getValue()}</p>,
     },
+    {
+      accessorKey: "insurance_info_id",
+      header: "",
+      cell: (props) => (
+        <button
+          className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline"
+          onClick={() => handleEditMode(props.getValue())}
+        >
+          <FaEdit />
+          Edit
+        </button>
+      ),
+    },
   ];
 
   const table = useReactTable({
@@ -83,8 +95,9 @@ function InsuranceInfoDataTable({
     onPaginationChange: setPagination,
   });
 
-  const handleEditMode = () => {
+  const handleEditMode = (id) => {
     // Close the modal by setting its visibility to false
+    propSetInsuranceInfoId(id);
     propSetEditMode(true);
     propSetModalVisible(true);
   };
@@ -114,7 +127,6 @@ function InsuranceInfoDataTable({
                     }
                   </th>
                 ))}
-                <th className="px-3 py-3 text-center text-sm font-bold uppercase tracking-wider text-gray-500"></th>
               </tr>
             ))}
           </thead>
@@ -129,16 +141,6 @@ function InsuranceInfoDataTable({
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-                <td className="text-center">
-                  {/* Edit Button */}
-                  <button
-                    className="mx-4 flex items-center gap-1 font-Karla text-green-500 hover:text-green-800 hover:underline"
-                    onClick={handleEditMode}
-                  >
-                    <FaEdit />
-                    Edit
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

@@ -2,16 +2,25 @@ import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
+import { PiKeyReturnBold } from "react-icons/pi";
 
 function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
   const [editMode, setEditMode] = useState(false);
   const [healthHistoryInfo, setHealthHistoryInfo] = useState({});
+
+  const [isDiabetic, setIsDiabetic] = useState(false);
+  const [isHypertensive, setIsHypertensive] = useState(false);
+  const [healthConditions, setHealthConditions] = useState("");
+  const [allergies, setAllergies] = useState("");
+  const [maintenanceMeds, setMaintenanceMeds] = useState("");
+  const [notes, setNotes] = useState("");
 
   const fetchHealthHistoryInfo = () => {
     fetch(`http://localhost:3000/patientHealthHistory/${propPatientId}`)
       .then((response) => response.json())
       .then((item) => {
         const info = {
+          historyId: item.health_history_id,
           diabetic: item.diabetic,
           hypertensive: item.hypertensive,
           healthConditions: item.other_health_conditions,
@@ -21,6 +30,7 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
         };
         setHealthHistoryInfo(info);
         console.log(info);
+        console.log(info.historyId);
       })
       .catch((error) => {
         console.error("Error fetching contact data:", error);
@@ -31,18 +41,61 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
     fetchHealthHistoryInfo();
   }, []);
 
+  useEffect(() => {
+    setIsDiabetic(healthHistoryInfo.diabetic);
+    setIsHypertensive(healthHistoryInfo.hypertensive);
+    setHealthConditions(healthHistoryInfo.healthConditions);
+    setAllergies(healthHistoryInfo.allergies);
+    setMaintenanceMeds(healthHistoryInfo.maintenanceMeds);
+    setNotes(healthHistoryInfo.notes);
+  }, [healthHistoryInfo]);
+
   const closeHealthHistoryModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
     setEditMode(false);
   };
 
-  const handleEditClick = () => {
-    setEditMode(true);
-  };
-
   const handleEditSubmit = () => {
-    setEditMode(false);
+    // Assuming you have a state variable for the edited health history data
+    const editedHealthHistoryData = {
+      diabetic: isDiabetic,
+      hypertensive: isHypertensive,
+      other_health_conditions: healthConditions,
+      allergies: allergies,
+      maintenance_medicines: maintenanceMeds,
+      notes: notes,
+    };
+
+    fetch(
+      `http://localhost:3000/patientHealthHistory/${healthHistoryInfo.historyId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedHealthHistoryData),
+      },
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Health history updated:", data.message);
+        // Additional logic if needed
+      })
+      .catch((error) => {
+        console.error("Error updating health history:", error.message);
+        // Handle error, show a notification, etc.
+      })
+      .finally(() => {
+        // This block will be executed regardless of success or error
+        setEditMode(false);
+        fetchHealthHistoryInfo();
+      });
   };
 
   return (
@@ -64,14 +117,34 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
             <div className="self-end pr-8">
               <button
                 className="flex items-center gap-1 font-Karla text-xl text-green-500 hover:text-green-800 hover:underline"
-                onClick={handleEditClick}
+                onClick={() => {
+                  setEditMode(true);
+                }}
               >
                 <FaEdit />
                 Edit
               </button>
             </div>
           )}
-          <form className="flex w-5/6 flex-col gap-x-4 gap-y-5 self-center px-8 pb-4">
+          {editMode && (
+            <div className="self-end pr-8">
+              <button
+                className="flex items-center gap-1 font-Karla text-xl text-blue-900 hover:text-green-800 hover:underline"
+                onClick={() => {
+                  setEditMode(false);
+                }}
+              >
+                <PiKeyReturnBold className="text-2xl" />
+                Cancel
+              </button>
+            </div>
+          )}
+          <form
+            className="flex w-5/6 flex-col gap-x-4 gap-y-5 self-center px-8 pb-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
             <div className="grid sm:grid-cols-2 lg:grid-cols-3">
               <div className="mb-1 font-Karla text-base font-bold text-black sm:col-span-1 lg:col-span-2">
                 Diabetic
@@ -80,6 +153,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                 <input
                   type="checkbox"
                   className="rounded-lg border-2 border-custom-blue"
+                  checked={isDiabetic}
+                  onChange={() => setIsDiabetic(!isDiabetic)}
                 />
               ) : (
                 <div
@@ -101,6 +176,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                 <input
                   type="checkbox"
                   className="rounded-lg border-2 border-custom-blue"
+                  checked={isHypertensive}
+                  onChange={() => setIsHypertensive(!isHypertensive)}
                 />
               ) : (
                 <div
@@ -123,6 +200,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                   className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                   rows="3"
                   cols="50"
+                  value={healthConditions}
+                  onChange={(e) => setHealthConditions(e.target.value)}
                 />
               ) : (
                 <div className="mb-1 font-Karla text-base text-black">
@@ -139,6 +218,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                   className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                   rows="3"
                   cols="50"
+                  value={allergies}
+                  onChange={(e) => setAllergies(e.target.value)}
                 />
               ) : (
                 <div className="mb-1 font-Karla text-base text-black">
@@ -155,6 +236,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                   className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                   rows="3"
                   cols="50"
+                  value={maintenanceMeds}
+                  onChange={(e) => setMaintenanceMeds(e.target.value)}
                 />
               ) : (
                 <div className="mb-1 font-Karla text-base text-black">
@@ -171,6 +254,8 @@ function HealthHistoryModal({ propSetModalVisible, propPatientId }) {
                   className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                   rows="3"
                   cols="50"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                 />
               ) : (
                 <div className="mb-1 font-Karla text-base text-black">

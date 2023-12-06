@@ -23,6 +23,7 @@ function AddRecord() {
   const [isFormValid, setFormValid] = useState(false);
   const [isValidContactNumber, setValidContactNumber] = useState(false);
   const [isValidEmail, setValidEmail] = useState(true);
+  const [submitError, setSubmitError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -126,13 +127,17 @@ function AddRecord() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data); // Log the response from the server
-        // Redirect to the '/patientRecordList' route
       })
       .catch((error) => {
         console.error("Error submitting form:", error);
+        setSubmitError(true);
         // Handle or display an error message to the user
+      })
+      .finally(() => {
+        if (!submitError) {
+          navigate("/patientRecordList");
+        }
       });
-    navigate("/patientRecordList");
   };
 
   return (
@@ -146,7 +151,12 @@ function AddRecord() {
           </h1>
         </div>
 
-        <form className="md:grids-cols-4 sm:grids-cols-1 mb-8 grid flex-col justify-between gap-x-6 gap-y-10 px-12 py-8 lg:grid-cols-3">
+        <form
+          className="md:grids-cols-4 sm:grids-cols-1 mb-8 grid flex-col justify-between gap-x-6 gap-y-10 px-12 py-8 lg:grid-cols-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
           <div className="col-span-1 flex flex-col font-Karla text-lg">
             <label className="mb-3 flex items-center">
               Last Name <span className="text-2xl text-red-500">*</span>

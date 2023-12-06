@@ -9,14 +9,14 @@ function XrayAddModal({
   propSetEditMode,
   propPatientId,
   propFetchXrayList,
+  propXrayId,
 }) {
-  const [editMode, setEditMode] = useState(propEditMode);
-
   const [type, setType] = useState("");
   const [dateTaken, setDateTaken] = useState("");
   const [notes, setNotes] = useState("");
   const fileInputRef = useRef(null);
   const [uploadedFileName, setUploadedFileName] = useState("");
+  const [noFileUploaded, setNofileUploaded] = useState(false);
 
   const handleInputChange = (event, setterFunction) => {
     setterFunction(event.target.value);
@@ -37,16 +37,19 @@ function XrayAddModal({
     }
   };
 
-  function isXrayAddFormValid() {
+  const isXrayAddFormValid = () => {
     // Check if all required fields are filled
     const isTypeValid = type.trim() !== "";
     const isDateTakenValid = dateTaken.trim() !== "";
     const isNotesValid = notes.trim() !== "";
     const isFileUploaded = uploadedFileName.trim() !== "";
+    if (!isFileUploaded) {
+      setNofileUploaded(true);
+    }
 
     // Return true if all fields are valid, otherwise false
     return isTypeValid && isDateTakenValid && isNotesValid && isFileUploaded;
-  }
+  };
 
   const handleSubmitXray = () => {
     if (!isXrayAddFormValid()) {
@@ -63,7 +66,7 @@ function XrayAddModal({
     const xrayImage = new FormData();
 
     // Append the image first
-    xrayImage.append("image", selectedFile);
+    xrayImage.append("xray", selectedFile);
 
     // Append xrayInfoPartial properties to the FormData
     Object.entries(xrayInfoPartial).forEach(([key, value]) => {
@@ -76,7 +79,6 @@ function XrayAddModal({
     fetch(`http://localhost:3000/patientRecordXray/${propPatientId}`, {
       method: "POST",
       body: xrayImage,
-      // headers: { 'Content-Type': 'multipart/form-data' }, // Don't set this manually
     })
       .then((response) => {
         if (!response.ok) {
@@ -94,16 +96,107 @@ function XrayAddModal({
       })
       .finally(() => {
         propFetchXrayList();
+        setNofileUploaded(false);
         // Close the modal by setting its visibility to false
         propSetModalVisible(false);
       });
   };
 
-  const handleEditXray = () => {
-    // Close the modal by setting its visibility to false
-    propSetModalVisible(false);
-    propSetEditMode(false);
+  const isXrayEditFormValid = () => {
+    // Check if all required fields are filled
+    const isTypeValid = type.trim() !== "";
+    const isDateTakenValid = dateTaken.trim() !== "";
+    const isNotesValid = notes.trim() !== "";
+
+    // Return true if all fields are valid, otherwise false
+    return isTypeValid && isDateTakenValid && isNotesValid;
   };
+
+  const handleEditXray = () => {
+    if (!isXrayEditFormValid()) {
+      console.log("Invalid Form");
+      return;
+    }
+
+    const xrayInfoPartial = {
+      type: type,
+      dateTaken: dateTaken,
+      notes: notes,
+    };
+
+    const selectedFile = fileInputRef.current.files[0];
+    const xrayImage = new FormData();
+
+    // Append the image first
+    xrayImage.append("xray_update", selectedFile);
+
+    // Append xrayInfoPartial properties to the FormData
+    Object.entries(xrayInfoPartial).forEach(([key, value]) => {
+      xrayImage.append(key, value);
+    });
+
+    console.log(xrayImage);
+
+    // Ensure you don't set Content-Type header yourself when using FormData
+    // The browser will set it with the proper boundary
+    fetch(`http://localhost:3000/patientXrayData/${propXrayId}`, {
+      method: "PUT",
+      body: xrayImage,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((text) => {
+            throw new Error(`${text.message} (status: ${response.status})`);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Successfully Updated", data);
+      })
+      .catch((error) => {
+        console.error(`Error updating Xray: ${error}`);
+      })
+      .finally(() => {
+        propFetchXrayList();
+        setNofileUploaded(false);
+        // Close the modal by setting its visibility to false
+        propSetModalVisible(false);
+      });
+  };
+
+  const convertDateFormat = (inputDate) => {
+    // Split the input date string into an array
+    const dateArray = inputDate.split("-");
+
+    // Rearrange the array elements to form the desired format "yyyy-mm-dd"
+    const formattedDate = `${dateArray[2]}-${dateArray[0].padStart(
+      2,
+      "0",
+    )}-${dateArray[1].padStart(2, "0")}`;
+
+    return formattedDate;
+  };
+
+  useEffect(() => {
+    if (propEditMode) {
+      fetch(`http://localhost:3000/patientXrayData/${propXrayId}`)
+        .then((response) => response.json())
+        .then((item) => {
+          // Destructure values from the item if needed
+          const { type, date_taken, notes } = item;
+
+          setType(type);
+          setDateTaken(convertDateFormat(date_taken));
+          setNotes(notes);
+        })
+        .catch((error) => {
+          console.error("Error fetching contact data:", error);
+        });
+      console.log(propXrayId);
+    }
+  }, [propEditMode, propXrayId]); // Make sure to include dependencies in the dependency array
+
   return (
     <>
       <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-70">
@@ -175,10 +268,18 @@ function XrayAddModal({
                 </span>
                 <span
                   className={`text-base font-bold ${
-                    uploadedFileName ? "text-blue-800 underline" : "text-black"
+                    uploadedFileName
+                      ? "text-blue-800 underline"
+                      : noFileUploaded
+                        ? "text-red-500"
+                        : "text-black"
                   }`}
                 >
-                  {uploadedFileName ? uploadedFileName : "Upload X-ray Image"}
+                  {uploadedFileName
+                    ? uploadedFileName
+                    : noFileUploaded
+                      ? "No file uploaded"
+                      : "Upload an Image"}
                 </span>
               </label>
               <input
@@ -187,14 +288,14 @@ function XrayAddModal({
                 id="fileInput"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                required
+                {...(propEditMode ? {} : { required: true })}
               />
             </div>
             <button
               className="rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
-              onClick={editMode ? handleEditXray : handleSubmitXray}
+              onClick={propEditMode ? handleEditXray : handleSubmitXray}
             >
-              {editMode ? "Edit" : "Add"}
+              {propEditMode ? "Edit" : "Add"}
             </button>
           </form>
         </div>

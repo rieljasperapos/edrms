@@ -10,12 +10,12 @@ function InsuranceInfoAddModal({
   propSetEditMode,
   propPatientId,
   propFetchInsuranceList,
+  propInsuranceInfoId,
 }) {
   const [insuranceCompany, setInsuranceCompany] = useState("");
   const [insuranceId, setInsuranceId] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [companyEmployed, setCompanyEmployed] = useState("");
-  const [editMode, setEditMode] = useState(propEditMode);
 
   const isInsuranceFormValid = () => {
     // Check if insuranceCompany, insuranceId, and expirationDate have non-empty values
@@ -74,10 +74,82 @@ function InsuranceInfoAddModal({
   };
 
   const handleEditInsurance = () => {
-    // Close the modal by setting its visibility to false
-    propSetModalVisible(false);
-    propSetEditMode(false);
+    if (!isInsuranceFormValid()) {
+      console.log("Please fill up the form");
+      return;
+    }
+
+    const formData = {
+      insuranceCompany: insuranceCompany.trim(),
+      insuranceIdNum: insuranceId.trim(),
+      expirationDate: expirationDate.trim(),
+      companyEmployed: companyEmployed.trim(),
+    };
+
+    fetch(
+      `http://localhost:3000/patientRecordInsuranceInfo/${propInsuranceInfoId}`,
+      {
+        method: "PUT", // Use PUT method for updating
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      },
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data); // Log the response from the server
+        // Redirect to the '/patientRecordList' route
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+        // Handle or display an error message to the user
+      })
+      .finally(() => {
+        propFetchInsuranceList();
+        // Close the modal by setting its visibility to false
+        propSetModalVisible(false);
+        propSetEditMode(false);
+      });
   };
+
+  const convertDateFormat = (inputDate) => {
+    // Split the input date string into an array
+    const dateArray = inputDate.split("-");
+
+    // Rearrange the array elements to form the desired format "yyyy-mm-dd"
+    const formattedDate = `${dateArray[2]}-${dateArray[0].padStart(
+      2,
+      "0",
+    )}-${dateArray[1].padStart(2, "0")}`;
+
+    return formattedDate;
+  };
+
+  useEffect(() => {
+    // Make a fetch request when propEditMode changes
+    if (propEditMode) {
+      fetch(
+        `http://localhost:3000/patientRecordInsuranceInfo/${propInsuranceInfoId}`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+            // Handle error message
+            console.error("Error retrieving insurance info:", data.message);
+          } else {
+            // Set the retrieved insurance info to state
+            setInsuranceCompany(data.insurance_company);
+            setInsuranceId(data.insurance_id_num);
+            setExpirationDate(convertDateFormat(data.expiration_date));
+            setCompanyEmployed(data.company_employed);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching insurance info:", error);
+        });
+    }
+  }, [propEditMode, propInsuranceInfoId]);
 
   return (
     <>
@@ -156,9 +228,11 @@ function InsuranceInfoAddModal({
             </div>
             <button
               className="rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
-              onClick={editMode ? handleEditInsurance : handleSubmitInsurance}
+              onClick={
+                propEditMode ? handleEditInsurance : handleSubmitInsurance
+              }
             >
-              {editMode ? "Edit" : "Add"}
+              {propEditMode ? "Edit" : "Add"}
             </button>
           </form>
         </div>

@@ -13,7 +13,7 @@ const path = require("path");
 app.use(
   cors({
     origin: ["http://localhost:5173"],
-    methods: ["GET, POST"],
+    methods: ["GET, POST, PUT"],
     credentials: true,
   }),
 );
@@ -37,10 +37,7 @@ const storage = multer.diskStorage({
     cb(null, "public/xrayImages");
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "_" + Date.now() + path.extname(file.originalname),
-    );
+    cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
   },
 });
 
@@ -277,26 +274,50 @@ app.post("/addRecord", (req, res) => {
   });
 });
 
-//patient Info Name Header
-app.get("/patientName/:patientId", (req, res) => {
+//update Patient Record
+app.put("/updateRecord/:patientId", (req, res) => {
+  console.log(req.params.patientId);
+  console.log(req.body);
+
+  if (
+    !req.body.last_name ||
+    !req.body.first_name ||
+    !req.body.birthdate ||
+    !req.body.sex ||
+    !req.body.contact_number ||
+    !req.body.street_address ||
+    !req.body.city
+  ) {
+    res.status(400).send({ message: "Fields must be filled out" });
+    return;
+  }
+
+  const updatePatientSql = `
+    UPDATE patient
+    SET last_name=?, first_name=?, middle_name=?, birthdate=?, sex=?, contact_number=?, email=?, street_address=?, city=?
+    WHERE patient_id = ?;
+  `;
+
   connection.query(
-    `SELECT 
-    last_name,
-    first_name
-FROM patient
-WHERE patient_id = ?`,
-    [req.params.patientId],
-    (error, result) => {
-      if (error) {
-        console.error("Error fetching patient information:", error);
+    updatePatientSql,
+    [
+      req.body.last_name,
+      req.body.first_name,
+      req.body.middle_name,
+      req.body.birthdate,
+      req.body.sex,
+      req.body.contact_number,
+      req.body.email,
+      req.body.street_address,
+      req.body.city,
+      req.params.patientId,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Error updating patient information:", err);
         res.status(500).send({ message: "Internal Server Error" });
       } else {
-        if (result.length === 0) {
-          // No patient information found
-          res.status(404).send({ message: "No patient name Found" });
-        } else {
-          res.status(200).send(result[0]);
-        }
+        res.status(200).send({ message: "Updated Successfully" });
       }
     },
   );
@@ -316,8 +337,8 @@ app.get("/patientInfo/:patientId", (req, res) => {
     email,
     street_address,
     city
-FROM patient
-WHERE patient_id = ?`,
+    FROM patient
+    WHERE patient_id = ?`,
     [req.params.patientId],
     (error, result) => {
       if (error) {
@@ -376,6 +397,7 @@ WHERE
 //Patient Record Insurance Information READ
 app.get("/patientInsuranceList/:patientId", (req, res) => {
   const sql = `SELECT
+    insurance_info_id,
     insurance_company,
     insurance_id_num,
     DATE_FORMAT(expiration_date, '%m-%d-%Y') AS expiration_date,
@@ -431,43 +453,94 @@ app.post("/patientRecordInsuranceInfo/:patientId", (req, res) => {
   );
 });
 
-//Add xray data modal Create
-app.post(
-  "/patientRecordXray/:patientId",
-  upload.single("image"),
-  (req, res) => {
-    console.log(req.body);
-    if (!req.file) {
-      return res.status(400).send({ message: "Please upload a file." });
+// Get insurance Info GET
+app.get("/patientRecordInsuranceInfo/:insuranceInfoId", (req, res) => {
+  const insuranceInfoId = req.params.insuranceInfoId;
+
+  const sql = `SELECT insurance_company, insurance_id_num, DATE_FORMAT(expiration_date, '%m-%d-%Y') AS expiration_date, company_employed FROM insurance_info WHERE insurance_info_id = ?;`;
+
+  connection.query(sql, [insuranceInfoId], (err, result) => {
+    if (err) {
+      console.error("Error retrieving data:", err);
+      res.status(500).send({ message: "Error retrieving data" });
+    } else {
+      if (result.length === 0) {
+        // No insurance info found for the given patient
+        res.status(404).send({ message: "No insurance info found" });
+      } else {
+        console.log("Data retrieved successfully");
+        res.status(200).send(result[0]);
+      }
     }
+  });
+});
 
-    const { type, dateTaken, notes } = req.body;
+// Update insurance Info PUT
+app.put("/patientRecordInsuranceInfo/:insuranceInfoId", (req, res) => {
+  const { insuranceCompany, insuranceIdNum, expirationDate, companyEmployed } =
+    req.body;
+  const insuranceInfoId = req.params.insuranceInfoId;
 
-    const sql = `INSERT INTO xray (patient_id, image_path, type, date_taken, notes) VALUES (?, ?, ?, ?, ?);`;
+  const sql = `
+    UPDATE insurance_info
+    SET insurance_company=?, insurance_id_num=?, expiration_date=?, company_employed=?
+    WHERE insurance_info_id=?;
+  `;
 
-    console.log(req.file);
-    console.log("Received values:", { type, dateTaken, notes });
+  connection.query(
+    sql,
+    [
+      insuranceCompany,
+      insuranceIdNum,
+      expirationDate,
+      companyEmployed,
+      insuranceInfoId,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating data:", err);
+        res.status(500).send({ message: "Error updating data" });
+      } else {
+        console.log("Data updated successfully");
+        res.status(200).send({ message: "Data updated successfully" });
+      }
+    },
+  );
+});
 
-    connection.query(
-      sql,
-      [req.params.patientId, req.file.filename, type, dateTaken, notes],
-      (err, result) => {
-        if (err) {
-          console.error("Error inserting into database:", err);
-          res.status(500).send({ message: "Error uploading to database" });
-        } else {
-          res
-            .status(200)
-            .send({ message: "Uploaded successfully", data: result });
-        }
-      },
-    );
-  },
-);
+//Add xray data modal Create
+app.post("/patientRecordXray/:patientId", upload.single("xray"), (req, res) => {
+  console.log(req.body);
+  if (!req.file) {
+    return res.status(400).send({ message: "Please upload a file." });
+  }
+
+  const { type, dateTaken, notes } = req.body;
+
+  const sql = `INSERT INTO xray (patient_id, image_path, type, date_taken, notes) VALUES (?, ?, ?, ?, ?);`;
+
+  console.log(req.file);
+  console.log("Received values:", { type, dateTaken, notes });
+
+  connection.query(
+    sql,
+    [req.params.patientId, req.file.filename, type, dateTaken, notes],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting into database:", err);
+        res.status(500).send({ message: "Error uploading to database" });
+      } else {
+        res
+          .status(200)
+          .send({ message: "Uploaded successfully", data: result });
+      }
+    },
+  );
+});
 
 //Patient Record Xray List READ
 app.get("/patientXrayList/:patientId", (req, res) => {
-  const sql = `SELECT xray_id, type, DATE_FORMAT(date_taken, '%m-%d-%Y') AS date_taken, notes FROM xray WHERE patient_id = ? AND is_deleted = 0;`;
+  const sql = `SELECT xray_id, xray_id as xray_id_edit, type, DATE_FORMAT(date_taken, '%m-%d-%Y') AS date_taken, notes FROM xray WHERE patient_id = ? AND is_deleted = 0;`;
   connection.query(sql, [req.params.patientId], (error, result) => {
     if (error) {
       console.error("Error fetching patient information:", error);
@@ -502,9 +575,51 @@ app.get("/patientXrayData/:xrayId", (req, res) => {
   });
 });
 
+// Patient Record Xray Data UPDATE (PUT)
+app.put(
+  "/patientXrayData/:xrayId",
+  upload.single("xray_update"),
+  (req, res) => {
+    console.log(req.file);
+    console.log(req.body);
+    const { type, dateTaken, notes } = req.body;
+    const xrayId = req.params.xrayId;
+    const image_path = req.file ? req.file.filename : null; // Get the file path from multer
+
+    // Check if image_path is provided and not null
+    const imagePathClause = image_path !== null ? ", image_path = ?" : "";
+
+    const sql = `
+    UPDATE xray
+    SET type = ?, date_taken = ?, notes = ?${imagePathClause}
+    WHERE xray_id = ? AND is_deleted = 0;
+  `;
+
+    // Include image_path in the parameters only if it's not null
+    const sqlParams =
+      image_path !== null
+        ? [type, dateTaken, notes, image_path, xrayId]
+        : [type, dateTaken, notes, xrayId];
+
+    connection.query(sql, sqlParams, (error, result) => {
+      if (error) {
+        console.error("Error updating Xray data:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+      } else {
+        if (result.affectedRows === 0) {
+          // No Xray data found for the given xrayId
+          res.status(404).send({ message: "No Xray Data found" });
+        } else {
+          res.status(200).send({ message: "Xray Data updated successfully" });
+        }
+      }
+    });
+  },
+);
+
 //Health History Data Read
 app.get("/patientHealthHistory/:patientId", (req, res) => {
-  const sql = `SELECT diabetic, hypertensive, other_health_conditions, allergies, maintenance_medicines, notes FROM health_history WHERE patient_id = ? AND is_deleted = 0;`;
+  const sql = `SELECT health_history_id, diabetic, hypertensive, other_health_conditions, allergies, maintenance_medicines, notes FROM health_history WHERE patient_id = ? AND is_deleted = 0;`;
 
   connection.query(sql, [req.params.patientId], (error, result) => {
     if (error) {
@@ -521,6 +636,47 @@ app.get("/patientHealthHistory/:patientId", (req, res) => {
   });
 });
 
+//Health History Data Read
+app.put("/patientHealthHistory/:healthHistoryId", (req, res) => {
+  const healthHistoryId = req.params.healthHistoryId;
+  const {
+    diabetic,
+    hypertensive,
+    other_health_conditions,
+    allergies,
+    maintenance_medicines,
+    notes,
+  } = req.body;
+
+  const sql = `
+    UPDATE health_history
+    SET diabetic=?, hypertensive=?, other_health_conditions=?, allergies=?, maintenance_medicines=?, notes=?
+    WHERE health_history_id = ?`;
+
+  connection.query(
+    sql,
+    [
+      diabetic,
+      hypertensive,
+      other_health_conditions,
+      allergies,
+      maintenance_medicines,
+      notes,
+      healthHistoryId,
+    ],
+    (error, results) => {
+      if (results.affectedRows === 0) {
+        res.send({ message: "ID Not Found" });
+      } else if (error) {
+        res.status(400).send({ message: "Error updating health history" });
+      } else {
+        res.send({
+          message: `Health history updated for ID ${healthHistoryId}`,
+        });
+      }
+    },
+  );
+});
 //Get appointments
 app.get("/appointments", (req, res) => {
   const sql = `SELECT * FROM appointment`;

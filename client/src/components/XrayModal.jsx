@@ -65,6 +65,7 @@ function XrayModal({ propPatientId }) {
           propSetEditMode={setEditModeXrayModal}
           propPatientId={propPatientId}
           propFetchXrayList={fetchXrayList}
+          propXrayId={modalXrayId}
         />
       )}
 

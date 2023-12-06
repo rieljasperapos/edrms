@@ -11,6 +11,7 @@ function InsuranceInfoModal({ propPatientId }) {
     useState(false);
 
   const [insuranceList, setInsuranceList] = useState([]);
+  const [insuranceInfoId, setInsuranceInfoId] = useState(0);
 
   const handleClickAddInsurance = () => {
     // Set the modal visibility to true and store the clicked image path
@@ -52,8 +53,8 @@ function InsuranceInfoModal({ propPatientId }) {
           <InsuranceInfoDataTable
             propSetEditMode={setEditModeInsuranceInfoModal}
             propSetModalVisible={setModalInsuranceInfoAddVisible}
-            propPatientId={propPatientId}
             propInsuranceList={insuranceList}
+            propSetInsuranceInfoId={(value) => setInsuranceInfoId(value)}
           />
         </div>
       </div>
@@ -65,6 +66,7 @@ function InsuranceInfoModal({ propPatientId }) {
           propSetEditMode={setEditModeInsuranceInfoModal}
           propPatientId={propPatientId}
           propFetchInsuranceList={fetchInsuranceList}
+          propInsuranceInfoId={insuranceInfoId}
         />
       )}
     </>
