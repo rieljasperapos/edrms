@@ -35,7 +35,7 @@ function AddVisitModal({ isVisible, onClose }) {
       additional_fees: additionalFees,
       discount: discount,
       amount_paid: amountPaid,
-      patient_id: 1, // Assuming you have a way to get the patient ID
+      patient_id: 1, // Assuming there is a way to get the patient ID
     };
 
     // Send POST request to server
