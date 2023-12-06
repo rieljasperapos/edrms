@@ -35,7 +35,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
-                  <strong>Treatment:</strong> {rowData.treatment_name}
+                  <strong>Treatment:</strong> {rowData.treatment}
                 </p>
               </div>
               <div className=" border border-gray-300 p-2 rounded-lg">

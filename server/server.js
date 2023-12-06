@@ -110,37 +110,34 @@ app.get('/signout', (req, res) => {
 })
 
 // For the visit table and view modal
-// http://localhost:3000/visits
-app.get('/visits', (req, res) => {
+// http://localhost:3000/visits/2
+app.get('/visits/:patientID', (req, res) => {
+    console.log(req.body);
     const sqlQuery = `
     SELECT
-        v.date_visit,
-        v.notes,
-        v.visit_purpose,
-        v.prescription,
-        v.additional_fees,
-        v.amount_paid,
-        v.discount,
-        (COALESCE(SUM(t.treatment_fee), 0) + v.additional_fees - v.amount_paid - v.discount) AS balance,
-        vs.temperature,
-        vs.pulse_rate,
-        vs.systolic_bp,
-        vs.diastolic_bp,
-        vs.time_taken,
-        COALESCE(GROUP_CONCAT(t.treatment_name SEPARATOR ', '), 'No Treatment') AS treatment_name
-    FROM
-        visit v
-    LEFT JOIN
-        treatment_rendered tr ON v.visit_id = tr.visit_id
-    LEFT JOIN
-        treatment t ON tr.treatment_id = t.treatment_id
-    LEFT JOIN
-        vital_signs vs ON v.visit_id = vs.visit_id
-    GROUP BY
-        v.visit_id;
+    DATE_FORMAT(v.date_visit, '%m-%d-%Y') AS date_visit,
+    v.visit_id,
+    v.notes,
+    v.visit_purpose,
+    v.prescription,
+    v.additional_fees,
+    v.amount_paid,
+    v.discount,
+    GROUP_CONCAT(t.treatment_name SEPARATOR ', ') AS treatment,
+    (SUM(t.treatment_fee) + v.additional_fees - v.amount_paid - v.discount) AS balance
+FROM
+    visit v
+INNER JOIN treatment_rendered tr ON v.visit_id = tr.visit_id
+INNER JOIN treatment t ON tr.treatment_id = t.treatment_id
+WHERE
+    v.patient_id = ?
+GROUP BY
+    v.visit_id  -- Assuming visit_id is the primary key of the visit table
+ORDER BY
+    v.date_visit DESC; -- Order by date_visit in descending order (most recent first)
     `;
 
-    connection.query(sqlQuery, (error, rows, fields) => {
+    connection.query(sqlQuery,[req.params.patientID],(error, rows, fields) => {
         if (error) {
             console.error('Error executing SQL query:', error);
             res.status(500).send('Internal Server Error');

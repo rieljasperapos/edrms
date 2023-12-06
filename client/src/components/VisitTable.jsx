@@ -17,7 +17,7 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 
-function VisitTable() {
+function VisitTable({ propPatientID }) {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
@@ -28,7 +28,7 @@ function VisitTable() {
 
   // Fetch data from the database
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/visits")
+    fetch("http://localhost:3000/visits/2")
       .then((response) => {
         return response.json();
       })
@@ -56,7 +56,7 @@ function VisitTable() {
     },
     {
       header: "Treatment",
-      accessorKey: "treatment_name",
+      accessorKey: "treatment",
     },
     {
       header: "Balance",
