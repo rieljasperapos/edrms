@@ -6,7 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [userName, setUserName] = useState("");
+  const [userExist, setUserExist] = useState(false);
   const [password, setPassword] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [invalidPassword, setInvalidPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [matchStatus, setMatchStatus] = useState(false);
@@ -21,6 +24,9 @@ const Signup = () => {
     setShowPassword(!showPassword);
   };
 
+  const regex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/])[A-Za-z\d!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]{8,}$/;
+
   const handleSignup = () => {
     if (
       !userName ||
@@ -31,6 +37,9 @@ const Signup = () => {
       !birthDate
     ) {
       alert("All fields must be filled out");
+      return;
+    } else if (!validPassword) {
+      alert("Enter a valid password");
       return;
     }
 
@@ -55,24 +64,89 @@ const Signup = () => {
         return response.json();
       })
       .then((data) => {
-        alert("Successfully Registered");
+        if (data.valid) {
+          alert("Successfully Registered");
+        } else {
+          setUserExist(true);
+          alert("User already exist");
+        }
         console.log(data);
-        navigate("/signin");
       })
       .catch((error) => {
         console.error(`Error registering user: ${error.message}`);
       });
   };
 
-  useEffect(() => {
-    if (
-      password === confirmPassword &&
-      (password != "" || confirmPassword != "")
+  const handleChange = (e) => {
+    const newUserName = e.target.value;
+    setUserName(newUserName);
+    console.log(newUserName);
+
+    fetch(`http://localhost:3000/accounts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userName: newUserName }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setUserExist(data.exist);
+      })
+      .catch((error) => {
+        console.error(`Error registering user: ${error.message}`);
+      });
+  };
+
+  const validatePassword = (password, confirmPassword) => {
+    // I KNOW ITS MESSY HEHE
+    if (password === "") {
+      setInvalidPassword("");
+      setValidPassword(false);
+    } else if (password.length < 8) {
+      setInvalidPassword(`Invalid Password. Minimum 8 characters required.`);
+      setValidPassword(false);
+    } else if (!/[A-Z]/.test(password)) {
+      setInvalidPassword(
+        "Invalid Password. Must contain at least one uppercase character.",
+      );
+    } else if (!/\d/.test(password)) {
+      setInvalidPassword(
+        `Invalid Password. Must contain at least one number (0-9).`,
+      );
+      setValidPassword(false);
+    } else if (
+      !/(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/])[A-Za-z\d!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]{8,}/.test(
+        password,
+      )
     ) {
-      setMatchStatus(true);
+      setInvalidPassword(
+        `Invalid Password. Must contain at least one special character.`,
+      );
+      setValidPassword(false);
+    } else if (regex.test(password)) {
+      console.log("Valid Password");
+      setValidPassword(true);
+      setInvalidPassword("");
     } else {
-      setMatchStatus(false);
+      setInvalidPassword("Unexpected error. Please try again.");
+      setValidPassword(false);
     }
+
+    setMatchStatus(
+      password === confirmPassword &&
+        (password !== "" || confirmPassword !== ""),
+    );
+  };
+
+  useEffect(() => {
+    validatePassword(password, confirmPassword);
   }, [password, confirmPassword]);
 
   // console.log(matchStatus)

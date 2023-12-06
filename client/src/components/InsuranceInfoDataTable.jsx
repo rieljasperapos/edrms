@@ -17,35 +17,25 @@ function InsuranceInfoDataTable({
   propSetEditMode,
   propSetModalVisible,
   propPatientId,
+  propInsuranceList,
 }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(propInsuranceList);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: 3,
     pageIndex: 0,
   });
 
-  const fetchInsuranceList = () => {
-    fetch(`http://localhost:3000/patientInsuranceList/${propPatientId}`)
-      .then((response) => response.json())
-      .then((item) => {
-        setData(item);
-      })
-      .catch((error) => {
-        console.error("Error fetching contact data:", error);
-      });
-  };
-
   useEffect(() => {
     console.log(propPatientId);
-    fetchInsuranceList();
-  }, []);
+    setData(propInsuranceList);
+  }, [propInsuranceList]);
 
   const columns = [
     {
       accessorKey: "insurance_company",
       header: "Insurance Company",
-      cell: (props) => <p>{props.getValue()}</p>,
+      cell: (props) => <p>{props.getValue().toUpperCase()}</p>,
     },
     {
       accessorKey: "insurance_id_num",

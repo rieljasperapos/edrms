@@ -8,6 +8,7 @@ function XrayAddModal({
   propEditMode,
   propSetEditMode,
   propPatientId,
+  propFetchXrayList,
 }) {
   const [editMode, setEditMode] = useState(propEditMode);
 
@@ -36,7 +37,22 @@ function XrayAddModal({
     }
   };
 
+  function isXrayAddFormValid() {
+    // Check if all required fields are filled
+    const isTypeValid = type.trim() !== "";
+    const isDateTakenValid = dateTaken.trim() !== "";
+    const isNotesValid = notes.trim() !== "";
+    const isFileUploaded = uploadedFileName.trim() !== "";
+
+    // Return true if all fields are valid, otherwise false
+    return isTypeValid && isDateTakenValid && isNotesValid && isFileUploaded;
+  }
+
   const handleSubmitXray = () => {
+    if (!isXrayAddFormValid()) {
+      console.log("Invalid Form");
+      return;
+    }
     const xrayInfoPartial = {
       type: type,
       dateTaken: dateTaken,
@@ -54,24 +70,30 @@ function XrayAddModal({
       xrayImage.append(key, value);
     });
 
+    console.log(xrayImage);
+    // Ensure you don't set Content-Type header yourself when using FormData
+    // The browser will set it with the proper boundary
     fetch(`http://localhost:3000/patientRecordXray/${propPatientId}`, {
       method: "POST",
       body: xrayImage,
+      // headers: { 'Content-Type': 'multipart/form-data' }, // Don't set this manually
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
+          return response.json().then((text) => {
+            throw new Error(`${text.message} (status: ${response.status})`);
+          });
         }
-        return response.json;
+        return response.json();
       })
       .then((data) => {
-        console.log("Successfully Uploaded");
-        console.log(data);
+        console.log("Successfully Uploaded", data);
       })
       .catch((error) => {
-        console.error(`Error uploading Xray: ${error.message}`);
+        console.error(`Error uploading Xray: ${error}`);
       })
       .finally(() => {
+        propFetchXrayList();
         // Close the modal by setting its visibility to false
         propSetModalVisible(false);
       });
@@ -97,15 +119,21 @@ function XrayAddModal({
               <IoMdCloseCircle />
             </button>
           </div>
-          <div className="flex w-5/6 flex-col gap-x-4 gap-y-5 self-center px-8 pb-4">
+          <form
+            className="flex w-5/6 flex-col gap-x-4 gap-y-5 self-center px-8 pb-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-3">
-              <div className="mb-1 font-Karla text-base font-bold text-black ">
+              <label className="mb-1 font-Karla text-base font-bold text-black ">
                 Type
-              </div>
+              </label>
               <select
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                 value={type}
                 onChange={(event) => handleInputChange(event, setType)}
+                required
               >
                 <option value="">Select</option>
                 <option value="panoramic">Panoramic</option>
@@ -114,20 +142,21 @@ function XrayAddModal({
               </select>
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
-              <div className="mb-1 font-Karla text-base font-bold text-black">
+              <label className="mb-1 font-Karla text-base font-bold text-black">
                 Date Taken
-              </div>
+              </label>
               <input
                 type="date"
                 className="h-12 w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                 value={dateTaken}
                 onChange={(event) => handleInputChange(event, setDateTaken)}
+                required
               />
             </div>
             <div className="sm:col-span-1 md:col-span-2 lg:col-span-2">
-              <div className="mb-1 font-Karla text-base font-bold text-black">
+              <label className="mb-1 font-Karla text-base font-bold text-black">
                 Notes
-              </div>
+              </label>
               <textarea
                 className="w-full rounded-lg border-2 border-custom-blue px-3 font-Karla"
                 rows="5"
@@ -158,17 +187,16 @@ function XrayAddModal({
                 id="fileInput"
                 ref={fileInputRef}
                 onChange={handleFileChange}
+                required
               />
             </div>
-          </div>
-          <div className="mb-5 mt-3 flex w-full justify-center">
             <button
               className="rounded-lg border-2 bg-custom-green px-5 py-1 text-lg  text-white hover:bg-green-600"
               onClick={editMode ? handleEditXray : handleSubmitXray}
             >
               {editMode ? "Edit" : "Add"}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </>

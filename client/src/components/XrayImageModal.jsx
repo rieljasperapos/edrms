@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { IoMdCloseCircle } from "react-icons/io";
 
-function ModalImageXray({ propSetModalVisible, propXrayId }) {
+function XrayImageModal({ propSetModalVisible, propXrayId }) {
   const [xrayData, setXrayData] = useState({});
 
   const fetchXrayData = () => {
@@ -72,4 +72,4 @@ function ModalImageXray({ propSetModalVisible, propXrayId }) {
   );
 }
 
-export default ModalImageXray;
+export default XrayImageModal;

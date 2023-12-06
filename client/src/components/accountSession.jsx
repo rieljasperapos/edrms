@@ -18,7 +18,12 @@ const Navbar = () => {
       })
       .then((data) => {
         if (data.valid) {
-          setUser(data);
+          const account = {
+            username: data.username,
+            isAdmin: data.is_admin,
+          };
+          setUser(account);
+          console.log(user);
         } else {
           navigate("/signin");
         }
@@ -32,6 +37,7 @@ const Navbar = () => {
       <div className="fixed right-0 top-0 m-4 mb-8 flex items-center gap-3 rounded-lg bg-gray-300 p-2 text-2xl">
         <FaUserCircle />
         <p>{user.username}</p>
+        <p>{user.isAdmin}</p>
       </div>
     </>
   );

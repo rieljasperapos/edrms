@@ -5,6 +5,9 @@ import AddIcon from "../assets/add-icon.png";
 import CalendarIcon from "../assets/calendar-icon.png";
 import FolderIcon from "../assets/folder-icon.png";
 import LogoutIcon from "../assets/logout-icon.png";
+import { RiUserSettingsLine } from "react-icons/ri";
+import { RiHome2Line } from "react-icons/ri";
+
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -32,9 +35,11 @@ const Navbar = () => {
       </div>
       <div className="flex flex-grow flex-col items-center justify-center bg-white text-black">
         <div className="m-auto mt-4 grid">
+          <NavItem text="Dashboard" />
           <NavItem icon={FolderIcon} text="Patient Records" />
           <NavItem icon={AddIcon} text="Add Record" />
           <NavItem icon={CalendarIcon} text="Calendar" />
+          <NavItem text="Manage" />
         </div>
         <button
           id="menu-logout"
@@ -57,12 +62,20 @@ const NavItem = ({ icon, text }) => {
       navigate("/patientRecordList");
     } else if (text === "Calendar") {
       navigate("/calendar");
+    } else if (text === "Dashboard") {
+      navigate("/dashboard");
     }
   };
   return (
     <div className="cursor-pointer pl-2 pr-2" onClick={handleClick}>
       <div className="flex h-20 flex-col flex-wrap items-center justify-center rounded-xl p-2 hover:bg-custom-gray hover:shadow-inner-dark">
-        <img src={icon} className="h-6 w-6" alt={`${text} Icon`} />
+        {text === "Manage" ? (
+          <RiUserSettingsLine className="text-3xl" />
+        ) : text === "Dashboard" ? (
+          <RiHome2Line className="text-3xl" />
+        ) : (
+          <img src={icon} className="h-6 w-6" alt={`${text} Icon`} />
+        )}
         <p className="text-center text-sm">{text}</p>
       </div>
     </div>

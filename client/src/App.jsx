@@ -22,8 +22,10 @@ function App() {
           <Route path="/addRecord" element={<AddRecord />} />
           <Route path="/patientRecordList" element={<PatientRecordList />} />
           <Route path="/patientRecord/:patientId" element={<PatientRecord />} />
-          <Route path="/visit" element={<Visit />} />
-          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/visit/:patientId" element={<Visit />} />
+          <Route exact path="/calendar/*" element={<Calendar />} />
+
+          <Route index element={<Login />} />
         </Routes>
       </BrowserRouter>
     </>

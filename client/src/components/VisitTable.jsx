@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import AddVisitModal from "./AddVisitModal";
+import ViewModal from "./ViewVisitModal";
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,10 +19,13 @@ import {
 import { PiKeyReturnBold } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 
-function VisitTable() {
+function VisitTable({ propPatientId }) {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
+  const [showModal, setShowModal] = useState(false); // AddVisitModal
+  const [showModal2, setShowModal2] = useState(false); // ViewModal
+  const [selectedRowData, setSelectedRowData] = useState(null);
 
   const navigate = useNavigate();
   // Fetch API Mock Data
@@ -86,7 +91,7 @@ function VisitTable() {
           <button
             className="hover:text-blue-900-900 inline-flex items-center gap-2 self-end text-xl text-blue-900 hover:underline"
             onClick={() => {
-              navigate("/patientRecord");
+              navigate(`/patientRecord/${propPatientId}`);
             }}
           >
             Return to Record
@@ -94,11 +99,20 @@ function VisitTable() {
           </button>
           <div className="mb-6 flex flex-row justify-between">
             {/* Add Visit */}
+            <button
+              className="inline-flex h-10 w-40 items-center rounded-lg border-2 bg-green-400 px-8 text-white hover:bg-green-600"
+              onClick={() => setShowModal(true)}
+            >
+              <AiOutlinePlus className="mr-2" />
+              Add Visit
+            </button>
+
+            {/* Add Visit Modal */}
             <div>
-              <button className="inline-flex h-10 w-40 items-center rounded-lg border-2 bg-green-400 px-8 text-white hover:bg-green-600">
-                <AiOutlinePlus className="mr-2" />
-                Add Visit
-              </button>
+              <AddVisitModal
+                isVisible={showModal}
+                onClose={() => setShowModal(false)}
+              />
             </div>
 
             {/* Filtering */}
@@ -157,7 +171,13 @@ function VisitTable() {
                   ))}
                   <td className="text-center">
                     {/* View Button */}
-                    <button className="rounded-lg border-2 bg-cyan-600 px-2 text-white hover:bg-cyan-800">
+                    <button
+                      className="rounded-lg border-2 bg-cyan-600 px-2 text-white hover:bg-cyan-800"
+                      onClick={() => {
+                        setSelectedRowData(row.original);
+                        setShowModal2(true);
+                      }}
+                    >
                       View
                     </button>
                   </td>
@@ -165,6 +185,15 @@ function VisitTable() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* View modal */}
+        <div>
+          <ViewModal
+            isVisible={showModal2}
+            onClose={() => setShowModal2(false)}
+            rowData={selectedRowData}
+          />
         </div>
 
         <div className="mt-4 flex flex-row items-center justify-between">

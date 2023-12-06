@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
-function PersonalInfoEditModal({ propSetModalVisible }) {
+function PersonalInfoEditModal({ propSetModalVisible, propPersonalInfo }) {
   const closePIEditModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);

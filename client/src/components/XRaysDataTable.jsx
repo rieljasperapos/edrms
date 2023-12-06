@@ -13,36 +13,21 @@ import {
 import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { FaEdit } from "react-icons/fa";
 import { MdViewList } from "react-icons/md";
+import XrayAddModal from "./XRayAddModal.jsx";
 
 function XRaysDataTable({
   propModalImageVisible,
   propSetEditMode,
   propSetModalVisible,
-  propPatientId,
   propSetXrayId,
+  propXrayList,
 }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(propXrayList);
   const [sorting, setSorting] = useState([]);
   const [pagination, setPagination] = useState({
     pageSize: 3,
     pageIndex: 0,
   });
-
-  const fetchXrayList = () => {
-    fetch(`http://localhost:3000/patientXrayList/${propPatientId}`)
-      .then((response) => response.json())
-      .then((item) => {
-        setData(item);
-      })
-      .catch((error) => {
-        console.error("Error fetching contact data:", error);
-      });
-  };
-
-  useEffect(() => {
-    console.log(propPatientId);
-    fetchXrayList();
-  }, []);
 
   const handleImageClick = (id) => {
     // Set the modal visibility to true and store the clicked image path
@@ -56,11 +41,15 @@ function XRaysDataTable({
     propSetModalVisible(true);
   };
 
+  useEffect(() => {
+    setData(propXrayList);
+  }, [propXrayList]);
+
   const columns = [
     {
       accessorKey: "type",
       header: "Type",
-      cell: (props) => <p>{props.getValue()}</p>,
+      cell: (props) => <p>{props.getValue().toUpperCase()}</p>,
     },
     {
       accessorKey: "date_taken",

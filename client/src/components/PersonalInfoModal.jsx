@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { FaEdit } from "react-icons/fa";
+import PersonalInfoEditModal from "./PersonalInfoEditModal.jsx";
 
-function PersonalInfoModal({ propSetModalPIEditVisible, propPatientId }) {
+function PersonalInfoModal({ propPatientId }) {
+  const [personalInfo, setPersonalInfo] = useState({});
+  const [modalPIEditVisible, setModalPIEditVisible] = useState(false);
   const handleClickEditPI = () => {
     // Set the modal visibility to true and store the clicked image path
-    propSetModalPIEditVisible(true);
+    setModalPIEditVisible(true);
   };
-
-  const [personalInfo, setPersonalInfo] = useState({});
-
   const fetchPersonalInfo = () => {
     fetch(`http://localhost:3000/patientInfo/${propPatientId}`)
       .then((response) => response.json())
@@ -136,6 +136,10 @@ function PersonalInfoModal({ propSetModalPIEditVisible, propPatientId }) {
           </div>
         </div>
       </div>
+
+      {modalPIEditVisible && (
+        <PersonalInfoEditModal propSetModalVisible={setModalPIEditVisible} />
+      )}
     </>
   );
 }
