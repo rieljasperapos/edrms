@@ -1,8 +1,10 @@
 const connection = require('../db/db_connection');
 const express = require('express');
+const session = require('express-session');
+const sessionConfig = require('../configs/sessionConfigs');
 const app = express();
 app.use(express.json());
-app.use(session(sessionConfigs));
+app.use(session(sessionConfig));
 
 const getSession = (req, res) => {
     console.log('Dashboard route. Session:', req.session);
