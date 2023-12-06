@@ -28,7 +28,7 @@ function VisitTable({ propPatientID }) {
 
   // Fetch data from the database
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/visits/2")
+    fetch("http://localhost:3000/visits/1")
       .then((response) => {
         return response.json();
       })

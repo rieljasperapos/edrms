@@ -14,6 +14,50 @@ function AddVisitModal({ isVisible, onClose }) {
   };
   const options = {};
 
+  const handleSubmit = () => {
+    // Gather values from input fields
+    const dateVisit = document.getElementById("dateVisit").value;
+    const visitPurpose = document.getElementById("visitPurpose").value;
+    const treatment = document.getElementById("treatment").value;
+    const prescription = document.getElementById("prescription").value;
+    const notes = document.getElementById("notes").value;
+    const additionalFees = document.getElementById("additionalFees").value;
+    const discount = document.getElementById("discount").value;
+    const amountPaid = document.getElementById("amountPaid").value;
+
+    // Prepare data for POST request
+    const formData = {
+      date_visit: dateVisit,
+      visit_purpose: visitPurpose,
+      treatment: treatment,
+      prescription: prescription,
+      notes: notes,
+      additional_fees: additionalFees,
+      discount: discount,
+      amount_paid: amountPaid,
+      patient_id: 1, // Assuming you have a way to get the patient ID
+    };
+
+    // Send POST request to server
+    fetch("http://localhost:3000/addVisit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, you can close the modal or show a success message
+        console.log(data);
+        onClose(); // Close the modal
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        // Handle the error, show an error message, etc.
+      });
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center">
@@ -39,6 +83,7 @@ function AddVisitModal({ isVisible, onClose }) {
               </div> */}
               <div>
                 <input
+                  id="dateVisit"
                   className="w-full pl-3 rounded-lg border border-gray-300 h-10"
                   type="date"
                 />
@@ -46,6 +91,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Visit purpose input box */}
               <div>
                 <input
+                  id="visitPurpose"
                   className="w-full pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Visit Purpose"
@@ -54,6 +100,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Treatment input box */}
               <div>
                 <input
+                  id="treatment"
                   className="w-full pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Treatment"
@@ -62,6 +109,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Prescription input box */}
               <div>
                 <input
+                  id="prescription"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Prescription"
@@ -70,6 +118,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Notes input box */}
               <div>
                 <input
+                  id="notes"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Notes"
@@ -83,6 +132,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Additional fee input box */}
               <div>
                 <input
+                  id="additionalFees"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
@@ -92,6 +142,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Discount input box */}
               <div>
                 <input
+                  id="discount"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
@@ -101,6 +152,7 @@ function AddVisitModal({ isVisible, onClose }) {
               {/* Amount paid input box */}
               <div>
                 <input
+                  id="amountPaid"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="number"
                   min={0}
@@ -119,7 +171,10 @@ function AddVisitModal({ isVisible, onClose }) {
             </div>
             {/* Submit button */}
             <div className="my-5 flex justify-center">
-              <button className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white">
+              <button
+                className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white"
+                onClick={handleSubmit}
+              >
                 Submit
               </button>
             </div>

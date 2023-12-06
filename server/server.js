@@ -147,12 +147,28 @@ ORDER BY
     });
 });
 
+// For the add visit modal
+// http://localhost:3000/addVisit
+app.post('/addVisit', (req, res) => {
+    const { visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes } = req.body;
+
+    connection.query('INSERT INTO `visit` (`visit_id`, `patient_id`, `visit_purpose`, `date_visit`, `additional_fees`, `amount_paid`, `discount`, `prescription`, `notes`, `is_deleted`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)', 
+    [visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes], 
+    (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+        } else {
+            res.status(200).send({ message: 'Visit added successfully.' });
+        }
+    });
+})
+
 // For the vital sign modal
 // http://localhost:3000/addVitalSigns
 app.post('/addVitalSigns', (req, res) => {
     const { visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken } = req.body;
 
-    // Insert data into vital_signs table
     connection.query(
         'INSERT INTO vital_signs (visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken, is_deleted) VALUES (?, ?, ?, ?, ?, ?, 0)',
         [visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken],
@@ -166,9 +182,6 @@ app.post('/addVitalSigns', (req, res) => {
         }
     );
 });
-
-// For the add visit modal
-// http://localhost:3000/addVisit
 
 
 app.listen(port, () => {

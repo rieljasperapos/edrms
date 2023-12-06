@@ -4,37 +4,42 @@ import { IoMdCloseCircleOutline } from "react-icons/io";
 function VitalSignModal({ isVisible, onClose, visitId }) {
   if (!isVisible) return null;
 
-  const [formData, setFormData] = useState({
-    temperature: "",
-    pulse_rate: "",
-    systolic_bp: "",
-    diastolic_bp: "",
-    time_taken: "",
-    visit_id: visitId,
-  });
+  const handleSubmit = () => {
+    // Gather values from input fields
+    const temperature = document.getElementById("temperature").value;
+    const pulseRate = document.getElementById("pulseRate").value;
+    const systolicBP = document.getElementById("systolicBP").value;
+    const diastolicBP = document.getElementById("diastolicBP").value;
+    const timeTaken = document.getElementById("timeTaken").value;
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.vale });
-  };
+    // Prepare data for POST request
+    const formData = {
+      temperature: temperature,
+      pulse_rate: pulseRate,
+      systolic_bp: systolicBP,
+      diastolic_bp: diastolicBP,
+      time_taken: timeTaken,
+      visit_id: 1, // Assuming there is a way to get the visit ID
+    };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/addVitalSigns", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+    // Send POST request to server
+    fetch("http://localhost:3000/addVitalSigns", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, you can close the modal or show a success message
+        console.log(data);
+        onClose(); // Close the modal
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        // Handle the error, show an error message, etc.
       });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      console.log("Vital signs added successfully");
-    } catch (error) {
-      console.error("Error adding vital signs:", error.message);
-    }
   };
 
   return (
@@ -52,6 +57,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
             {/* Temperature input box */}
             <div className="mb-4">
               <input
+                id="temperature"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="number"
                 min={0}
@@ -61,6 +67,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
             {/* Pulse rate input box */}
             <div className="mb-4">
               <input
+                id="pulseRate"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="number"
                 min={0}
@@ -71,6 +78,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
               {/* Blood pressure input box */}
               <div className="mb-4">
                 <input
+                  id="systolicBP"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   min={0}
@@ -80,6 +88,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
               {/* Blood pressure input box */}
               <div className="mb-4">
                 <input
+                  id="diastolicBP"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   min={0}
@@ -90,6 +99,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
             {/* Time input box */}
             <div className="mb-4">
               <input
+                id="timeTaken"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="time"
                 placeholder="Time"
