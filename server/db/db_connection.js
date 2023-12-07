@@ -4,7 +4,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'dental_records3'
+    database: 'edrms_db'
 });
 
 db.connect((err) => {

@@ -4,11 +4,9 @@ import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import AddAppointment from './addAppointmentsModal';
 
-const CalendarWeekView = () => {
+const CalendarWeekView = (props) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [currentWeek, setCurrentWeek] = useState(dayjs().startOf('week'));
-    const [showModal, setShowModal] = useState(false);
-    const [appointments, setAppointments] = useState([]);
     const navigate = useNavigate();
     const currentDate = dayjs();
     const [today, setToday] = useState(currentDate);
@@ -52,39 +50,16 @@ const CalendarWeekView = () => {
     console.log(today.format("HH:mm"))
     console.log(staticAppointments);
 
-    useEffect(() => {
-
-        fetch('http://localhost:3000/appointments', {
-            method: 'GET',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}`)
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    // console.log(data);
-                    setAppointments(data);
-                } else {
-                    console.log("No data found");
-                }
-            })
-            .catch(err => {
-                console.error(err.message);
-            })
-    }, [showModal])
-
-    console.log(appointments);
 
     return (
         <>
             <div className="flex justify-between items-center p-6 border-b">
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
-                <button className="bg-custom-green text-white font-medium rounded-lg p-3" onClick={() => setShowModal(true)}>Add appointment</button>
+                <button className="bg-custom-green text-white font-medium rounded-lg p-3" onClick={() => props.setShowModal(true)}>Add appointment</button>
 
-                <AddAppointment isVisible={showModal} handleClose={() => setShowModal(false)} />
+                <AddAppointment 
+                    isVisible={props.modal} 
+                    handleClose={() => props.setShowModal(false)} />
             </div>
 
             <div className="p-8">
@@ -156,7 +131,7 @@ const CalendarWeekView = () => {
                             <tr>
                                 {daysOfWeek.map(day => (
                                     <td key={day.format('YYYY-MM-DD')} className='px-6 py-4 whitespace-no-wrap border-gray-200'>
-                                        {appointments
+                                        {props.appointments
                                             .filter(event => day.isSame((event.date_schedule), 'day'))
                                             .map((event, index) => {
                                                 const timeParts = event.time_schedule.split(':');
@@ -166,7 +141,14 @@ const CalendarWeekView = () => {
                                                 const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
                                                 const formattedTime = `${formattedHours}:${minutes}`;
                                                 return (
-                                                    <div key={index} className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44'>
+                                                    <div 
+                                                        key={index} 
+                                                        className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44' 
+                                                        onClick={() => {
+                                                            props.setShowCard(true)
+                                                            console.log(event)
+                                                            props.setAppointmentDetails(event);
+                                                        }}>
                                                         <p className='mb-2'>{formattedTime} {amPm}</p>
                                                         <p>{event.purpose}</p>
                                                     </div>

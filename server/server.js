@@ -12,7 +12,7 @@ const sessionSecret = uuidv4();
 const app = express();
 app.use(cors({
     origin: ["http://localhost:5173"],
-    methods: ["GET, POST"],
+    methods: ["GET, POST, PUT"],
     credentials: true
 }));
 app.use(express.json());
@@ -78,6 +78,17 @@ app.get('/signup', (req, res) => {
         res.send(rows);
     })
 })
+
+// app.get('/appointments/edit/:appointmentId', (req, res) => {
+//     const sql = `SELECT * FROM appointment WHERE appointment_id = ?`;
+//     connection.query(sql, [req.params.appointmentId], (err, rows) => {
+//         if (err) {
+//             res.send({message: "Error"});
+//         } else {
+//             res.send(rows);
+//         }
+//     })
+// })
 
 // app.get('/signin', (req, res) => {
 //     if (req.session.authorized) {

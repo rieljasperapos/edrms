@@ -2,18 +2,18 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { generateDate, months } from "../utils/calendar";
 import dayjs from "dayjs";
 import cn from "../utils/cn";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import AddAppointment from './addAppointmentsModal';
+import AppointmentCard from './appointmentCardModal';
+import EditAppointment from './editAppointmentModal';
 
-const calendarMonthView = () => {
+const calendarMonthView = (props) => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const currentDate = dayjs();
     const [today, setToday] = useState(currentDate);
     const [selectDate, setSelectDate] = useState(currentDate);
-    const [showModal, setShowModal] = useState(false);
-    const [appointments, setAppointments] = useState([]);
-    // console.log(showModal);
+    console.log(props.appointments);
 
     const days = [
         'Sun',
@@ -36,40 +36,11 @@ const calendarMonthView = () => {
     }
 
     const handleClose = () => {
-        setShowModal(false);
+        props.setShowModal(false);
     }
 
-    useEffect(() => {
-
-        fetch('http://localhost:3000/appointments', {
-            method: 'GET',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}`)
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    // console.log(data);
-                    setAppointments(data);
-                } else {
-                    console.log("No data found");
-
-                }
-            })
-            .catch(err => {
-                console.error(err.message);
-            })
-    }, [showModal])
-
-    console.log(appointments);
-    appointments.map(event => {
-        console.log(event.date_schedule);
-    })
-
-    console.log(showModal);
+    console.log(props.modal);
+    console.log(props.appointmentCard);
 
     // console.log(`Current Date: ${currentDate.format("HH:mm")}`);
     // console.log(hours);
@@ -87,16 +58,19 @@ const calendarMonthView = () => {
                 <button
                     className="bg-custom-green text-white font-medium rounded-lg p-3"
                     onClick={() => {
-                        setShowModal(true);
+                        props.setShowModal(true);
                     }}
                 >
                     Add appointment
                 </
                 button>
                 <AddAppointment
-                    isVisible={showModal}
+                    isVisible={props.modal}
                     handleClose={handleClose}
                 />
+                <EditAppointment 
+                    isVisible={props.editMode}
+                    handleClose={() => props.setShowEdit(false)}/>
             </div>
 
             <div className="p-8">
@@ -179,8 +153,8 @@ const calendarMonthView = () => {
                                 <h1 className={cn(
                                     currentMonth ? "" : "text-gray-400",
                                     today ? "bg-red-500 text-white" : "",
-                                    selectDate.toDate().toDateString() === date.toDate().toDateString() ? "bg-primary-green text-white" : "",
-                                    "h-10 w-10 mt-2 grid place-content-center rounded-full hover:bg-primary-green cursor-pointer hover:text-white transition-all"
+                                    selectDate.toDate().toDateString() === date.toDate().toDateString() ? "bg-custom-green text-white" : "",
+                                    "h-10 w-10 mt-2 grid place-content-center rounded-full hover:bg-custom-green cursor-pointer hover:text-white transition-all"
                                 )}
                                     onClick={() => {
                                         setSelectDate(date);
@@ -188,7 +162,7 @@ const calendarMonthView = () => {
                                 >{date.date()}
                                 </h1>
                                 <div className="p-2">
-                                    {appointments
+                                    {props.appointments
                                         .filter(event => date.isSame(event.date_schedule), 'day')
                                         .map((event, index) => {
                                             const timeParts = event.time_schedule.split(':');
@@ -198,9 +172,19 @@ const calendarMonthView = () => {
                                             const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
                                             const formattedTime = `${formattedHours}:${minutes}`;
                                             return (
-                                                <div className="flex flex-col gap-2 text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in p-2">
-                                                    <p className="font-semibold">{formattedTime} {amPm}</p>
-                                                    <p>{event.purpose}</p>
+                                                <div 
+                                                    key={index} 
+                                                    className="flex flex-col gap-2 text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in p-2" 
+                                                    onClick={() => {
+                                                        props.setShowCard(true)
+                                                        console.log(event)
+                                                        props.setAppointmentDetails(event);
+
+                                                    }}>
+                                                        <p className="font-semibold">{formattedTime} {amPm}</p>
+                                                        <p>{event.purpose}</p>
+
+                                                    {/* <AppointmentCard isVisible={props.appointmentCard} /> */}
                                                 </div>
                                             )
                                         })

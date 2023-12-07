@@ -44,13 +44,15 @@ exports.login = (req, res) => {
             return;
         }
 
-        console.log('Before setting session:', req.session);
+        // console.log('Before setting session:', req.session);
 
         console.log(rows[0].password);
         bcrypt.compare(req.body.password, rows[0].password, (err, isPasswordMatch) => {
             if (isPasswordMatch) {
+                console.log(rows[0]);
                 req.session.authorized = true;
                 req.session.user = rows[0].username
+                req.session.userId = rows[0].account_id
                 // req.session.user = rows[0].username;
                 // console.log(req.session);
                 console.log('Login successful. Session after login:', req.session);

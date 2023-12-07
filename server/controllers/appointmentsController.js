@@ -22,3 +22,34 @@ exports.getAppointments = (req, res) => {
         }
     })
 }
+
+exports.editAppointment = (req, res) => {
+    console.log(req.params.appointmentId);
+    const sql = 
+        `UPDATE appointment 
+        SET date_schedule = ?, time_schedule = ?, name = ?, contact_number = ?, purpose = ?
+        WHERE appointment_id = ?`
+    ;
+
+    console.log(req.body);
+    console.log(req.params.appointmentId);
+    connection.query(sql, [req.body.date, req.body.timeSchedule, req.body.name, req.body.contactNumber, req.body.purpose, req.params.appointmentId], (err, rows) => {
+        if (err) {
+            res.send({message: "Error cannot update"});
+        } else {
+            res.send({message: "Updated Successfully"});
+        }
+    })
+}
+
+exports.getAppointmentsById = (req, res) => {
+    console.log(req.params.appointmentId);
+    const sql = `SELECT * FROM appointment WHERE appointment_id = ?`;
+    connection.query(sql, [req.params.appointmentId], (err, rows) => {
+        if (err) {
+            res.send({message: "Error"});
+        } else {
+            res.send(rows);
+        }
+    })
+}
