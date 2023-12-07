@@ -30,7 +30,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
 
   // Fetch data from the database
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/visits/1")
+    fetch("http://localhost:3000/vital_signs/1")
       .then((response) => {
         return response.json();
       })
@@ -39,13 +39,63 @@ function ViewModal({ isVisible, onClose, rowData }) {
       });
   };
 
+  useEffect(() => {
+    fetchVisitData();
+  }, []);
+
+  const data = visits;
+
+  // JSDoc for autocompletion
+  /**@type import('@tanstack/react-table').ColumnDef<any>*/
+  const columns = [
+    {
+      header: "Temperature",
+      accessorKey: "temperature",
+    },
+    {
+      header: "Pulse Rate",
+      accessorKey: "pulse_rate",
+    },
+    {
+      header: "Systolic BP",
+      accessorKey: "systolic_bp",
+    },
+    {
+      header: "Diastolic BP",
+      accessorKey: "diastolic_bp",
+    },
+    {
+      header: "Time Taken",
+      accessorKey: "time_taken",
+    },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      globalFilter: filtering,
+      sorting: sorting,
+      // pagination: {
+      //   pageSize: 3,
+      //   pageIndex: 0,
+      // },
+    },
+    onGlobalFilterChange: setFiltering,
+    onSortingChange: setSorting,
+  });
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center">
         <div className="w-[600px] flex flex-col">
           {/* Close Button */}
           <button
-            className=" text-white text-xl place-self-end"
+            className=" text-white text-xs place-self-end"
             onClick={() => onClose()}
           >
             <IoMdCloseCircleOutline />
@@ -145,6 +195,112 @@ function ViewModal({ isVisible, onClose, rowData }) {
                 </p>
               </div>
             </div> */}
+
+            {/* Table */}
+            <div className="flex flex-col rounded-lg border-2">
+              <table className="divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          className="py-3 px-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider"
+                          key={header.id}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {/* Sorting */}
+                          {
+                            { asc: "🔽", desc: "🔼" }[
+                              header.column.getIsSorted() ?? null
+                            ]
+                          }
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {table.getRowModel().rows.map((row) => (
+                    <tr key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td className="px-2 py-4 text-center" key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {/* End of Table */}
+            <div className="flex flex-row justify-between items-center mt-4">
+              {/* Pagination */}
+              <div className="pl-2">
+                Page{" "}
+                <strong>
+                  {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
+                </strong>
+              </div>
+
+              {/* Page Results */}
+              <div className="ml-4">
+                <select
+                  className="bg-gray-50 hover:bg-gray-300 rounded-lg px-2"
+                  value={table.getState().pagination.pageSize}
+                  onChange={(e) => {
+                    table.setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[1, 3].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Pagination button */}
+              <div className="pr-2">
+                <button
+                  className="bg-gray-50 hover:bg-gray-300 rounded-l-lg border border-r-black px-2"
+                  onClick={() => table.setPageIndex(0)}
+                >
+                  {/* First Page */}
+                  <RxDoubleArrowLeft size={18} />
+                </button>
+                <button
+                  className="bg-gray-50 hover:bg-gray-300 border border-r-black px-2"
+                  disabled={!table.getCanPreviousPage()}
+                  onClick={() => table.previousPage()}
+                >
+                  {/* Previous Page */}
+                  <RxChevronLeft size={18} />
+                </button>
+                <button
+                  className="bg-gray-50 hover:bg-gray-300 border border-r-black px-2"
+                  disabled={!table.getCanNextPage()}
+                  onClick={() => table.nextPage()}
+                >
+                  {/* Next Page */}
+                  <RxChevronRight size={18} />
+                </button>
+                <button
+                  className="bg-gray-50 hover:bg-gray-300 rounded-r-lg px-2"
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                >
+                  {/* Last Page */}
+                  <RxDoubleArrowRight size={18} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
