@@ -16,7 +16,7 @@ function App() {
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/visit" element={<Visit />} />
         </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
     </>
   )
 }
