@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar-menu fixed flex h-screen w-28 flex-col overflow-auto bg-custom-blue font-Montserrat text-white shadow-2xl ">
+    <div className="navbar-menu fixed flex h-screen w-28 flex-col overflow-auto bg-custom-blue font-Montserrat text-white shadow ">
       <div>
         <img src={Logo} className="mx-auto my-6 h-24" alt="Page Logo" />
       </div>
@@ -55,6 +55,7 @@ const Navbar = () => {
 
 const NavItem = ({ icon, text }) => {
   const navigate = useNavigate();
+
   const handleClick = () => {
     if (text === "Add Record") {
       navigate("/addRecord");
@@ -64,6 +65,8 @@ const NavItem = ({ icon, text }) => {
       navigate("/calendar");
     } else if (text === "Dashboard") {
       navigate("/dashboard");
+    } else if (text === "Manage") {
+      navigate("/manage");
     }
   };
   return (

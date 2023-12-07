@@ -170,6 +170,27 @@ app.get("/signout", (req, res) => {
   });
 });
 
+//Read Accounts List
+app.get("/manageAccountList", (req, res) => {
+  // Corrected SQL query
+  const sql =
+    "SELECT account_id, username, last_name, first_name, middle_name, DATE_FORMAT(birthdate, '%m-%d-%Y') as birthdate, is_admin, is_deactivated, account_id as view_id FROM `account`";
+
+  connection.query(sql, (error, result) => {
+    if (error) {
+      console.error("Error fetching account information:", error);
+      res.status(500).send({ message: "Internal Server Error" });
+    } else {
+      if (result.length === 0) {
+        // No account information found
+        res.status(404).send({ message: "No Accounts List found" });
+      } else {
+        res.status(200).send(result);
+      }
+    }
+  });
+});
+
 //Patient Info List Page
 app.get("/patientInfoList", (req, res) => {
   connection.query(

@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import AccountSession from "./components/accountSession.jsx";
 import Visit from "./pages/Visit.jsx";
 import Calendar from "./pages/calender.jsx";
+import Manage from "./pages/Manage.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/patientRecord/:patientId" element={<PatientRecord />} />
           <Route path="/visit/:patientId" element={<Visit />} />
           <Route exact path="/calendar/*" element={<Calendar />} />
+          <Route path="/manage" element={<Manage />} />
 
           <Route index element={<Login />} />
         </Routes>
