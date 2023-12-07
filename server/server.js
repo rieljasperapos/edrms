@@ -112,7 +112,6 @@ app.get('/signout', (req, res) => {
 // For the visit table and view modal
 // http://localhost:3000/visits/2
 app.get('/visits/:patientID', (req, res) => {
-    console.log(req.body);
     const sqlQuery = `
     SELECT
     DATE_FORMAT(v.date_visit, '%m-%d-%Y') AS date_visit,
@@ -138,6 +137,32 @@ ORDER BY
     `;
 
     connection.query(sqlQuery,[req.params.patientID],(error, rows, fields) => {
+        if (error) {
+            console.error('Error executing SQL query:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
+// For the vital sign table in view modal
+// http://localhost:3000/vital_signs/1
+app.get('/vital_signs/:visitID', (req, res) => {
+    const sqlQuery = `
+    SELECT
+        temperature,
+        pulse_rate,
+        systolic_bp,
+        diastolic_bp,
+        time_taken
+    FROM
+        vital_signs
+    WHERE
+        visit_id = ?;
+    `;
+
+    connection.query(sqlQuery,[req.params.visitID],(error, rows, fields) => {
         if (error) {
             console.error('Error executing SQL query:', error);
             res.status(500).send('Internal Server Error');

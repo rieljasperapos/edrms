@@ -32,13 +32,11 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response, you can close the modal or show a success message
         console.log(data);
         onClose(); // Close the modal
       })
       .catch((error) => {
         console.error("Error:", error);
-        // Handle the error, show an error message, etc.
       });
   };
 

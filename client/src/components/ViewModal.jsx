@@ -1,12 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { AiOutlinePlus } from "react-icons/ai";
 import VitalSignModal from "./VitalSignModal";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
+import {
+  RxDoubleArrowLeft,
+  RxDoubleArrowRight,
+  RxChevronLeft,
+  RxChevronRight,
+} from "react-icons/rx";
 
 function ViewModal({ isVisible, onClose, rowData }) {
   if (!isVisible) return null;
 
   const [showModal3, setShowModal3] = useState(false);
+
+  const [visits, setVisits] = useState([]);
+  const [filtering, setFiltering] = useState("");
+  const [sorting, setSorting] = useState([]);
+
+  const [selectedRowData, setSelectedRowData] = useState(null);
+
+  // Fetch data from the database
+  const fetchVisitData = () => {
+    fetch("http://localhost:3000/visits/1")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setVisits(data);
+      });
+  };
 
   return (
     <>
@@ -87,7 +118,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
                 Add Vital Signs
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-2 gap-4">
               <div className=" border border-gray-300 p-2 rounded-lg">
                 <p>
                   <strong>Temperature:</strong> {rowData.temperature}
@@ -113,7 +144,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
                   <strong>Time:</strong> {rowData.time_taken}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
