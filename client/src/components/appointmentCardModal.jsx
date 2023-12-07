@@ -5,7 +5,7 @@ import { GoPersonFill } from "react-icons/go";
 import EditAppointment from './editAppointmentModal';
 import { useState } from 'react';
 
-const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails }) => {
+const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails, fetchAppointments }) => {
     const [showEdit, setShowEdit] = useState(false);
     const formatDate = (dateString) => {
         const options = {
@@ -36,6 +36,7 @@ const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails }) => {
 
     const handleClick = () => {
         setShowEdit(true);
+        setShowCard(false);
     }
 
     console.log(showEdit);
@@ -94,7 +95,7 @@ const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails }) => {
                 </div>
             )}
             {showEdit && (
-                <EditAppointment isVisible={showEdit} handleClose={() => setShowEdit(false)} appointmentDetails={appointmentDetails} />
+                <EditAppointment isVisible={showEdit} handleClose={() => setShowEdit(false)} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments} />
             )}
         </>
     );

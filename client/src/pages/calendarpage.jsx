@@ -15,26 +15,7 @@ const Calendar = () => {
     const [appointmentDetails, setAppointmentDetails] = useState({});
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetch('http://localhost:3000/session', {
-            credentials: 'include',
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (!data.valid) {
-                navigate('/signin');
-                console.log(data);
-            }
-        })
-        .catch((err) => {
-            console.error(err.message);
-        })
-
+    const fetchAppointments = () => {
         fetch('http://localhost:3000/appointments', {
             method: 'GET',
         })
@@ -55,7 +36,30 @@ const Calendar = () => {
             .catch(err => {
                 console.error(err.message);
             })
-    }, [showAddAppointmentsModal, appointmentDetails])
+    }
+
+    useEffect(() => {
+        fetch('http://localhost:3000/session', {
+            credentials: 'include',
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (!data.valid) {
+                navigate('/signin');
+                console.log(data);
+            }
+        })
+        .catch((err) => {
+            console.error(err.message);
+        })
+
+        fetchAppointments();
+    }, [showAddAppointmentsModal])
     
     const handleClose = () => {
         setShowAppointmentCard(false);
@@ -68,7 +72,7 @@ const Calendar = () => {
     return (
         <>
             <Navbar />
-            <AppointmentCard isVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} />
+            <AppointmentCard isVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments}/>
             <Contents>
                 <Routes>
                     <Route 

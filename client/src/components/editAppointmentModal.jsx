@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails }) => {
+const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails, fetchAppointments }) => {
     const [date, setDate] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [timeSchedule, setTimeSchedule] = useState('');
@@ -42,6 +42,9 @@ const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails }) =
             })
             .catch(err => {
                 console.error(err.message);
+            })
+            .finally(() => {
+                fetchAppointments();
             })
     }
 
