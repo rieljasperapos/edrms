@@ -30,7 +30,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
 
   // Fetch data from the database
   const fetchVisitData = () => {
-    fetch("http://localhost:3000/vital_signs/1")
+    fetch("http://localhost:3000/vital_signs/2")
       .then((response) => {
         return response.json();
       })
