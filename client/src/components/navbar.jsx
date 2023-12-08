@@ -54,7 +54,7 @@ const Navbar = () => {
       <div>
         <img src={Logo} className="mx-auto my-6 h-24" alt="Page Logo" />
       </div>
-      <div className="flex flex-grow flex-col items-center justify-center bg-white text-black">
+      <div className="flex flex-grow flex-col items-center justify-between bg-white text-black">
         <div className="m-auto mt-4 grid">
           <NavItem text="Dashboard" />
           <NavItem icon={FolderIcon} text="Patient Records" />
@@ -62,7 +62,7 @@ const Navbar = () => {
           <NavItem icon={CalendarIcon} text="Calendar" />
           {user.isAdmin ? <NavItem text="Manage" /> : ""}
         </div>
-        <div className="m-auto mt-4 flex flex-col gap-2 ">
+        <div className="mb-10 flex flex-col ">
           <div className="flex flex-col items-center gap-1 rounded-xl p-4 hover:bg-custom-gray hover:shadow-inner-dark">
             <FaUserCircle className="text-4xl" />
             <p className="text-xl">{user.username}</p>

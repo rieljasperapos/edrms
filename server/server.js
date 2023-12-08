@@ -996,9 +996,13 @@ app.get("/appointments", (req, res) => {
   const sql = `SELECT * FROM appointment`;
   connection.query(sql, (err, rows) => {
     if (err) {
-      res.send({ message: "Error fetching the data" });
+      res.status(500).send({ message: "Error fetching the appointments" });
     } else {
-      res.send(rows);
+      res.status(200).send({
+        success: true,
+        message: "Appointments fetched successfully",
+        data: rows,
+      });
     }
   });
 });
@@ -1022,6 +1026,79 @@ app.post("/addAppointment", (req, res) => {
       } else {
         res.send({ message: "Successfully Added" });
       }
+    },
+  );
+});
+
+//Get treatment List
+app.get("/treatmentList", (req, res) => {
+  const sql = `SELECT treatment_id, treatment_name, treatment_fee, treatment_id as edit_id, treatment_id as delete_id FROM treatment`;
+  connection.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).send({ message: "Error fetching the treatment data" });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: "Treatment list fetched successfully",
+        data: rows,
+      });
+    }
+  });
+});
+
+//Add treatment -- CREATE
+app.post("/addTreatment", (req, res) => {
+  const { treatment_name, treatment_fee } = req.body;
+
+  if (!treatment_name || !treatment_fee) {
+    return res
+      .status(400)
+      .send({ message: "Treatment name and fee are required" });
+  }
+
+  const sql =
+    "INSERT INTO treatment (treatment_name, treatment_fee) VALUES (?, ?)";
+  connection.query(sql, [treatment_name, treatment_fee], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .send({ message: "Error adding the treatment", error: err });
+    }
+
+    res.status(201).send({
+      success: true,
+      message: "Treatment added successfully",
+    });
+  });
+});
+
+//Edit treatment
+app.put("/updateTreatment/:treatmentId", (req, res) => {
+  const { treatment_name, treatment_fee } = req.body;
+  const treatmentId = req.params.treatmentId;
+
+  if (!treatment_name || !treatment_fee) {
+    return res
+      .status(400)
+      .send({ message: "Treatment name and fee are required" });
+  }
+
+  const sql =
+    "UPDATE treatment SET treatment_name = ?, treatment_fee = ? WHERE treatment_id = ?";
+  connection.query(
+    sql,
+    [treatment_name, treatment_fee, treatmentId],
+    (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ message: "Error updating the treatment", error: err });
+      }
+
+      res.status(200).send({
+        success: true,
+        message: "Treatment updated successfully",
+      });
     },
   );
 });

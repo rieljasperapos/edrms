@@ -32,7 +32,7 @@ const calendarMonthView = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/appointments", {
+    fetch("http://localhost:3000/`appointments`", {
       method: "GET",
     })
       .then((response) => {

@@ -4,8 +4,11 @@ import Navbar from "../components/navbar.jsx";
 import AccountsDataTable from "../components/AccountsDataTable.jsx";
 import { FaAddressBook } from "react-icons/fa6";
 import { FaTooth } from "react-icons/fa";
+import useAuth from "../hooks/useAuth.js";
+import TreatmentListTable from "../components/TreatmentListTable.jsx";
 
 function Manage() {
+  const { authenticated } = useAuth();
   const [accountsMgtView, setAccountsMgtView] = useState(true);
   const [treatmentListView, setTreatmentListView] = useState(false);
 
@@ -45,6 +48,7 @@ function Manage() {
           </div>
         </h1>
         {accountsMgtView && <AccountsDataTable />}
+        {treatmentListView && <TreatmentListTable />}
       </Contents>
     </>
   );

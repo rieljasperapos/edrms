@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
+import useAuth from "../hooks/useAuth.js";
 
 const Dashboard = () => {
   const [name, setName] = useState("");
   const navigate = useNavigate();
+  const { authenticated, username } = useAuth();
 
   const handleLogout = () => {
     fetch("http://localhost:3000/signout", {
@@ -23,26 +25,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/dashboard", {
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.valid) {
-          setName(data.username);
-        } else {
-          navigate("/signin");
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  }, []);
+    setName(username);
+    console.log(username);
+  }, [username]); // Include username as a dependency
 
   return (
     <>

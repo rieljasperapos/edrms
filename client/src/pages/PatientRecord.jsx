@@ -15,8 +15,10 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { MdViewList } from "react-icons/md";
 import { FaTooth } from "react-icons/fa6";
 import { FaHeartbeat } from "react-icons/fa";
+import useAuth from "../hooks/useAuth.js";
 
 function PatientRecord() {
+  const { authenticated } = useAuth();
   const [modalHealthHistoryVisible, setModalHealthHistoryVisible] =
     useState(false);
   const [DeleteModalVisible, setDeleteModalVisible] = useState(false);

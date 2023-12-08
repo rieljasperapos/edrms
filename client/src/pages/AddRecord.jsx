@@ -5,8 +5,10 @@ import Navbar from "../components/navbar.jsx";
 import { useNavigate } from "react-router-dom";
 
 import { MdError } from "react-icons/md";
+import useAuth from "../hooks/useAuth.js";
 
 function AddRecord() {
+  const { authenticated } = useAuth();
   // State variables for input fields
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");

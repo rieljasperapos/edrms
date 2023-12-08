@@ -44,7 +44,10 @@ function Login() {
           if (data.message === "Account is deactivated") {
             setNotDeactivatedAcocunt(data.valid);
           }
-          if (data.message === "User not found") {
+          if (
+            data.message === "User not found" ||
+            data.message === "Invalid Credentials"
+          ) {
             setValidAccount(data.valid);
           }
           console.log(data.message);

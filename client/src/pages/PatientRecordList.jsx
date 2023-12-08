@@ -18,8 +18,10 @@ import { MdViewList } from "react-icons/md";
 import Contents from "../components/contents.jsx";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
+import useAuth from "../hooks/useAuth.js";
 
 function PatientRecordList() {
+  const { authenticated } = useAuth();
   const [data, setData] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
