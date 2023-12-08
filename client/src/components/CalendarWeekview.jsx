@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import AddAppointment from "./addAppointmentsModal";
+import AddAppointment from "./AddAppointmentsModal.jsx";
 
-const CalendarWeekView = () => {
+const CalendarWeekview = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [currentWeek, setCurrentWeek] = useState(dayjs().startOf("week"));
   const [showModal, setShowModal] = useState(false);
@@ -65,7 +65,7 @@ const CalendarWeekView = () => {
       .then((data) => {
         if (data) {
           // console.log(data);
-          setAppointments(data);
+          setAppointments(data.data);
         } else {
           console.log("No data found");
         }
@@ -218,4 +218,4 @@ const CalendarWeekView = () => {
   );
 };
 
-export default CalendarWeekView;
+export default CalendarWeekview;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-import Contents from "../components/contents.jsx";
-import Navbar from "../components/navbar.jsx";
+import Contents from "../components/Contents.jsx";
+import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
 
 import { MdError } from "react-icons/md";
@@ -23,7 +23,6 @@ function AddRecord() {
   const [isFormValid, setFormValid] = useState(false);
   const [isValidContactNumber, setValidContactNumber] = useState(false);
   const [isValidEmail, setValidEmail] = useState(true);
-  const [submitError, setSubmitError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -127,16 +126,11 @@ function AddRecord() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data); // Log the response from the server
+        navigate("/patientRecordList?addRecordSuccess=true");
       })
       .catch((error) => {
         console.error("Error submitting form:", error);
-        setSubmitError(true);
         // Handle or display an error message to the user
-      })
-      .finally(() => {
-        if (!submitError) {
-          navigate("/patientRecordList");
-        }
       });
   };
 

@@ -1,6 +1,6 @@
 import VisitTable from "../components/VisitTable";
-import Navbar from "../components/navbar.jsx";
-import Contents from "../components/contents.jsx";
+import Navbar from "../components/Navbar.jsx";
+import Contents from "../components/Contents.jsx";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";

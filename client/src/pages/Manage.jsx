@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Contents from "../components/contents.jsx";
-import Navbar from "../components/navbar.jsx";
+import Contents from "../components/Contents.jsx";
+import Navbar from "../components/Navbar.jsx";
 import AccountsDataTable from "../components/AccountsDataTable.jsx";
 import { FaAddressBook } from "react-icons/fa6";
 import { FaTooth } from "react-icons/fa";

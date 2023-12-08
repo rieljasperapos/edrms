@@ -477,6 +477,7 @@ FROM
     GROUP BY
       patient_id
   ) recent_visit ON p.patient_id = recent_visit.patient_id
+  WHERE is_deleted = 0
 ORDER BY
   p.last_name ASC;`,
     (error, result) => {
@@ -562,7 +563,9 @@ app.post("/addRecord", (req, res) => {
                     res.status(500).send({ message: "Internal Server Error" });
                   });
                 } else {
-                  res.status(200).send({ message: "Registered Successfully" });
+                  res
+                    .status(200)
+                    .send({ message: "Record Added Successfully" });
                 }
               });
             }
@@ -1103,6 +1106,7 @@ app.put("/updateTreatment/:treatmentId", (req, res) => {
   );
 });
 
+//Soft Delete Treatment
 app.put("/deleteTreatment/:treatmentId", (req, res) => {
   const treatmentId = req.params.treatmentId;
 
@@ -1120,6 +1124,153 @@ app.put("/deleteTreatment/:treatmentId", (req, res) => {
       message: "Treatment soft deleted successfully",
     });
   });
+});
+
+//Tooth list Read
+app.get("/toothNumbers", (req, res) => {
+  const sql = "SELECT `tooth_number` FROM `tooth`";
+
+  connection.query(sql, (err, rows) => {
+    if (err) {
+      return res
+        .status(500)
+        .send({ message: "Error fetching tooth numbers", error: err });
+    }
+
+    const toothNumbers = rows.map((row) => row.tooth_number);
+
+    res.status(200).send({
+      success: true,
+      message: "Tooth numbers fetched successfully",
+      data: toothNumbers,
+    });
+  });
+});
+
+//Get treatment List
+app.get("/teethChart/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+  const sql =
+    "SELECT tooth_number, status FROM teeth_status WHERE patient_id = ?";
+
+  connection.query(sql, [patientId], (err, rows) => {
+    if (err) {
+      res.status(500).send({ message: "Error fetching the treatment data" });
+    } else {
+      res.status(200).send({
+        success: true,
+        message: "Treatment list fetched successfully",
+        data: rows,
+      });
+    }
+  });
+});
+
+// Teeth Chart add tooth
+app.post("/teethChart/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+  const { toothNumber, status } = req.body;
+
+  if (!toothNumber || !status) {
+    return res
+      .status(400)
+      .send({ message: "Tooth Number and status are required" });
+  }
+
+  // Check if tooth number already exists
+  const checkIfExistsSql = `SELECT COUNT(*) as count FROM teeth_status WHERE patient_id = ? AND tooth_number = ?`;
+  connection.query(
+    checkIfExistsSql,
+    [patientId, toothNumber],
+    (checkErr, checkResult) => {
+      if (checkErr) {
+        return res
+          .status(500)
+          .send({ message: "Error checking tooth existence", error: checkErr });
+      }
+
+      const toothCount = checkResult[0].count;
+
+      if (toothCount > 0) {
+        // Tooth number already exists, send an error response
+        return res.status(409).send({ message: "Tooth Number already exists" });
+      }
+
+      // Tooth number doesn't exist, proceed with the insertion
+      const insertSql = `INSERT INTO teeth_status (patient_id, tooth_number, status) VALUES (?, ?, ?)`;
+      connection.query(
+        insertSql,
+        [patientId, toothNumber, status],
+        (insertErr, insertResult) => {
+          if (insertErr) {
+            return res
+              .status(500)
+              .send({ message: "Error adding the tooth", error: insertErr });
+          }
+
+          res.status(201).send({
+            success: true,
+            message: "Update successfully",
+          });
+        },
+      );
+    },
+  );
+});
+
+// Teeth Chart update tooth
+app.put("/teethChart/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+  const { toothNumber, status } = req.body;
+
+  console.log(patientId);
+  console.log(toothNumber);
+  console.log(status);
+  if (!toothNumber || !status) {
+    return res
+      .status(400)
+      .send({ message: "Tooth Number and status are required" });
+  }
+
+  // Check if the tooth exists
+  const checkIfExistsSql = `SELECT COUNT(*) as count FROM teeth_status WHERE patient_id = ? AND tooth_number = ?`;
+  connection.query(
+    checkIfExistsSql,
+    [patientId, toothNumber],
+    (checkErr, checkResult) => {
+      if (checkErr) {
+        return res
+          .status(500)
+          .send({ message: "Error checking tooth existence", error: checkErr });
+      }
+
+      const toothCount = checkResult[0].count;
+
+      if (toothCount === 0) {
+        // Tooth doesn't exist, send an error response
+        return res.status(404).send({ message: "Tooth not found" });
+      }
+
+      // Tooth exists, proceed with the update
+      const updateSql = `UPDATE teeth_status SET status = ? WHERE patient_id = ? AND tooth_number = ?`;
+      connection.query(
+        updateSql,
+        [status, patientId, toothNumber],
+        (updateErr, updateResult) => {
+          if (updateErr) {
+            return res
+              .status(500)
+              .send({ message: "Error updating the tooth", error: updateErr });
+          }
+
+          res.status(200).send({
+            success: true,
+            message: "Update successful",
+          });
+        },
+      );
+    },
+  );
 });
 
 app.listen(port, () => {

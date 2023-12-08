@@ -2,11 +2,11 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { generateDate, months } from "../utils/calendar";
 import dayjs from "dayjs";
 import cn from "../utils/cn";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AddAppointment from "./addAppointmentsModal";
+import AddAppointment from "./AddAppointmentsModal.jsx";
 
-const calendarMonthView = () => {
+const CalendarMonthView = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const currentDate = dayjs();
   const [today, setToday] = useState(currentDate);
@@ -32,7 +32,7 @@ const calendarMonthView = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/`appointments`", {
+    fetch("http://localhost:3000/appointments", {
       method: "GET",
     })
       .then((response) => {
@@ -44,7 +44,7 @@ const calendarMonthView = () => {
       .then((data) => {
         if (data) {
           // console.log(data);
-          setAppointments(data);
+          setAppointments(data.data);
         } else {
           console.log("No data found");
         }
@@ -197,28 +197,29 @@ const calendarMonthView = () => {
                     {date.date()}
                   </h1>
                   <div className="p-2">
-                    {appointments
-                      .filter(
-                        (event) => date.isSame(event.date_schedule),
-                        "day",
-                      )
-                      .map((event, index) => {
-                        const timeParts = event.time_schedule.split(":");
-                        const hours = parseInt(timeParts[0], 10);
-                        const minutes = timeParts[1];
-                        const amPm = hours >= 12 ? "PM" : "AM";
-                        const formattedHours =
-                          hours % 12 === 0 ? 12 : hours % 12;
-                        const formattedTime = `${formattedHours}:${minutes}`;
-                        return (
-                          <div className="mt-2 flex cursor-pointer flex-col gap-2 rounded-lg bg-custom-blue p-2 text-sm text-white transition-transform ease-in hover:scale-105">
-                            <p className="font-semibold">
-                              {formattedTime} {amPm}
-                            </p>
-                            <p>{event.purpose}</p>
-                          </div>
-                        );
-                      })}
+                    {Array.isArray(appointments) &&
+                      appointments
+                        .filter(
+                          (event) => date.isSame(event.date_schedule),
+                          "day",
+                        )
+                        .map((event, index) => {
+                          const timeParts = event.time_schedule.split(":");
+                          const hours = parseInt(timeParts[0], 10);
+                          const minutes = timeParts[1];
+                          const amPm = hours >= 12 ? "PM" : "AM";
+                          const formattedHours =
+                            hours % 12 === 0 ? 12 : hours % 12;
+                          const formattedTime = `${formattedHours}:${minutes}`;
+                          return (
+                            <div className="mt-2 flex cursor-pointer flex-col gap-2 rounded-lg bg-custom-blue p-2 text-sm text-white transition-transform ease-in hover:scale-105">
+                              <p className="font-semibold">
+                                {formattedTime} {amPm}
+                              </p>
+                              <p>{event.purpose}</p>
+                            </div>
+                          );
+                        })}
                     {/* <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment, ${currentDate.format("HH:mm")}` : "")}</p> */}
                   </div>
                 </div>
@@ -231,4 +232,4 @@ const calendarMonthView = () => {
   );
 };
 
-export default calendarMonthView;
+export default CalendarMonthView;

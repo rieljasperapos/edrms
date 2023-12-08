@@ -8,14 +8,15 @@ import InsuranceInfoModal from "../components/InsuranceInfoModal.jsx";
 import XrayModal from "../components/XrayModal.jsx";
 import HealthHistoryModal from "../components/HealthHistoryModal.jsx";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal.jsx";
-import Contents from "../components/contents.jsx";
-import Navbar from "../components/navbar.jsx";
+import Contents from "../components/Contents.jsx";
+import Navbar from "../components/Navbar.jsx";
 
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { MdViewList } from "react-icons/md";
 import { FaTooth } from "react-icons/fa6";
 import { FaHeartbeat } from "react-icons/fa";
 import useAuth from "../hooks/useAuth.js";
+import ToothChartModal from "../components/ToothChartModal.jsx";
 
 function PatientRecord() {
   const { authenticated } = useAuth();
@@ -25,6 +26,7 @@ function PatientRecord() {
   const navigate = useNavigate();
   const [patientId, setPatientId] = useState(parseInt(useParams().patientId));
   const [personalInfo, setPersonalInfo] = useState({});
+  const [isVisibleToothChartModal, setVisibleToothChartModal] = useState(false);
 
   const fetchPersonalInfo = () => {
     fetch(`http://localhost:3000/patientInfo/${patientId}`)
@@ -90,7 +92,12 @@ function PatientRecord() {
                 <MdViewList />
                 VISITS
               </button>
-              <button className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline">
+              <button
+                className="flex items-center gap-1 font-Karla text-3xl font-bold text-green-500 hover:text-green-800 hover:underline"
+                onClick={() => {
+                  setVisibleToothChartModal(true);
+                }}
+              >
                 <FaTooth />
                 TEETH CHART
               </button>
@@ -122,6 +129,13 @@ function PatientRecord() {
           <ConfirmDeleteModal propSetModalVisible={setDeleteModalVisible} />
         )}
       </Contents>
+
+      {isVisibleToothChartModal && (
+        <ToothChartModal
+          propSetVisibleModal={setVisibleToothChartModal}
+          propPatientId={patientId}
+        />
+      )}
     </>
   );
 }

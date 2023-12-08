@@ -15,16 +15,18 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 import { MdViewList } from "react-icons/md";
-import Contents from "../components/contents.jsx";
+import Contents from "../components/Contents.jsx";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/navbar.jsx";
+import Navbar from "../components/Navbar.jsx";
 import useAuth from "../hooks/useAuth.js";
+import { FaCheckCircle } from "react-icons/fa";
 
 function PatientRecordList() {
   const { authenticated } = useAuth();
   const [data, setData] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
+  const [addRecordSuccess, setAddRecordSuccess] = useState(false);
 
   const navigate = useNavigate();
 
@@ -47,6 +49,22 @@ function PatientRecordList() {
     console.log("View clicked for patientId:", patientId);
     navigate(`/patientRecord/${patientId}`);
   };
+
+  useEffect(() => {
+    setAddRecordSuccess(false);
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("addRecordSuccess") === "true") {
+      setAddRecordSuccess(true);
+
+      // Hide the success message after 2 seconds
+      const timeoutId = setTimeout(() => {
+        setAddRecordSuccess(false);
+      }, 1000);
+
+      // Clear the timeout when the component unmounts
+      return () => clearTimeout(timeoutId);
+    }
+  }, []);
 
   const columns = [
     {
@@ -247,6 +265,15 @@ function PatientRecordList() {
           </div>
         </div>
       </Contents>
+      {/* Display success message as a modal at the top */}
+      {addRecordSuccess && (
+        <div className="fixed left-1/2 top-0 -translate-x-1/2 transform rounded-md bg-gray-500 bg-opacity-80 p-4 shadow-md">
+          <div className="flex items-center gap-1 text-green-500">
+            <FaCheckCircle />
+            Record added successfully!
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/navbar.jsx";
+import Navbar from "../components/Navbar.jsx";
 import useAuth from "../hooks/useAuth.js";
 
 const Dashboard = () => {

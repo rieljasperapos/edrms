@@ -12,12 +12,17 @@ import Manage from "./pages/Manage.jsx";
 
 function App() {
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [addRecordSuccess, setAddRecordSucess] = useState(false);
 
   useEffect(() => {
     // Check if the signupSuccess query parameter is present in the URL
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("signupSuccess") === "true") {
       setSignupSuccess(true);
+    }
+
+    if (urlParams.get("addRecordSuccess") === "true") {
+      setAddRecordSucess(true);
     }
   }, []);
 
@@ -37,6 +42,7 @@ function App() {
 
           {/* Use Navigate to redirect after successful signup */}
           {signupSuccess && <Navigate to="/signin" replace />}
+          {addRecordSuccess && <Navigate to="/addRecord" replace />}
 
           <Route index element={<Login />} />
         </Routes>
