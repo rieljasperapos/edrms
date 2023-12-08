@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails, fetchAppointments }) => {
+const editAppointmentsModal = ({ handleClose, EditVisible, appointmentDetails, fetchAppointments }) => {
     const [date, setDate] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [timeSchedule, setTimeSchedule] = useState('');
@@ -35,7 +35,7 @@ const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails, fet
             .then(data => {
                 if (data) {
                     console.log(data);
-                    handleClose()
+                    handleClose();
                 } else {
                     // Handle the case where data is falsy
                 }
@@ -73,7 +73,7 @@ const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails, fet
 
     return (
         <>
-            {isVisible && (<div id="default-modal" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%)] max-h-full">
+            {EditVisible && (<div id="default-modal" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%)] max-h-full">
                 <div className="relative p-4 w-full max-w-3xl max-h-full">
                     <div className="relative bg-white rounded-lg shadow-xl">
                         {/* Modal header */}
@@ -111,7 +111,7 @@ const editAppointmentsModal = ({ handleClose, isVisible, appointmentDetails, fet
                                 <textarea value={purpose} rows="4" type="text" className="p-4 w-96 rounded-lg border" placeholder="e.g Monthly teeth cleaning" onChange={(e) => setPurpose(e.target.value)}></textarea>
                             </div>
                             <div className="mt-10">
-                                <button className="bg-custom-green hover:bg-green-300 text-white p-4 rounded-lg w-96" onClick={handleClick}>Add</button>
+                                <button className="bg-custom-green hover:bg-green-300 text-white p-4 rounded-lg w-96" onClick={handleClick}>Save</button>
                             </div>
                         </div>
                     </div>
