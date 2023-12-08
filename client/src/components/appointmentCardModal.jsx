@@ -4,9 +4,12 @@ import { FaRegCalendar, FaEdit } from "react-icons/fa";
 import { GoPersonFill } from "react-icons/go";
 import EditAppointment from './editAppointmentModal';
 import { useState } from 'react';
+import { FaRegCircleCheck } from "react-icons/fa6";
+import ConfirmCancelAppointment from './confirmCancelAppointment';
 
-const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails, fetchAppointments }) => {
+const AppointmentCard = ({ appointmentVisible, setShowCard, appointmentDetails, fetchAppointments }) => {
     const [showEdit, setShowEdit] = useState(false);
+    const [showCancel, setShowCancel] = useState(false);
     const formatDate = (dateString) => {
         const options = {
             weekday: "long",
@@ -40,10 +43,11 @@ const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails, fetchAppo
     }
 
     console.log(showEdit);
+    console.log(`SHOW CANCEL: ${showCancel}`);
 
     return (
         <>
-            {isVisible && (
+            {appointmentVisible && (
                 <div className="fixed inset-0 flex justify-center items-center">
                     <div className="w-2/5 bg-white rounded-lg overflow-hidden shadow-2xl relative">
                         <div className="absolute top-0 right-0 m-4 flex gap-4">
@@ -81,6 +85,23 @@ const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails, fetchAppo
                                     <GoPersonFill />
                                     <p>Patient: {appointmentDetails.name}</p>
                                 </div>
+                                <div className='flex items-center gap-4 mt-4'>
+                                    <FaRegCircleCheck />
+                                    <p>
+                                        Status: <span className={`font-semibold uppercase ${appointmentDetails.status === 'confirmed' ? 'text-green-500' : 'text-red-500'}`}>{appointmentDetails.status}</span>
+                                    </p>
+                                    {appointmentDetails.status !== 'cancelled' && (
+                                        <h1
+                                            className='text-sm text-red-600 cursor-pointer hover:text-red-400'
+                                            onClick={() => {
+                                                setShowCancel(true);
+                                                setShowCard(false);
+                                            }}
+                                        >
+                                            Would like to cancel the appointment?
+                                        </h1>
+                                    )}
+                                </div>
                             </div>
                             <div className='mt-4'>
                                 {/* <div className='flex items-center gap-4'>
@@ -95,7 +116,10 @@ const AppointmentCard = ({ isVisible, setShowCard, appointmentDetails, fetchAppo
                 </div>
             )}
             {showEdit && (
-                <EditAppointment isVisible={showEdit} handleClose={() => setShowEdit(false)} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments} />
+                <EditAppointment EditVisible={showEdit} handleClose={() => setShowEdit(false)} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments} />
+            )}
+            {showCancel && (
+                <ConfirmCancelAppointment confirmCancelVisible={showCancel} onClose={() => setShowCancel(false)} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments} />
             )}
         </>
     );
