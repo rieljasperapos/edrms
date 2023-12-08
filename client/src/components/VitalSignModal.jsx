@@ -1,8 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 
-function VitalSignModal({ isVisible, onClose }) {
+function VitalSignModal({ isVisible, onClose, visitId }) {
   if (!isVisible) return null;
+
+  const handleSubmit = () => {
+    // Gather values from input fields
+    const temperature = document.getElementById("temperature").value;
+    const pulseRate = document.getElementById("pulseRate").value;
+    const systolicBP = document.getElementById("systolicBP").value;
+    const diastolicBP = document.getElementById("diastolicBP").value;
+    const timeTaken = document.getElementById("timeTaken").value;
+
+    // Prepare data for POST request
+    const formData = {
+      temperature: temperature,
+      pulse_rate: pulseRate,
+      systolic_bp: systolicBP,
+      diastolic_bp: diastolicBP,
+      time_taken: timeTaken,
+      visit_id: 1, // Assuming there is a way to get the visit ID
+    };
+
+    // Send POST request to server
+    fetch("http://localhost:3000/addVitalSigns", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        onClose(); // Close the modal
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <>
@@ -19,6 +55,7 @@ function VitalSignModal({ isVisible, onClose }) {
             {/* Temperature input box */}
             <div className="mb-4">
               <input
+                id="temperature"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="number"
                 min={0}
@@ -28,6 +65,7 @@ function VitalSignModal({ isVisible, onClose }) {
             {/* Pulse rate input box */}
             <div className="mb-4">
               <input
+                id="pulseRate"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="number"
                 min={0}
@@ -38,6 +76,7 @@ function VitalSignModal({ isVisible, onClose }) {
               {/* Blood pressure input box */}
               <div className="mb-4">
                 <input
+                  id="systolicBP"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   min={0}
@@ -47,6 +86,7 @@ function VitalSignModal({ isVisible, onClose }) {
               {/* Blood pressure input box */}
               <div className="mb-4">
                 <input
+                  id="diastolicBP"
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   min={0}
@@ -57,6 +97,7 @@ function VitalSignModal({ isVisible, onClose }) {
             {/* Time input box */}
             <div className="mb-4">
               <input
+                id="timeTaken"
                 className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                 type="time"
                 placeholder="Time"
@@ -65,7 +106,10 @@ function VitalSignModal({ isVisible, onClose }) {
 
             {/* Submit button */}
             <div className="mt-5 flex justify-center">
-              <button className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white">
+              <button
+                className="rounded-lg border-2 h-10 w-52  bg-green-400 hover:bg-green-600 text-white"
+                onClick={handleSubmit}
+              >
                 Submit
               </button>
             </div>

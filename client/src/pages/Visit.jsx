@@ -1,9 +1,9 @@
 import VisitTable from "../components/VisitTable";
 
-function Visit() {
+function Visit({ propPatientId }) {
   return (
     <>
-      <VisitTable />
+      <VisitTable propPatientId={propPatientId} />
     </>
   );
 }
