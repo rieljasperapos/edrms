@@ -2,13 +2,25 @@ import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 
 const UserModal = ({ user, onClose, fetchSession }) => {
+    const formatDate = (dateString) => {
+        const originalDate = new Date(dateString);
+    
+        // Format the date to "yyyy-MM-dd"
+        const year = originalDate.getFullYear();
+        const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = originalDate.getDate().toString().padStart(2, '0');
+    
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+    };
+
     const [editMode, setEditMode] = useState(false);
     const [editedUser, setEditedUser] = useState({
         username: user.username,
         firstName: user.first_name,
         middleName: user.middle_name,
         lastname: user.last_name,
-        birthdate: user.birthdate,
+        birthdate: formatDate(user.birthdate),
     });
 
     const handleEditClick = () => {
@@ -48,18 +60,6 @@ const UserModal = ({ user, onClose, fetchSession }) => {
     }
 
     console.log(editedUser);
-
-    const formatDate = (dateString) => {
-        const originalDate = new Date(dateString);
-    
-        // Format the date to "yyyy-MM-dd"
-        const year = originalDate.getFullYear();
-        const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = originalDate.getDate().toString().padStart(2, '0');
-    
-        const formattedDate = `${year}-${month}-${day}`;
-        return formattedDate;
-    };
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-99 md:inset-0 h-[calc(100%)]">
@@ -125,7 +125,7 @@ const UserModal = ({ user, onClose, fetchSession }) => {
                             <input
                                 type="date"
                                 className="p-2 border"
-                                value={formatDate(editedUser.birthdate)}
+                                value={editedUser.birthdate}
                                 onChange={(e) =>
                                     setEditedUser({ ...editedUser, birthdate: e.target.value })
                                 }
