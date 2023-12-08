@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 
-function AddVisitModal({ isVisible, onClose }) {
+function AddVisitModal({ isVisible, onClose, propFetchVisitTable }) {
   if (!isVisible) return null;
 
   const [treatmentOptions, setTreatmentOptions] = useState([]);
@@ -73,6 +73,7 @@ function AddVisitModal({ isVisible, onClose }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        propFetchVisitTable();
         onClose(); // Close the modal
       })
       .catch((error) => {
@@ -139,7 +140,7 @@ function AddVisitModal({ isVisible, onClose }) {
                       className=""
                       type="checkbox"
                       id="treatment"
-                      value={option.treatment_name}
+                      value={option.treatment_id}
                       onChange={handleTreatmentChange}
                       checked={selectedTreatments.includes(
                         option.treatment_name

@@ -174,20 +174,189 @@ app.get('/vital_signs/:visitID', (req, res) => {
 
 // For the add visit modal
 // http://localhost:3000/addVisit
-app.post('/addVisit', (req, res) => {
-    const { visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes } = req.body;
+// app.post('/addVisit', (req, res) => {
+//     const { visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes } = req.body;
 
-    connection.query('INSERT INTO `visit` (`visit_id`, `patient_id`, `visit_purpose`, `date_visit`, `additional_fees`, `amount_paid`, `discount`, `prescription`, `notes`, `is_deleted`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)', 
-    [visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes], 
-    (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
-        } else {
-            res.status(200).send({ message: 'Visit added successfully.' });
+//     connection.query('INSERT INTO `visit` (`visit_id`, `patient_id`, `visit_purpose`, `date_visit`, `additional_fees`, `amount_paid`, `discount`, `prescription`, `notes`, `is_deleted`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)', 
+//     [visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes], 
+//     (error, results) => {
+//         if (error) {
+//             console.error(error);
+//             res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+//         } else {
+//             res.status(200).send({ message: 'Visit added successfully.' });
+//         }
+//     });
+// })
+
+// app.post('/addVisit', (req, res) => {
+//     const {
+//         patient_id,
+//         visit_purpose,
+//         date_visit,
+//         additional_fees,
+//         amount_paid,
+//         discount,
+//         prescription,
+//         notes,
+//         treatments // Array of selected treatments
+//     } = req.body;
+
+//     const visitInsertQuery = `
+//         INSERT INTO visit (
+//             patient_id,
+//             visit_purpose,
+//             date_visit,
+//             additional_fees,
+//             amount_paid,
+//             discount,
+//             prescription,
+//             notes,
+//             is_deleted
+//         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);
+//     `;
+
+//     connection.beginTransaction((err) => {
+//         if (err) {
+//             console.error('Error starting transaction:', err);
+//             res.status(500).send({ message: 'Internal Server Error' });
+//             return;
+//         }
+
+//         connection.query(
+//             visitInsertQuery,
+//             [patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes],
+//             (error, results, fields) => {
+//                 if (error) {
+//                     connection.rollback(() => {
+//                         console.error('Error inserting visit data:', error);
+//                         res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+//                     });
+//                 } else {
+//                     const visitId = results.insertId;
+
+
+//                     // Insert selected treatments into treatment_rendered table
+//                     const treatmentRenderedInsertQuery = `
+//                         INSERT INTO treatment_rendered (visit_id, treatment_id) VALUES (?, ?), (?, ?), ...;
+//                     `;
+
+//                     const treatmentInsertValues = treatments.map(treatmentId => [visitId, treatmentId]).flat();
+
+//                     connection.query(
+//                         treatmentRenderedInsertQuery,
+//                         treatmentInsertValues,
+//                         (treatmentError) => {
+//                             if (treatmentError) {
+//                                 connection.rollback(() => {
+//                                     console.error('Error inserting treatments:', treatmentError);
+//                                     res.status(400).send({ message: 'Error inserting treatments.' });
+//                                 });
+//                             } else {
+//                                 connection.commit((commitError) => {
+//                                     if (commitError) {
+//                                         connection.rollback(() => {
+//                                             console.error('Error committing transaction:', commitError);
+//                                             res.status(500).send({ message: 'Internal Server Error' });
+//                                         });
+//                                     } else {
+//                                         res.status(200).send({ message: 'Visit added successfully.' });
+//                                     }
+//                                 });
+//                             }
+//                         }
+//                     );
+//                 }
+//             }
+//         );
+//     });
+// });
+
+app.post('/addVisit', (req, res) => {
+    console.log(req.body);
+    const {
+        patient_id,
+        visit_purpose,
+        date_visit,
+        additional_fees,
+        amount_paid,
+        discount,
+        prescription,
+        notes,
+        treatments // Array of selected treatments
+    } = req.body;
+
+    const visitInsertQuery = `
+        INSERT INTO visit (
+            patient_id,
+            visit_purpose,
+            date_visit,
+            additional_fees,
+            amount_paid,
+            discount,
+            prescription,
+            notes,
+            is_deleted
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);
+    `;
+
+    connection.beginTransaction((err) => {
+        if (err) {
+            console.error('Error starting transaction:', err);
+            res.status(500).send({ message: 'Internal Server Error' });
+            return;
         }
+
+        connection.query(
+            visitInsertQuery,
+            [patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes],
+            (error, results, fields) => {
+                if (error) {
+                    connection.rollback(() => {
+                        console.error('Error inserting visit data:', error);
+                        res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+                    });
+                } else {
+                    const visitId = results.insertId;
+
+                    // Insert selected treatments into treatment_rendered table
+                    const treatmentInsertQuery = `INSERT INTO treatment_rendered (visit_id, treatment_id) VALUES (?, ?)`;
+
+                    for (let i = 0; i < treatments.length; i++) {
+                        const treatmentId = treatments[i];
+
+                        connection.query(
+                            treatmentInsertQuery,
+                            [visitId, treatmentId],
+                            (treatmentError, treatmentResult) => {
+                                if (treatmentError) {
+                                    connection.rollback(() => {
+                                        console.error('Error inserting treatment:', treatmentError);
+                                        res.status(400).send({ message: 'Error inserting treatment.' });
+                                    });
+                                } else {
+                                    // Handle success if needed
+                                }
+                            }
+                        );
+                    }
+
+                    connection.commit((commitError) => {
+                        if (commitError) {
+                            connection.rollback(() => {
+                                console.error('Error committing transaction:', commitError);
+                                res.status(500).send({ message: 'Internal Server Error' });
+                            });
+                        } else {
+                            res.status(200).send({ message: 'Visit added successfully.' });
+                        }
+                    });
+                }
+            }
+        );
     });
-})
+});
+
 
 // For the treatment dropdown in the add visit modal
 // http://localhost:3000/treatmentDropdownOptions
