@@ -1032,7 +1032,7 @@ app.post("/addAppointment", (req, res) => {
 
 //Get treatment List
 app.get("/treatmentList", (req, res) => {
-  const sql = `SELECT treatment_id, treatment_name, treatment_fee, treatment_id as edit_id, treatment_id as delete_id FROM treatment`;
+  const sql = `SELECT treatment_id, treatment_name, treatment_fee, treatment_id as edit_id, treatment_id as delete_id FROM treatment WHERE is_deleted = 0 ORDER BY treatment_name ASC`;
   connection.query(sql, (err, rows) => {
     if (err) {
       res.status(500).send({ message: "Error fetching the treatment data" });
@@ -1101,6 +1101,25 @@ app.put("/updateTreatment/:treatmentId", (req, res) => {
       });
     },
   );
+});
+
+app.put("/deleteTreatment/:treatmentId", (req, res) => {
+  const treatmentId = req.params.treatmentId;
+
+  // Update the is_deleted field to 1
+  const sql = "UPDATE treatment SET is_deleted = 1 WHERE treatment_id = ?";
+  connection.query(sql, [treatmentId], (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .send({ message: "Error deleting the treatment", error: err });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Treatment soft deleted successfully",
+    });
+  });
 });
 
 app.listen(port, () => {

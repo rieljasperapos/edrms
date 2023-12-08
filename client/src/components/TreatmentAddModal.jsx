@@ -100,6 +100,7 @@ function TreatmentAddModal({
         propSetEditMode(false);
         propFetchTreatmentList();
         propSetUpdateSucess(true);
+        propSetTreatmentData({});
       })
       .catch((error) => {
         // Handle errors

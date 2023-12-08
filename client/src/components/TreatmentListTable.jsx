@@ -13,10 +13,11 @@ import {
   RxChevronLeft,
   RxChevronRight,
 } from "react-icons/rx";
-import { FaRegEdit } from "react-icons/fa";
+import { FaCheckCircle, FaRegEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import TreatmentAddModal from "./TreatmentAddModal.jsx";
 import { AiOutlinePlus } from "react-icons/ai";
+import TreatmentConfirmDelete from "./TreatmentConfirmDelete.jsx";
 
 function AccountsDataTable() {
   const [data, setData] = useState([]);
@@ -26,6 +27,12 @@ function AccountsDataTable() {
     useState(false);
   const [editModeTreatmentModal, setEditModeTreatmentModal] = useState(false);
   const [treatmentDataEdit, setTreatmentDataEdit] = useState({});
+  const [addSuccess, setAddSuccess] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [isVisibleConfirmDeleteModal, setVisibleConfirmDeleteModal] =
+    useState(false);
+  const [toDeleteTreatment, setToDeleteTreatment] = useState({});
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const fetchTreatmentList = () => {
     fetch("http://localhost:3000/treatmentList")
@@ -41,6 +48,39 @@ function AccountsDataTable() {
   useEffect(() => {
     fetchTreatmentList();
   }, []);
+
+  useEffect(() => {
+    // Timer for addSuccess
+    let addSuccessTimer;
+    if (addSuccess) {
+      addSuccessTimer = setTimeout(() => {
+        setAddSuccess(false);
+      }, 1000);
+    }
+
+    // Timer for updateSuccess
+    let updateSuccessTimer;
+    if (updateSuccess) {
+      updateSuccessTimer = setTimeout(() => {
+        setUpdateSuccess(false);
+      }, 1000);
+    }
+
+    // Timer for deleteSuccess
+    let deleteSuccessTimer;
+    if (deleteSuccess) {
+      deleteSuccessTimer = setTimeout(() => {
+        setDeleteSuccess(false);
+      }, 1000);
+    }
+
+    // Cleanup timers on component unmount
+    return () => {
+      clearTimeout(addSuccessTimer);
+      clearTimeout(updateSuccessTimer);
+      clearTimeout(deleteSuccessTimer);
+    };
+  }, [addSuccess, updateSuccess, deleteSuccess]);
 
   const columns = [
     {
@@ -87,6 +127,8 @@ function AccountsDataTable() {
             className="flex items-center gap-1 text-red-500 hover:text-red-900 hover:underline"
             onClick={() => {
               console.log(props.getValue());
+              setToDeleteTreatment(props.row.original);
+              setVisibleConfirmDeleteModal(true);
             }}
           >
             <MdDeleteForever />
@@ -255,7 +297,43 @@ function AccountsDataTable() {
           propSetEditMode={setEditModeTreatmentModal}
           propSetTreatmentData={setTreatmentDataEdit}
           propFetchTreatmentList={fetchTreatmentList}
+          propSetAddSuccess={setAddSuccess}
+          propSetUpdateSucess={setUpdateSuccess}
         />
+      )}
+      {isVisibleConfirmDeleteModal && (
+        <TreatmentConfirmDelete
+          propDeleteData={toDeleteTreatment}
+          propSetModalVisible={setVisibleConfirmDeleteModal}
+          propFetchTreatmentList={fetchTreatmentList}
+          propSetDeleteData={setToDeleteTreatment}
+          propSetDeleteSucess={setDeleteSuccess}
+        />
+      )}
+      {/* Display success message as a modal at the top */}
+      {addSuccess && (
+        <div className="fixed left-1/2 top-0 -translate-x-1/2 transform rounded-md bg-gray-500 bg-opacity-80 p-4 shadow-md">
+          <div className="flex items-center gap-1 text-green-500">
+            <FaCheckCircle />
+            Treatment Added successfully
+          </div>
+        </div>
+      )}
+      {updateSuccess && (
+        <div className="fixed left-1/2 top-0 -translate-x-1/2 transform rounded-md bg-gray-500 bg-opacity-80 p-4 shadow-md">
+          <div className="flex items-center gap-1 text-green-500">
+            <FaCheckCircle />
+            Treatment Updated successfully
+          </div>
+        </div>
+      )}
+      {deleteSuccess && (
+        <div className="fixed left-1/2 top-0 -translate-x-1/2 transform rounded-md bg-gray-500 bg-opacity-80 p-4 shadow-md">
+          <div className="flex items-center gap-1 text-red-500">
+            <FaCheckCircle />
+            Treatment Deleted Successfully
+          </div>
+        </div>
       )}
     </>
   );
