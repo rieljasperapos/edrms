@@ -8,7 +8,10 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
     const [purpose, setPurpose] = useState('');
     const [name, setName] = useState('');
     const [patientExist, setPatientExist] = useState(false);
+    const [validNumber, setValidNumber] = useState(false);
     const navigate = useNavigate();
+
+    const regex = /^\d{11}$/;
 
     // console.log(contactNumber)
     // console.log(timeSchedule)
@@ -85,6 +88,23 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
         });
     }
 
+    const validateContactNumber = (contactNumber) => {
+        if (regex.test(contactNumber)) {
+            console.log("VALID CONTACT NUMBER");
+            setValidNumber(true);
+        } else if (contactNumber === '') {
+            setValidNumber(true);
+        } else {
+            setValidNumber(false);
+        }
+    }
+
+    console.log(validNumber);
+
+    useEffect(() => {
+        validateContactNumber(contactNumber);
+    })
+
     return (
         <>
             {isVisible && (<div id="default-modal" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full backdrop-brightness-50 md:inset-0 h-[calc(100%)] max-h-full">
@@ -120,6 +140,7 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
                             <div className="flex flex-col gap-1">
                                 <p>Contact Number</p>
                                 <input value={contactNumber} type="text" className="p-4 w-96 rounded-lg border" placeholder="09XXXXXXXXX" onChange={(e) => setContactNumber(e.target.value)}></input>
+                                {validNumber || <p className="text-red-500">Please enter a valid 11-digit phone number</p>}
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p>Purpose</p>
