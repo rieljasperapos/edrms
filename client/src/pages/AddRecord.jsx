@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import "../index.css";
 import Contents from "../components/contents.jsx";
 import Navbar from "../components/navbar.jsx";
-import AccountSession from "../components/accountSession.jsx";
 import { useNavigate } from "react-router-dom";
 
 import { MdError } from "react-icons/md";
-import { FaAsterisk } from "react-icons/fa";
 
 function AddRecord() {
   // State variables for input fields
@@ -143,7 +141,6 @@ function AddRecord() {
   return (
     <>
       <Navbar />
-      <AccountSession />
       <Contents>
         <div className="flex items-center justify-between border-b bg-custom-blue px-12 pb-6 pt-8">
           <h1 className="font-Montserrat text-4xl font-bold text-white">

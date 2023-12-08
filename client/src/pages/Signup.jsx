@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
+import useAuth from "../hooks/useAuth.js";
 import Logo from "../assets/dentalClinicLogo.png";
 import Matched from "../assets/icon-check.png";
 import EyeIcon from "../assets/eye-icon.png";
 import { useNavigate } from "react-router-dom";
+import { MdError } from "react-icons/md";
 
 const Signup = () => {
+  const { authenticated } = useAuth();
   const [userName, setUserName] = useState("");
   const [userExist, setUserExist] = useState(false);
   const [password, setPassword] = useState("");
-  const [validPassword, setValidPassword] = useState(false);
-  const [invalidPassword, setInvalidPassword] = useState("");
+  const [validPassword, setValidPassword] = useState(true);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [matchStatus, setMatchStatus] = useState(false);
@@ -24,10 +26,16 @@ const Signup = () => {
     setShowPassword(!showPassword);
   };
 
-  const regex =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/])[A-Za-z\d!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]{8,}$/;
-
   const handleSignup = () => {
+    setUserExist(false);
+    // Validate password before proceeding
+    if (!testPasswordValidity(password, confirmPassword)) {
+      setValidPassword(false);
+      return;
+    } else {
+      setValidPassword(true);
+    }
+
     if (
       !userName ||
       !password ||
@@ -36,13 +44,11 @@ const Signup = () => {
       !middleName ||
       !birthDate
     ) {
-      alert("All fields must be filled out");
-      return;
-    } else if (!validPassword) {
-      alert("Enter a valid password");
+      console.log("All fields must be filled out");
       return;
     }
 
+    // If password is valid, proceed with the fetch request
     fetch(`http://localhost:3000/signup`, {
       method: "POST",
       headers: {
@@ -65,10 +71,10 @@ const Signup = () => {
       })
       .then((data) => {
         if (data.valid) {
-          alert("Successfully Registered");
+          console.log("Successfully Registered");
+          navigate("/signin?signupSuccess=true");
         } else {
           setUserExist(true);
-          alert("User already exist");
         }
         console.log(data);
       })
@@ -77,103 +83,62 @@ const Signup = () => {
       });
   };
 
-  const handleChange = (e) => {
-    const newUserName = e.target.value;
-    setUserName(newUserName);
-    console.log(newUserName);
+  // Validation function outside handleSignup (assuming this is a separate function)
+  const testPasswordValidity = (password, confirmPassword) => {
+    const regex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/])[A-Za-z\d!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]{8,}$/;
+    const isLengthValid = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]/.test(password);
+    const meetsComplexityRequirements = regex.test(password);
 
-    fetch(`http://localhost:3000/accounts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userName: newUserName }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setUserExist(data.exist);
-      })
-      .catch((error) => {
-        console.error(`Error registering user: ${error.message}`);
-      });
+    const isValid =
+      password !== "" &&
+      isLengthValid &&
+      hasUppercase &&
+      hasDigit &&
+      hasSpecialChar &&
+      meetsComplexityRequirements;
+
+    return isValid;
   };
 
-  const validatePassword = (password, confirmPassword) => {
-    // I KNOW ITS MESSY HEHE
-    if (password === "") {
-      setInvalidPassword("");
-      setValidPassword(false);
-    } else if (password.length < 8) {
-      setInvalidPassword(`Invalid Password. Minimum 8 characters required.`);
-      setValidPassword(false);
-    } else if (!/[A-Z]/.test(password)) {
-      setInvalidPassword(
-        "Invalid Password. Must contain at least one uppercase character.",
-      );
-    } else if (!/\d/.test(password)) {
-      setInvalidPassword(
-        `Invalid Password. Must contain at least one number (0-9).`,
-      );
-      setValidPassword(false);
-    } else if (
-      !/(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/])[A-Za-z\d!@#$%^&*()\-_+={}[\]|;:'"<>?,.\/]{8,}/.test(
-        password,
-      )
-    ) {
-      setInvalidPassword(
-        `Invalid Password. Must contain at least one special character.`,
-      );
-      setValidPassword(false);
-    } else if (regex.test(password)) {
-      console.log("Valid Password");
-      setValidPassword(true);
-      setInvalidPassword("");
-    } else {
-      setInvalidPassword("Unexpected error. Please try again.");
-      setValidPassword(false);
-    }
+  // const handleChange = (e) => {
+  //   const newUserName = e.target.value;
+  //   setUserName(newUserName);
+  //   console.log(newUserName);
+  //
+  //   fetch(`http://localhost:3000/accounts`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ userName: newUserName }),
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error(`Error ${response.status}`);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       console.log(data);
+  //       setUserExist(data.exist);
+  //     })
+  //     .catch((error) => {
+  //       console.error(`Error registering user: ${error.message}`);
+  //     });
+  // };
 
+  useEffect(() => {
     setMatchStatus(
       password === confirmPassword &&
         (password !== "" || confirmPassword !== ""),
     );
-  };
-
-  useEffect(() => {
-    validatePassword(password, confirmPassword);
   }, [password, confirmPassword]);
 
   // console.log(matchStatus)
-
-  const handleSignIn = () => {
-    navigate("/signin");
-  };
-
-  useEffect(() => {
-    fetch("http://localhost:3000/dashboard", {
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.valid) {
-          navigate("/patientRecordList");
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  }, []);
 
   return (
     <>
@@ -197,6 +162,12 @@ const Signup = () => {
                 className="w-full rounded-lg border p-2"
                 onChange={(e) => setUserName(e.target.value)}
               ></input>
+              {userExist && (
+                <div className="flex items-center gap-1 pt-1 text-xs text-red-500">
+                  <MdError />
+                  Username already exist
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-center p-4">
@@ -224,6 +195,19 @@ const Signup = () => {
                   />
                 </div>
               </div>
+              {!validPassword && (
+                <div className="pt-1 text-xs text-red-500">
+                  <div className="flex items-center gap-1">
+                    <MdError />
+                    Password must contain:
+                  </div>
+                  <ul>
+                    <li>Minimum 8 characters required</li>
+                    <li>Must contain at least one uppercase character.</li>
+                    <li>Must contain at least one number (0-9)</li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-center p-4">
@@ -316,7 +300,7 @@ const Signup = () => {
                   Already have an account?{" "}
                   <span
                     className="cursor-pointer text-custom-blue transition-transform ease-in hover:text-opacity-60 hover:underline"
-                    onClick={handleSignIn}
+                    onClick={() => navigate("/signin")}
                   >
                     Sign in
                   </span>

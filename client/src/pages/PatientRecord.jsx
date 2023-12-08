@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "../index.css";
 
-import PersonalInfoEditModal from "../components/PersonalInfoEditModal.jsx";
 import PersonalInfoModal from "../components/PersonalInfoModal.jsx";
 import RecentVisitModal from "../components/RecentVisitModal.jsx";
 import InsuranceInfoModal from "../components/InsuranceInfoModal.jsx";
-import InsuranceInfoAddModal from "../components/InsuranceInfoAddModal.jsx";
-
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { MdViewList } from "react-icons/md";
-import { FaTooth } from "react-icons/fa6";
-import { FaHeartbeat } from "react-icons/fa";
 import XrayModal from "../components/XrayModal.jsx";
 import HealthHistoryModal from "../components/HealthHistoryModal.jsx";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal.jsx";
 import Contents from "../components/contents.jsx";
 import Navbar from "../components/navbar.jsx";
-import AccountSession from "../components/accountSession.jsx";
-import { useNavigate, useParams } from "react-router-dom";
+
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { MdViewList } from "react-icons/md";
+import { FaTooth } from "react-icons/fa6";
+import { FaHeartbeat } from "react-icons/fa";
 
 function PatientRecord() {
   const [modalHealthHistoryVisible, setModalHealthHistoryVisible] =
@@ -58,7 +55,6 @@ function PatientRecord() {
   return (
     <>
       <Navbar />
-      <AccountSession />
       <Contents>
         <div className="flex flex-wrap items-center justify-between gap-6 bg-custom-blue pb-6 pl-12 pr-16 pt-8">
           <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">

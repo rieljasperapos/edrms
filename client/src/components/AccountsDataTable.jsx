@@ -14,24 +14,127 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 import { MdViewList } from "react-icons/md";
+import { IoIosWarning } from "react-icons/io";
+import { GrUserAdmin } from "react-icons/gr";
+import { IoPersonRemove } from "react-icons/io5";
+import { MdLockReset } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
 
-function AccountsDataTable({
-  propAccountsList,
-  propSetVisibleAccountView,
-  propSetAccountId,
-}) {
-  const [data, setData] = useState(propAccountsList);
+import AcccountViewModal from "./AcccountViewModal.jsx";
+import AccountResetPassModal from "./AccountResetPassModal.jsx";
+
+function AccountsDataTable({}) {
+  const [data, setData] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
 
-  useEffect(() => {
-    setData(propAccountsList);
-  }, [propAccountsList]);
+  const [isVisibleAccountView, setVisibleAccountView] = useState(false);
+  const [isVisiblePasswordReset, setVisiblePasswordReset] = useState(false);
+  const [viewAccountData, setViewAccountData] = useState({});
+  const [viewId, setViewId] = useState();
+  const [resetPasswordId, setResetPasswordId] = useState();
+  const [isPasswordResetSuccess, setPasswordResetSuccess] = useState(false);
+  const [passwordResetSuccessPopup, setpasswordResetSuccessPopup] =
+    useState(false);
 
-  const handleViewClick = (id) => {
-    propSetVisibleAccountView(true);
-    propSetAccountId(id);
+  const fetchAccountsList = () => {
+    fetch("http://localhost:3000/manageAccountList")
+      .then((response) => response.json())
+      .then((item) => {
+        setData(item);
+      })
+      .catch((error) => {
+        console.error("Error fetching contact data:", error);
+      });
   };
+
+  useEffect(() => {
+    fetchAccountsList();
+  }, []);
+
+  useEffect(() => {
+    if (isPasswordResetSuccess) {
+      setpasswordResetSuccessPopup(true);
+
+      // Set a timeout to hide the popup after 1 second
+      const timeoutId = setTimeout(() => {
+        setpasswordResetSuccessPopup(false);
+        // Set isPasswordResetSuccess to false after hiding the popup
+        setPasswordResetSuccess(false);
+      }, 1000);
+
+      // Clear the timeout when the component unmounts or when a new password reset success occurs
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isPasswordResetSuccess]);
+
+  const handleUpdate = (id) => {
+    const accountObject = data.find((account) => account.account_id === id);
+    // Set the account_id state
+    if (accountObject) {
+      setViewAccountData(accountObject);
+    }
+  };
+
+  const handleMakeAdmin = (accountId, adminStatus) => {
+    fetch(`http://localhost:3000/handleAdminStatus/${accountId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        adminStatus: !adminStatus, // Toggle the admin status
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Make admin successful:", data.message);
+        // Handle success, update state, or trigger a re-fetch if needed
+        fetchAccountsList();
+      })
+      .catch((error) => {
+        console.error("Error making admin:", error.message);
+        // Handle error, show a notification, etc.
+      });
+  };
+
+  const handleDeactivate = (accountId, deactivationStatus) => {
+    const action = deactivationStatus ? "Reactivate" : "Deactivate";
+
+    fetch(`http://localhost:3000/handleDeactivationStatus/${accountId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        deactivationStatus: !deactivationStatus,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(`${action} successful:`, data.message);
+        // Handle success, update state, or trigger a re-fetch if needed
+        fetchAccountsList();
+      })
+      .catch((error) => {
+        console.error(`Error ${action.toLowerCase()}ing:`, error.message);
+        // Handle error, show a notification, etc.
+      });
+  };
+
+  useEffect(() => {
+    handleUpdate(viewId);
+  }, [data]);
 
   const columns = [
     {
@@ -43,16 +146,6 @@ function AccountsDataTable({
       header: "Username",
       accessorKey: "username",
       cell: (props) => <p>{props.getValue()}</p>,
-    },
-    {
-      header: "Last Name",
-      accessorKey: "last_name",
-      cell: (props) => <p>{props.getValue().toUpperCase()}</p>,
-    },
-    {
-      header: "First Name",
-      accessorKey: "first_name",
-      cell: (props) => <p>{props.getValue().toUpperCase()}</p>,
     },
     {
       header: "Admin",
@@ -70,7 +163,7 @@ function AccountsDataTable({
       ),
     },
     {
-      header: "Deactivation Status",
+      header: "Status",
       accessorKey: "is_deactivated",
       cell: (props) => (
         <p
@@ -80,7 +173,7 @@ function AccountsDataTable({
               : "font-bold text-green-500"
           }
         >
-          {props.getValue() ? "YES" : "NO"}
+          {props.getValue() ? "Inactive" : "Active"}
         </p>
       ),
     },
@@ -91,10 +184,74 @@ function AccountsDataTable({
         <div className="flex w-full items-center justify-center">
           <button
             className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
-            onClick={() => handleViewClick(props.getValue())}
+            onClick={() => {
+              setVisibleAccountView(true);
+              handleUpdate(props.getValue());
+              setViewId(props.getValue());
+            }}
           >
             <MdViewList />
             <p>View</p>
+          </button>
+        </div>
+      ),
+    },
+    {
+      header: "",
+      accessorKey: "resetPasswordId",
+      cell: (props) => (
+        <div className="flex w-full items-center justify-center">
+          <button
+            className="flex items-center gap-1 text-blue-500 hover:text-blue-900 hover:underline"
+            onClick={() => {
+              setVisiblePasswordReset(true);
+              setResetPasswordId(props.getValue());
+            }}
+          >
+            <MdLockReset />
+            <p>Reset Password</p>
+          </button>
+        </div>
+      ),
+    },
+    {
+      header: "",
+      accessorKey: "admin_status",
+      cell: (props) => (
+        <div className="flex w-full items-center justify-center">
+          <button
+            className={`flex items-center gap-1 ${
+              props.getValue() === 0
+                ? "text-green-500 hover:text-green-900"
+                : "text-red-500 hover:text-red-900"
+            } hover:underline`}
+            onClick={() =>
+              handleMakeAdmin(props.row.original.account_id, props.getValue())
+            }
+          >
+            {props.getValue() === 0 ? <GrUserAdmin /> : <IoPersonRemove />}
+            <p>{props.getValue() === 0 ? "Make admin" : "Remove admin"}</p>
+          </button>
+        </div>
+      ),
+    },
+    {
+      header: "",
+      accessorKey: "deactivation_status",
+      cell: (props) => (
+        <div className="flex w-full items-center justify-center">
+          <button
+            className={`flex items-center gap-1 ${
+              !props.getValue()
+                ? "text-red-500 hover:text-red-900"
+                : "text-green-500 hover:text-green-900"
+            } hover:underline`}
+            onClick={() =>
+              handleDeactivate(props.row.original.account_id, props.getValue())
+            }
+          >
+            <IoIosWarning />
+            <p>{props.getValue() ? "Reactivate" : "Deactivate"}</p>
           </button>
         </div>
       ),
@@ -119,7 +276,10 @@ function AccountsDataTable({
   return (
     <>
       <div className="mx-12 mb-10 mt-6 flex flex-col">
-        <div className="mb-6 flex flex-row flex-wrap self-end">
+        <div className="mb-6 flex flex-row flex-wrap items-center justify-between">
+          <div className="font-Karla text-2xl font-bold">
+            Accounts Management
+          </div>
           {/* Filtering */}
           <div>
             <input
@@ -238,6 +398,30 @@ function AccountsDataTable({
           </div>
         </div>
       </div>
+
+      {isVisibleAccountView && (
+        <AcccountViewModal
+          propAccountData={viewAccountData}
+          propFetchAccountsList={fetchAccountsList}
+          propSetVisibleAccountView={setVisibleAccountView}
+        />
+      )}
+
+      {isVisiblePasswordReset && (
+        <AccountResetPassModal
+          propResetId={resetPasswordId}
+          propSetVisiblePasswordReset={setVisiblePasswordReset}
+          propSetPasswordResetSuccess={setPasswordResetSuccess}
+        />
+      )}
+      {passwordResetSuccessPopup && (
+        <div className="fixed left-1/2 top-0 -translate-x-1/2 transform rounded-md bg-gray-500 bg-opacity-80 p-4 shadow-md">
+          <div className="flex items-center gap-1 text-green-500">
+            <FaCheckCircle />
+            Password Reset success
+          </div>
+        </div>
+      )}
     </>
   );
 }

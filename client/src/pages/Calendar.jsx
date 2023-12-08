@@ -2,14 +2,12 @@ import MonthView from "../components/calendarMonthView";
 import { Routes, Route, Outlet } from "react-router-dom";
 import WeekView from "../components/calendarWeekView";
 import Navbar from "../components/navbar.jsx";
-import AccountSession from "../components/accountSession.jsx";
 import Contents from "../components/contents.jsx";
 
 const Calendar = () => {
   return (
     <>
       <Navbar />
-      <AccountSession />
       <Contents>
         <Routes>
           <Route path="month" element={<MonthView />} />

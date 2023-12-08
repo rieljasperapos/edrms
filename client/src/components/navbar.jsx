@@ -1,5 +1,5 @@
 // Navbar.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../assets/clinicLogo.png";
 import AddIcon from "../assets/add-icon.png";
 import CalendarIcon from "../assets/calendar-icon.png";
@@ -7,11 +7,14 @@ import FolderIcon from "../assets/folder-icon.png";
 import LogoutIcon from "../assets/logout-icon.png";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { RiHome2Line } from "react-icons/ri";
+import { FaUserCircle } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
 
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState({});
   const handleLogout = () => {
     fetch("http://localhost:3000/signout", {
       credentials: "include",
@@ -28,8 +31,26 @@ const Navbar = () => {
       });
   };
 
+  useEffect(() => {
+    fetch("http://localhost:3000/sessionInfo", {
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }, []);
+
   return (
-    <div className="navbar-menu fixed flex h-screen w-28 flex-col overflow-auto bg-custom-blue font-Montserrat text-white shadow ">
+    <div className="navbar-menu border-gray-300-600 fixed flex h-screen w-28 flex-col overflow-auto border-r bg-custom-blue font-Montserrat text-white shadow-2xl">
       <div>
         <img src={Logo} className="mx-auto my-6 h-24" alt="Page Logo" />
       </div>
@@ -39,15 +60,23 @@ const Navbar = () => {
           <NavItem icon={FolderIcon} text="Patient Records" />
           <NavItem icon={AddIcon} text="Add Record" />
           <NavItem icon={CalendarIcon} text="Calendar" />
-          <NavItem text="Manage" />
+          {user.isAdmin ? <NavItem text="Manage" /> : ""}
         </div>
-        <button
-          id="menu-logout"
-          className="mb-10 mt-auto flex cursor-pointer space-x-2 p-1 hover:bg-custom-gray"
-          onClick={handleLogout}
-        >
-          <img src={LogoutIcon} className="h-6 w-6" alt="Logout Icon" />
-        </button>
+        <div className="m-auto mt-4 flex flex-col gap-2 ">
+          <div className="flex flex-col items-center gap-1 rounded-xl p-4 hover:bg-custom-gray hover:shadow-inner-dark">
+            <FaUserCircle className="text-4xl" />
+            <p className="text-xl">{user.username}</p>
+          </div>
+          <div className="flex justify-center">
+            <button
+              id="menu-logout"
+              className="flex items-center justify-center rounded-xl p-2 hover:bg-custom-gray hover:shadow-inner-dark"
+              onClick={handleLogout}
+            >
+              <BiLogOut className="text-2xl" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

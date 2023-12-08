@@ -46,7 +46,6 @@ const upload = multer({
 });
 
 // Sign up logic (password encryption)
-// Sign up logic (password encryption)
 app.post("/signup", (req, res) => {
   connection.query(
     `SELECT * FROM account WHERE username = ?`,
@@ -114,27 +113,46 @@ app.get("/signup", (req, res) => {
 
 // Sign in logic
 app.post("/signin", (req, res) => {
-  const sql = `SELECT * FROM account WHERE username = ?`;
+  const sql = `SELECT
+  account_id,
+  username,
+  password,
+  last_name,
+  first_name,
+  middle_name,
+  DATE_FORMAT(birthdate, '%m-%d-%Y') as birthdate,
+  is_admin,
+  is_deactivated,
+  super_admin
+FROM
+  account
+WHERE
+  username = ?;`;
   connection.query(sql, [req.body.userName], (err, rows) => {
     if (rows.length === 0) {
       res.send({ message: "User not found", valid: false });
       return;
     }
 
-    console.log("Before setting session:", req.session);
+    // Check if the account is deactivated
+    if (rows[0].is_deactivated) {
+      res.send({ message: "Account is deactivated", valid: false });
+      return;
+    }
 
-    console.log(rows[0].password);
     bcrypt.compare(
       req.body.password,
       rows[0].password,
       (err, isPasswordMatch) => {
         if (isPasswordMatch) {
           req.session.authorized = true;
-          req.session.user = rows[0].username;
-          req.session.is_admin = rows[0].is_admin; // Include is_admin in the session
+          req.session.username = rows[0].username;
+          req.session.lastName = rows[0].last_name;
+          req.session.firstName = rows[0].first_name;
+          req.session.middleName = rows[0].middle_name;
+          req.session.birthdate = rows[0].birthdate;
+          req.session.isAdmin = rows[0].is_admin;
 
-          // req.session.user = rows[0].username;
-          // console.log(req.session);
           console.log("Login successful. Session after login:", req.session);
           res.send({ message: "Login successful", valid: true });
         } else {
@@ -145,20 +163,41 @@ app.post("/signin", (req, res) => {
   });
 });
 
+//Session confirmation
 app.get("/dashboard", (req, res) => {
   console.log("Dashboard route. Session:", req.session);
-  if (req.session.user) {
-    console.log("User found in session. Username:", req.session.user);
+  if (req.session.username) {
+    console.log("User found in session. Username:", req.session.username);
     res.send({
-      valid: true,
-      username: req.session.user,
-      is_admin: req.session.is_admin,
+      valid: req.session.authorized,
+      username: req.session.username,
+      isAdmin: req.session.isAdmin,
     });
   } else {
-    res.send({ message: "Error", valid: false });
+    res.send({ message: "Error session", valid: false });
   }
 });
 
+//Get session INfo
+app.get("/sessionInfo", (req, res) => {
+  console.log("Dashboard route. Session:", req.session);
+  if (req.session.username) {
+    console.log("User found in session. Username:", req.session.username);
+    res.send({
+      valid: req.session.authorized,
+      username: req.session.username,
+      lastname: req.session.lastName,
+      firstName: req.session.firstName,
+      middleName: req.session.middleName,
+      birthdate: req.session.birthdate,
+      isAdmin: req.session.isAdmin,
+    });
+  } else {
+    res.send({ message: "Error no session Info", valid: false });
+  }
+});
+
+//Signout and deactivating session
 app.get("/signout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -173,8 +212,24 @@ app.get("/signout", (req, res) => {
 //Read Accounts List
 app.get("/manageAccountList", (req, res) => {
   // Corrected SQL query
-  const sql =
-    "SELECT account_id, username, last_name, first_name, middle_name, DATE_FORMAT(birthdate, '%m-%d-%Y') as birthdate, is_admin, is_deactivated, account_id as view_id FROM `account`";
+  const sql = `
+  SELECT
+    account_id,
+    username,
+    last_name,
+    first_name,
+    middle_name,
+    DATE_FORMAT(birthdate, '%m-%d-%Y') as birthdate,
+    is_admin,
+    is_deactivated,
+    account_id as view_id,
+    account_id as resetPasswordId,
+    is_admin as admin_status,
+    is_deactivated as deactivation_status
+  FROM account
+  WHERE super_admin != 1
+  ORDER BY is_admin DESC, account_id ASC;
+`;
 
   connection.query(sql, (error, result) => {
     if (error) {
@@ -191,16 +246,239 @@ app.get("/manageAccountList", (req, res) => {
   });
 });
 
+//updateAccount profiles
+app.put("/updateProfile/:accountId", (req, res) => {
+  const accountIdToUpdate = req.params.accountId;
+  const newUsername = req.body.username;
+
+  console.log(req.body);
+  // Check if the new username is already in use
+  connection.query(
+    `SELECT * FROM account WHERE username = ? AND account_id != ?`,
+    [newUsername, accountIdToUpdate],
+    (err, usernameRows) => {
+      if (usernameRows.length !== 0 && err) {
+        res
+          .status(500)
+          .send({ message: "Error checking new username existence" });
+        return;
+      }
+
+      // Check if the username is already in use
+      if (usernameRows.length > 0) {
+        res.status(409).send({ message: "Username is already in use" });
+        return;
+      }
+
+      // Continue with the update if the new username is not in use
+      // Check if there are no rows (username is available)
+      if (usernameRows.length === 0) {
+        connection.query(
+          `SELECT * FROM account WHERE account_id = ?`,
+          [accountIdToUpdate],
+          (err, rows) => {
+            if (err) {
+              console.error("Error checking user existence:", err);
+
+              res
+                .status(500)
+                .send({ message: "Error checking user existence" });
+              return;
+            }
+
+            if (rows.length === 0) {
+              res.status(404).send({ message: "User not found" });
+              return;
+            }
+
+            const existingUser = rows[0];
+
+            // Update user information
+            const updatedUser = {
+              lastName: req.body.lastName || existingUser.last_name,
+              firstName: req.body.firstName || existingUser.first_name,
+              middleName: req.body.middleName || existingUser.middle_name,
+              birthDate: req.body.birthDate || existingUser.birthdate,
+            };
+
+            const sql = `UPDATE account SET username=?, last_name=?, first_name=?, middle_name=?, birthdate=? WHERE account_id=?`;
+
+            connection.query(
+              sql,
+              [
+                newUsername,
+                updatedUser.lastName,
+                updatedUser.firstName,
+                updatedUser.middleName,
+                updatedUser.birthDate,
+                accountIdToUpdate,
+              ],
+              (err) => {
+                if (err) {
+                  res
+                    .status(500)
+                    .send({ message: "Error updating user profile" });
+                } else {
+                  res.send({
+                    message: "Profile updated successfully",
+                    valid: true,
+                  });
+                }
+              },
+            );
+          },
+        );
+      }
+    },
+  );
+});
+
+//reset Password
+app.put("/resetPassword/:accountId", (req, res) => {
+  const newPassword = req.body.newPassword;
+  const id = req.params.accountId;
+
+  console.log(newPassword);
+  console.log(id);
+  if (!newPassword) {
+    return res
+      .status(400)
+      .send({ status: 400, message: "New password is required" });
+  }
+
+  // Check if the user exists
+  connection.query(
+    `SELECT * FROM account WHERE account_id = ?`,
+    [id],
+    (err, rows) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ status: 500, message: "Error checking user existence" });
+      }
+
+      if (rows.length === 0) {
+        return res.status(404).send({ status: 404, message: "User not found" });
+      }
+
+      const existingPassword = rows[0].password;
+
+      // Check if the new password is different from the old password
+      bcrypt.compare(newPassword, existingPassword, (err, isSame) => {
+        if (err) {
+          return res
+            .status(500)
+            .send({ status: 500, message: "Error comparing passwords" });
+        }
+
+        if (isSame) {
+          return res.status(400).send({
+            status: 400,
+            message: "New password must be different from the old password",
+          });
+        }
+
+        // Hash the new password
+        bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+          if (err) {
+            return res
+              .status(500)
+              .send({ status: 500, message: "Error hashing the password" });
+          }
+
+          // Update the user's password in the database
+          connection.query(
+            `UPDATE account SET password = ? WHERE account_id = ?`,
+            [hashedPassword, id],
+            (err, result) => {
+              if (err) {
+                return res
+                  .status(500)
+                  .send({ status: 500, message: "Error updating password" });
+              }
+
+              return res.send({
+                status: 200,
+                message: "Password reset successfully",
+                valid: true,
+              });
+            },
+          );
+        });
+      });
+    },
+  );
+});
+
+// Handle updating admin status
+app.put("/handleAdminStatus/:accountId", (req, res) => {
+  const accountIdToUpdate = req.params.accountId;
+
+  // Assuming req.body.adminStatus is a boolean indicating the new admin status
+  const newAdminStatus = req.body.adminStatus;
+
+  // Update the admin status in the "account" table
+  const sql = "UPDATE account SET is_admin = ? WHERE account_id = ?";
+  connection.query(sql, [newAdminStatus, accountIdToUpdate], (err, result) => {
+    if (err) {
+      console.error("Error updating admin status:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      console.log("Admin status updated successfully");
+      res.status(200).json({ message: "Admin status updated successfully" });
+    }
+  });
+});
+
+// Handle Deactivation accoutn status
+app.put("/handleDeactivationStatus/:accountId", (req, res) => {
+  const accountIdToUpdate = req.params.accountId;
+
+  // Assuming req.body.adminStatus is a boolean indicating the new admin status
+  const newDeactivationStatus = req.body.deactivationStatus;
+
+  // Update the admin status in the "account" table
+  const sql = "UPDATE account SET is_deactivated = ? WHERE account_id = ?";
+  connection.query(
+    sql,
+    [newDeactivationStatus, accountIdToUpdate],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating admin status:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        console.log("Admin status updated successfully");
+        res.status(200).json({
+          message: "Account deactivation status updated successfully",
+        });
+      }
+    },
+  );
+});
+
 //Patient Info List Page
 app.get("/patientInfoList", (req, res) => {
   connection.query(
-    `SELECT p.patient_id, p.last_name, p.first_name, p.middle_name, p.contact_number, IFNULL(DATE_FORMAT(recent_visit.recent_visit_date, '%m-%d-%Y'), NULL) AS recent_visit_date
-     FROM patient p
-     LEFT JOIN ( 
-     SELECT patient_id, MAX(date_visit) AS recent_visit_date
-     FROM visit
-     GROUP BY patient_id) 
-     recent_visit ON p.patient_id = recent_visit.patient_id;`,
+    `SELECT
+  p.patient_id,
+  p.last_name,
+  p.first_name,
+  p.middle_name,
+  p.contact_number,
+  IFNULL(DATE_FORMAT(recent_visit.recent_visit_date, '%m-%d-%Y'), NULL) AS recent_visit_date
+FROM
+  patient p
+  LEFT JOIN (
+    SELECT
+      patient_id,
+      MAX(date_visit) AS recent_visit_date
+    FROM
+      visit
+    GROUP BY
+      patient_id
+  ) recent_visit ON p.patient_id = recent_visit.patient_id
+ORDER BY
+  p.last_name ASC;`,
     (error, result) => {
       if (error) {
         console.error("Error fetching patient information:", error);
@@ -417,18 +695,21 @@ WHERE
 
 //Patient Record Insurance Information READ
 app.get("/patientInsuranceList/:patientId", (req, res) => {
-  const sql = `SELECT
+  const sql = `
+  SELECT
     insurance_info_id,
     insurance_company,
     insurance_id_num,
     DATE_FORMAT(expiration_date, '%m-%d-%Y') AS expiration_date,
     CASE WHEN expiration_date < CURDATE() THEN true ELSE false END AS status,
     company_employed
-FROM
+  FROM
     insurance_info
-WHERE
+  WHERE
     patient_id = ? AND
-    is_deleted = 0;`;
+    is_deleted = 0
+  ORDER BY expiration_date DESC;
+`;
 
   connection.query(sql, [req.params.patientId], (error, result) => {
     if (error) {
@@ -561,7 +842,18 @@ app.post("/patientRecordXray/:patientId", upload.single("xray"), (req, res) => {
 
 //Patient Record Xray List READ
 app.get("/patientXrayList/:patientId", (req, res) => {
-  const sql = `SELECT xray_id, xray_id as xray_id_edit, type, DATE_FORMAT(date_taken, '%m-%d-%Y') AS date_taken, notes FROM xray WHERE patient_id = ? AND is_deleted = 0;`;
+  const sql = `
+  SELECT
+    xray_id,
+    xray_id as xray_id_edit,
+    type,
+    DATE_FORMAT(date_taken, '%m-%d-%Y') AS date_taken,
+    notes
+  FROM xray
+  WHERE patient_id = ?
+    AND is_deleted = 0
+  ORDER BY date_taken DESC;
+`;
   connection.query(sql, [req.params.patientId], (error, result) => {
     if (error) {
       console.error("Error fetching patient information:", error);
@@ -698,6 +990,7 @@ app.put("/patientHealthHistory/:healthHistoryId", (req, res) => {
     },
   );
 });
+
 //Get appointments
 app.get("/appointments", (req, res) => {
   const sql = `SELECT * FROM appointment`;

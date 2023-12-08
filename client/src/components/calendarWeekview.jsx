@@ -94,7 +94,7 @@ const CalendarWeekView = () => {
         />
       </div>
 
-      <div className="p-8">
+      <div className="min-h-full p-8">
         <div className="flex min-w-full items-center justify-between border bg-custom-gray p-6">
           <div className="flex items-center gap-4 p-2">
             <GrFormPrevious
@@ -158,66 +158,61 @@ const CalendarWeekView = () => {
             )}
           </div>
         </div>
-        <div className="h-screen overflow-x-auto border">
-          <table className="min-w-full">
-            <thead>
-              <tr>
-                {daysOfWeek.map((day) => (
-                  <th
-                    key={day.format("YYYY-MM-DD")}
-                    className={`bg-gray-50 px-6 py-3 text-left font-medium uppercase leading-4 tracking-wider text-gray-500`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <p>{day.format("ddd")}</p>
-                      <p
-                        className={`${
-                          day.isSame(today, "day")
-                            ? "bg-red-500 text-white"
-                            : ""
-                        } rounded-full p-4`}
-                      >
-                        {day.format("D")}
-                      </p>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {daysOfWeek.map((day) => (
-                  <td
-                    key={day.format("YYYY-MM-DD")}
-                    className="whitespace-no-wrap border-gray-200 px-6 py-4"
-                  >
-                    {appointments
-                      .filter((event) => day.isSame(event.date_schedule, "day"))
-                      .map((event, index) => {
-                        const timeParts = event.time_schedule.split(":");
-                        const hours = parseInt(timeParts[0], 10);
-                        const minutes = timeParts[1];
-                        const amPm = hours >= 12 ? "PM" : "AM";
-                        const formattedHours =
-                          hours % 12 === 0 ? 12 : hours % 12;
-                        const formattedTime = `${formattedHours}:${minutes}`;
-                        return (
-                          <div
-                            key={index}
-                            className="mb-2 w-44 justify-between rounded-lg bg-custom-blue p-2 text-white"
-                          >
-                            <p className="mb-2">
-                              {formattedTime} {amPm}
-                            </p>
-                            <p>{event.purpose}</p>
-                          </div>
-                        );
-                      })}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <table className="h-full min-w-full border">
+          <thead>
+            <tr>
+              {daysOfWeek.map((day) => (
+                <th
+                  key={day.format("YYYY-MM-DD")}
+                  className={`w-40 border bg-gray-50 px-6 py-3 text-left font-medium uppercase leading-4 tracking-wider text-gray-500`}
+                >
+                  <div className="flex items-center gap-2">
+                    <p>{day.format("ddd")}</p>
+                    <p
+                      className={`${
+                        day.isSame(today, "day") ? "bg-red-500 text-white" : ""
+                      } rounded-full p-4`}
+                    >
+                      {day.format("D")}
+                    </p>
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="h-full">
+              {daysOfWeek.map((day) => (
+                <td
+                  key={day.format("YYYY-MM-DD")}
+                  className="whitespace-no-wrap w-40 border border-b-0 border-gray-200 px-6 py-4"
+                >
+                  {appointments
+                    .filter((event) => day.isSame(event.date_schedule, "day"))
+                    .map((event, index) => {
+                      const timeParts = event.time_schedule.split(":");
+                      const hours = parseInt(timeParts[0], 10);
+                      const minutes = timeParts[1];
+                      const amPm = hours >= 12 ? "PM" : "AM";
+                      const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+                      const formattedTime = `${formattedHours}:${minutes}`;
+                      return (
+                        <div
+                          key={index}
+                          className="mb-2 w-full min-w-full max-w-full justify-between rounded-lg bg-custom-blue p-2 text-white"
+                        >
+                          <p className="mb-2">
+                            {formattedTime} {amPm}
+                          </p>
+                          <p>{event.purpose}</p>
+                        </div>
+                      );
+                    })}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </div>
     </>
   );

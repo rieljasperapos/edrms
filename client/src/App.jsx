@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
-import Navbar from "./components/navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/Dashboard.jsx";
 import AddRecord from "./pages/AddRecord.jsx";
 import PatientRecordList from "./pages/PatientRecordList.jsx";
 import PatientRecord from "./pages/PatientRecord.jsx";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
-import AccountSession from "./components/accountSession.jsx";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Visit from "./pages/Visit.jsx";
-import Calendar from "./pages/calender.jsx";
+import Calendar from "./pages/Calendar.jsx";
 import Manage from "./pages/Manage.jsx";
 
 function App() {
+  const [signupSuccess, setSignupSuccess] = useState(false);
+
+  useEffect(() => {
+    // Check if the signupSuccess query parameter is present in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("signupSuccess") === "true") {
+      setSignupSuccess(true);
+    }
+  }, []);
+
   return (
     <>
       <BrowserRouter>
@@ -24,8 +32,11 @@ function App() {
           <Route path="/patientRecordList" element={<PatientRecordList />} />
           <Route path="/patientRecord/:patientId" element={<PatientRecord />} />
           <Route path="/visit/:patientId" element={<Visit />} />
-          <Route exact path="/calendar/*" element={<Calendar />} />
+          <Route path="/calendar/*" element={<Calendar />} />
           <Route path="/manage" element={<Manage />} />
+
+          {/* Use Navigate to redirect after successful signup */}
+          {signupSuccess && <Navigate to="/signin" replace />}
 
           <Route index element={<Login />} />
         </Routes>

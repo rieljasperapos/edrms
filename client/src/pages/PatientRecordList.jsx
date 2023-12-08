@@ -15,11 +15,9 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 import { MdViewList } from "react-icons/md";
-import PatientListData from "../assets/PatientListData.js";
 import Contents from "../components/contents.jsx";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
-import AccountSession from "../components/accountSession.jsx";
 
 function PatientRecordList() {
   const [data, setData] = useState([]);
@@ -109,7 +107,6 @@ function PatientRecordList() {
   return (
     <>
       <Navbar />
-      <AccountSession />
       <Contents>
         <h1 className="border-b bg-custom-blue px-12 pb-6 pt-8 font-Montserrat text-4xl font-bold text-white">
           Patient Record

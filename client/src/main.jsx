@@ -6,7 +6,7 @@ import App from "./App.jsx";
 import Login from "./pages/Login.jsx";
 import Visit from "./pages/Visit.jsx";
 import Signup from "./pages/Signup.jsx";
-import Dashboard from "./pages/dashboard.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import AddRecord from "./pages/AddRecord.jsx";
 import PatientRecord from "./pages/PatientRecord.jsx";
 import PatientRecordList from "./pages/PatientRecordList.jsx";
