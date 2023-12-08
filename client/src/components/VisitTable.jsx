@@ -99,6 +99,7 @@ function VisitTable({ propPatientID }) {
             <AddVisitModal
               isVisible={showModal}
               onClose={() => setShowModal(false)}
+              propFetchVisitTable={fetchVisitData}
             />
           </div>
 
