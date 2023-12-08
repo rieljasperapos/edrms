@@ -72,7 +72,7 @@ const Calendar = () => {
     return (
         <>
             <Navbar />
-            <AppointmentCard isVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments}/>
+            <AppointmentCard appointmentVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments}/>
             <Contents>
                 <Routes>
                     <Route 
