@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 const addAppointmentsModal = ({ handleClose, isVisible }) => {
@@ -7,6 +7,7 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
     const [timeSchedule, setTimeSchedule] = useState('');
     const [purpose, setPurpose] = useState('');
     const [name, setName] = useState('');
+    const [patientExist, setPatientExist] = useState(false);
     const navigate = useNavigate();
 
     // console.log(contactNumber)
@@ -14,6 +15,14 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
     // console.log(date)
     // console.log(purpose);
     // console.log(name);
+
+    // useEffect(() => {
+    //         setDate('')
+    //         setContactNumber('')
+    //         setTimeSchedule('')
+    //         setPurpose('')
+    //         setName('')
+    // }, []);
 
     const handleClick = (e) => {
         e.preventDefault();
@@ -35,6 +44,12 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
                 if (data) {
                     console.log(data);
                     handleClose();
+                    setDate('');
+                    setContactNumber('');
+                    setTimeSchedule('');
+                    setPurpose('');
+                    setName('');
+                    setPatientExist(false);
                 } else {
                     
                 }
@@ -42,6 +57,32 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
             .catch(err => {
                 console.error(err.message);
             })
+    }
+
+    const handleChange = (e) => {
+        const newName = e.target.value;
+        setName(newName);
+
+        fetch(`http://localhost:3000/appointments/patient`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            setPatientExist(data.exist);
+        })
+        .catch(error => {
+            console.error(`Error cannot find user: ${error.message}`);
+        });
     }
 
     return (
@@ -73,7 +114,8 @@ const addAppointmentsModal = ({ handleClose, isVisible }) => {
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p>Name</p>
-                                <input value={name} type="text" className="p-4 w-96 rounded-lg border" placeholder="e.g John Doe" onChange={(e) => setName(e.target.value)}></input>
+                                <input value={name} type="text" className="p-4 w-96 rounded-lg border" placeholder="e.g Morales, Stanleigh Balmes " onChange={handleChange}></input>
+                                {patientExist && <p className="text-green-500">A previous patient, this name exist in the records</p>}
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p>Contact Number</p>
