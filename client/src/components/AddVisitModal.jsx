@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import Datepicker from "tailwind-datepicker-react";
 
 function AddVisitModal({ isVisible, onClose }) {
   if (!isVisible) return null;
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const handleChange = (selectedDate) => {
-    console.log(selectedDate);
-  };
-  const handleCloseDatePicker = (state) => {
-    setShowDatePicker(state);
-  };
-  const options = {};
+  const [treatmentOptions, setTreatmentOptions] = useState([]);
+
+  useEffect(() => {
+    // Fetch treatment options when the component mounts
+    fetch("http://localhost:3000/treatmentDropdownOptions")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTreatmentOptions(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching treatment options: ", error);
+      });
+  }, []);
 
   const handleSubmit = () => {
     // Gather values from input fields
@@ -70,15 +79,6 @@ function AddVisitModal({ isVisible, onClose }) {
           {/* Modal content */}
           <div className="bg-white p-4 rounded-md ">
             <div className="grid grid-cols-2 gap-4">
-              {/* Date picker */}
-              {/* <div className=" w-72 mr-3 pr-4">
-                <Datepicker
-                  options={{}}
-                  onChange={handleChange}
-                  show={showDatePicker}
-                  setShow={handleCloseDatePicker}
-                />
-              </div> */}
               <div>
                 <input
                   id="dateVisit"
@@ -95,14 +95,25 @@ function AddVisitModal({ isVisible, onClose }) {
                   placeholder="Visit Purpose"
                 />
               </div>
-              {/* Treatment input box */}
+              {/* Treatment drop down */}
               <div>
-                <input
+                <select
                   id="treatment"
                   className="w-full pl-3 rounded-lg border border-gray-300 h-10"
-                  type="text"
-                  placeholder="Treatment"
-                />
+                  defaultValue="" // Set the default value here
+                >
+                  <option value="" disabled>
+                    Select Treatment
+                  </option>
+                  {treatmentOptions.map((option) => (
+                    <option
+                      key={option.treatment_id}
+                      value={option.treatment_name}
+                    >
+                      {option.treatment_name} - ₱ {option.treatment_fee}
+                    </option>
+                  ))}
+                </select>
               </div>
               {/* Prescription input box */}
               <div>

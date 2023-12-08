@@ -189,6 +189,28 @@ app.post('/addVisit', (req, res) => {
     });
 })
 
+// For the treatment dropdown in the add visit modal
+// http://localhost:3000/treatmentDropdownOptions
+app.get('/treatmentDropdownOptions', (req, res) => {
+    const sqlQuery = `
+    SELECT
+        treatment_id,
+        treatment_name,
+        treatment_fee
+    FROM
+        treatment;
+    `;
+
+    connection.query(sqlQuery,(error, rows, fields) => {
+        if (error) {
+            console.error('Error executing SQL query:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
 // For the vital sign modal
 // http://localhost:3000/addVitalSigns
 app.post('/addVitalSigns', (req, res) => {
