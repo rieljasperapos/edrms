@@ -81,7 +81,7 @@ const CalendarWeekView = (props) => {
 
                         <h1 className="font-medium text-xl">{currentWeek.format("MMMM YYYY")}</h1>
                     </div>
-                    <div className="relative inline-block text-left ml-4">
+                    <div className="inline-block text-left ml-4">
                         <button
                             type="button"
                             className="bg-white hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center"
@@ -100,7 +100,7 @@ const CalendarWeekView = (props) => {
                             </svg>
                         </button>
                         {isDropdownOpen && (
-                            <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
+                            <div className="origin-top-right absolute right-0 mt-2 mr-16 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
                                 <div className="py-1">
                                     <a
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
