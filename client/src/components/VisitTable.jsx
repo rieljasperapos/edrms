@@ -17,7 +17,7 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 
-function VisitTable() {
+function VisitTable({ propPatientID }) {
   const [visits, setVisits] = useState([]);
   const [filtering, setFiltering] = useState("");
   const [sorting, setSorting] = useState([]);
@@ -26,12 +26,9 @@ function VisitTable() {
 
   const [selectedRowData, setSelectedRowData] = useState(null);
 
-  // Fetch API Mock Data
+  // Fetch data from the database
   const fetchVisitData = () => {
-    const jsonFileUrl =
-      "https://raw.githubusercontent.com/hello-isa/react-dental-record-management-system/main/visit-page-mock-data.json";
-
-    fetch(jsonFileUrl)
+    fetch("http://localhost:3000/visits/1")
       .then((response) => {
         return response.json();
       })
@@ -51,7 +48,7 @@ function VisitTable() {
   const columns = [
     {
       header: "Date",
-      accessorKey: "date",
+      accessorKey: "date_visit",
     },
     {
       header: "Visit Purpose",

@@ -169,6 +169,106 @@ app.use('/appointments', appointmentRoutes);
 //     })
 // })
 
+// For the visit table and view modal
+// http://localhost:3000/visits/2
+app.get('/visits/:patientID', (req, res) => {
+    const sqlQuery = `
+    SELECT
+    DATE_FORMAT(v.date_visit, '%m-%d-%Y') AS date_visit,
+    v.visit_id,
+    v.notes,
+    v.visit_purpose,
+    v.prescription,
+    v.additional_fees,
+    v.amount_paid,
+    v.discount,
+    GROUP_CONCAT(t.treatment_name SEPARATOR ', ') AS treatment,
+    (SUM(t.treatment_fee) + v.additional_fees - v.amount_paid - v.discount) AS balance
+FROM
+    visit v
+INNER JOIN treatment_rendered tr ON v.visit_id = tr.visit_id
+INNER JOIN treatment t ON tr.treatment_id = t.treatment_id
+WHERE
+    v.patient_id = ?
+GROUP BY
+    v.visit_id  -- Assuming visit_id is the primary key of the visit table
+ORDER BY
+    v.date_visit DESC; -- Order by date_visit in descending order (most recent first)
+    `;
+
+    connection.query(sqlQuery,[req.params.patientID],(error, rows, fields) => {
+        if (error) {
+            console.error('Error executing SQL query:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
+// For the vital sign table in view modal
+// http://localhost:3000/vital_signs/1
+app.get('/vital_signs/:visitID', (req, res) => {
+    const sqlQuery = `
+    SELECT
+        temperature,
+        pulse_rate,
+        systolic_bp,
+        diastolic_bp,
+        time_taken
+    FROM
+        vital_signs
+    WHERE
+        visit_id = ?;
+    `;
+
+    connection.query(sqlQuery,[req.params.visitID],(error, rows, fields) => {
+        if (error) {
+            console.error('Error executing SQL query:', error);
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.send(rows);
+        }
+    });
+});
+
+// For the add visit modal
+// http://localhost:3000/addVisit
+app.post('/addVisit', (req, res) => {
+    const { visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes } = req.body;
+
+    connection.query('INSERT INTO `visit` (`visit_id`, `patient_id`, `visit_purpose`, `date_visit`, `additional_fees`, `amount_paid`, `discount`, `prescription`, `notes`, `is_deleted`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)', 
+    [visit_id, patient_id, visit_purpose, date_visit, additional_fees, amount_paid, discount, prescription, notes], 
+    (error, results) => {
+        if (error) {
+            console.error(error);
+            res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+        } else {
+            res.status(200).send({ message: 'Visit added successfully.' });
+        }
+    });
+})
+
+// For the vital sign modal
+// http://localhost:3000/addVitalSigns
+app.post('/addVitalSigns', (req, res) => {
+    const { visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken } = req.body;
+
+    connection.query(
+        'INSERT INTO vital_signs (visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken, is_deleted) VALUES (?, ?, ?, ?, ?, ?, 0)',
+        [visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken],
+        (error, results, fields) => {
+            if (error) {
+                console.error('Error inserting vital signs data: ' + error.stack);
+                res.status(400).send({ message: 'Error: Data incomplete or invalid.' });
+            } else {
+                res.status(200).send({ message: 'Vital signs added successfully.' });
+            }
+        }
+    );
+});
+
+
 app.listen(port, () => {
     console.log(`App is listening to port ${port}`)
 })
