@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 
-function VitalSignModal({ isVisible, onClose, visitId }) {
+function VitalSignModal({ isVisible, onClose, visitId, propFetchVitalSign }) {
   if (!isVisible) return null;
 
   const handleSubmit = () => {
@@ -33,6 +33,7 @@ function VitalSignModal({ isVisible, onClose, visitId }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        propFetchVitalSign();
         onClose(); // Close the modal
       })
       .catch((error) => {

@@ -1,18 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import Datepicker from "tailwind-datepicker-react";
 
-function AddVisitModal({ isVisible, onClose }) {
+function AddVisitModal({ isVisible, onClose, propFetchVisitTable }) {
   if (!isVisible) return null;
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const handleChange = (selectedDate) => {
-    console.log(selectedDate);
+  const [treatmentOptions, setTreatmentOptions] = useState([]);
+  const [selectedTreatments, setSelectedTreatments] = useState([]);
+
+  useEffect(() => {
+    // Fetch treatment options when the component mounts
+    fetch("http://localhost:3000/treatmentDropdownOptions")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTreatmentOptions(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching treatment options: ", error);
+        // Handle the error gracefully, e.g., set an empty array for treatmentOptions
+        setTreatmentOptions([]);
+      });
+  }, []); // Empty dependency array ensures the effect runs once on mount
+
+  const handleTreatmentChange = (event) => {
+    const value = event.target.value;
+
+    if (event.target.checked) {
+      setSelectedTreatments((prevSelected) => [...prevSelected, value]);
+    } else {
+      setSelectedTreatments((prevSelected) =>
+        prevSelected.filter((treatment) => treatment !== value)
+      );
+    }
   };
-  const handleCloseDatePicker = (state) => {
-    setShowDatePicker(state);
-  };
-  const options = {};
 
   const handleSubmit = () => {
     // Gather values from input fields
@@ -29,12 +53,12 @@ function AddVisitModal({ isVisible, onClose }) {
     const formData = {
       date_visit: dateVisit,
       visit_purpose: visitPurpose,
-      treatment: treatment,
       prescription: prescription,
       notes: notes,
       additional_fees: additionalFees,
       discount: discount,
       amount_paid: amountPaid,
+      treatments: selectedTreatments,
       patient_id: 1, // Assuming there is a way to get the patient ID
     };
 
@@ -49,6 +73,7 @@ function AddVisitModal({ isVisible, onClose }) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        propFetchVisitTable();
         onClose(); // Close the modal
       })
       .catch((error) => {
@@ -70,15 +95,6 @@ function AddVisitModal({ isVisible, onClose }) {
           {/* Modal content */}
           <div className="bg-white p-4 rounded-md ">
             <div className="grid grid-cols-2 gap-4">
-              {/* Date picker */}
-              {/* <div className=" w-72 mr-3 pr-4">
-                <Datepicker
-                  options={{}}
-                  onChange={handleChange}
-                  show={showDatePicker}
-                  setShow={handleCloseDatePicker}
-                />
-              </div> */}
               <div>
                 <input
                   id="dateVisit"
@@ -93,15 +109,6 @@ function AddVisitModal({ isVisible, onClose }) {
                   className="w-full pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Visit Purpose"
-                />
-              </div>
-              {/* Treatment input box */}
-              <div>
-                <input
-                  id="treatment"
-                  className="w-full pl-3 rounded-lg border border-gray-300 h-10"
-                  type="text"
-                  placeholder="Treatment"
                 />
               </div>
               {/* Prescription input box */}
@@ -120,6 +127,38 @@ function AddVisitModal({ isVisible, onClose }) {
                   className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
                   type="text"
                   placeholder="Notes"
+                />
+              </div>
+              {/* Treatment checkboxes */}
+              <div className="w-full pl-3 rounded-lg border border-gray-300 h30">
+                <label htmlFor="treatment" className="text-l text-neutral-400">
+                  Select Treatment
+                </label>
+                {treatmentOptions.map((option) => (
+                  <div key={option.treatment_id}>
+                    <input
+                      className=""
+                      type="checkbox"
+                      id="treatment"
+                      value={option.treatment_id}
+                      onChange={handleTreatmentChange}
+                      checked={selectedTreatments.includes(
+                        option.treatment_name
+                      )}
+                    />
+                    <label htmlFor={option.treatment_id}>
+                      {option.treatment_name} - ₱{option.treatment_fee}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {/* Display selected treatments in a textarea */}
+              <div>
+                <textarea
+                  placeholder="Selected Treatment"
+                  value={selectedTreatments.join(", ")} // Display selected treatments as a comma-separated string
+                  readOnly
+                  className="w-full pl-3 rounded-lg border border-gray-300 h-20"
                 />
               </div>
             </div>
@@ -157,15 +196,6 @@ function AddVisitModal({ isVisible, onClose }) {
                   placeholder="Amount Paid"
                 />
               </div>
-              {/* Balance input box */}
-              {/* <div>
-                <input
-                  className="w-full  pl-3 rounded-lg border border-gray-300 h-10"
-                  type="number"
-                  min={0}
-                  placeholder="Balance"
-                />
-              </div> */}
             </div>
             {/* Submit button */}
             <div className="my-5 flex justify-center">

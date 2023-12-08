@@ -306,6 +306,7 @@ function ViewModal({ isVisible, onClose, rowData }) {
       </div>
       <VitalSignModal
         isVisible={showModal3}
+        propFetchVitalSign={fetchVisitData}
         onClose={() => setShowModal3(false)}
       />
     </>
