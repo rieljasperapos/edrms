@@ -9,6 +9,8 @@ router.post('/signin', authController.login);
 router.post('/accounts', validateUsername.checkUsername);
 router.get('/signout', authController.signout);
 router.get('/session', validateSession.getSession);
+router.put('/account/:accountId', authController.editAccount);
+router.post('/getAccountById', authController.getAccount);
 
 
 module.exports = router;

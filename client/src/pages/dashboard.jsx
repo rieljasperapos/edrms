@@ -22,13 +22,14 @@ import {
 } from "react-icons/rx";
 import { MdViewList } from "react-icons/md";
 
-const Dashboard = () => {
+const Dashboard = (props) => {
     // const [data, setData] = useState([]);
     const [totalCancelled, setTotalCancelled] = useState(0);
     const [totalConfirmed, setTotalConfirmed] = useState(0);
     const [filtering, setFiltering] = useState("");
     const [sorting, setSorting] = useState([]);
-    const [name, setName] = useState('');
+    const [sessionData, setSessionData] = useState({});
+    const [user, setUser] = useState('');
     const [filteredAppointments, setFilteredAppointments] = useState([]);
     const navigate = useNavigate();
 
@@ -50,9 +51,9 @@ const Dashboard = () => {
             })
     }
 
-    useEffect(() => {
-        fetch('http://localhost:3000/session', {
-            credentials: 'include',
+    const fetchSession = () => {
+        fetch("http://localhost:3000/session", {
+            credentials: "include",
         })
             .then((response) => {
                 if (!response.ok) {
@@ -61,15 +62,16 @@ const Dashboard = () => {
                 return response.json();
             })
             .then((data) => {
-                if (data.valid) {
-                    setName(data.username);
-                } else {
-                    navigate('/signin')
-                }
+                console.log(data);
+                setSessionData(data);
             })
             .catch((err) => {
                 console.error(err.message);
-            })
+            });
+    }
+
+    useEffect(() => {
+        fetchSession();
     }, [])
 
     useEffect(() => {
@@ -147,6 +149,33 @@ const Dashboard = () => {
                 console.error(err.message);
             })
     }, [])
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/getAccountById`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify( {accountId: sessionData.accountId} )
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`)
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    setUser(data);
+                    console.log(data);
+                } else {
+                    // Handle the case where data is falsy
+                }
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }, [sessionData])
 
     const formatDate = (dateString) => {
         const originalDate = new Date(dateString);
@@ -239,26 +268,26 @@ const Dashboard = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar user={user} sessionData={sessionData} fetchSession={fetchSession} />
             <Contents>
                 <h1 className="border-b bg-custom-blue px-12 pb-6 pt-8 font-Montserrat text-4xl font-bold text-white">
                     Dashboard
                 </h1>
                 <div className="flex justify-evenly mt-8">
                     <div className="p-8 m-8 bg-gray-100 rounded-lg w-auto">
-                        <h1 className="text-3xl">Welcome, <span className="uppercase text-green-500 font-bold">{name}</span></h1>
+                        <h1 className="text-3xl">Welcome, <span className="uppercase text-custom-blue font-bold">{user.first_name}</span></h1>
                         <h1 className="mt-4">Whatever you do, do it with determination, You have one life to live; do your work with passion and give your best</h1>
                     </div>
                     <div className="p-8 m-8 bg-gray-100 rounded-lg w-auto">
                         <div>
                             <h1>Total appointments</h1>
-                            <h1 className="text-center mt-6 text-2xl text-green-600">{totalConfirmed}</h1>
+                            <h1 className="text-center font-bold mt-6 text-3xl text-green-600">{totalConfirmed}</h1>
                         </div>
                     </div>
                     <div className="p-8 m-8 bg-gray-100 rounded-lg w-auto">
                         <div>
                             <h1>Appointments Cancelled</h1>
-                            <h1 className="text-center mt-6 text-2xl text-red-600">{totalCancelled}</h1>
+                            <h1 className="text-center font-bold mt-6 text-3xl text-red-600">{totalCancelled}</h1>
                         </div>
                     </div>
                 </div>

@@ -43,19 +43,21 @@ exports.login = (req, res) => {
             res.send({ message: "User not found", valid: false });
             return;
         }
-
         // console.log('Before setting session:', req.session);
-
-        console.log(rows[0].password);
+        // console.log(rows[0].password);
         bcrypt.compare(req.body.password, rows[0].password, (err, isPasswordMatch) => {
             if (isPasswordMatch) {
-                console.log(rows[0]);
-                req.session.authorized = true;
-                req.session.user = rows[0].username
+                // console.log(rows[0]);
                 req.session.userId = rows[0].account_id
-                // req.session.user = rows[0].username;
+                req.session.authorized = true;
+                req.session.username = rows[0].username
+                req.session.firstName = rows[0].first_name
+                req.session.lastName = rows[0].last_name
+                req.session.middleName = rows[0].middle_name
+                req.session.birthdate = rows[0].birthdate
+                req.session.password = rows[0].password
                 // console.log(req.session);
-                console.log('Login successful. Session after login:', req.session);
+                // console.log('Login successful. Session after login:', req.session);
                 res.send({ message: "Login successful", valid: true });
             } else {
                 res.send({ message: "Invalid Credentials", valid: false });
@@ -71,6 +73,41 @@ exports.signout = (req, res) => {
         } else {
             res.clearCookie('connect.sid');
             res.send({ message: "Logout Successfull" });
+        }
+    })
+}
+
+exports.editAccount = (req, res) => {
+    console.log(req.params.accountId);
+    const sql = 
+        `UPDATE account 
+        SET first_name = ?, middle_name = ?, last_name = ?, birthdate = ?
+        WHERE account_id = ?`
+    ;
+
+    console.log(req.body);
+    console.log(req.params.accountId);
+    // const status = req.body.status || "Confirmed";
+
+    connection.query(sql, [req.body.firstName, req.body.middleName, req.body.lastname, req.body.birthdate, req.params.accountId], (err, rows) => {
+        if (err) {
+            res.send({message: "Error cannot update"});
+        } else {
+            res.send({message: "Updated Successfully"});
+        }
+    })
+}
+
+exports.getAccount = (req, res) => {
+    const sql = `SELECT * FROM account WHERE account_id = ?`;
+    console.log(req.body);
+
+    connection.query(sql, [req.body.accountId], (err, rows) => {
+        if (err) {
+            res.send({message: "Error internal server in node"});
+        } else {
+            console.log(rows)
+            res.send(rows[0]);
         }
     })
 }

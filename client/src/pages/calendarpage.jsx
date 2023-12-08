@@ -13,6 +13,8 @@ const Calendar = () => {
     const [showAddAppointmentsModal, setShowAddAppointmentsModal] = useState(false);
     const [showAppointmentCard, setShowAppointmentCard] = useState(false);
     const [appointmentDetails, setAppointmentDetails] = useState({});
+    const [sessionData, setSessionData] = useState({});
+    const [user, setUser] = useState('');
     const navigate = useNavigate();
 
     const fetchAppointments = () => {
@@ -60,6 +62,56 @@ const Calendar = () => {
 
         fetchAppointments();
     }, [showAddAppointmentsModal])
+
+    const fetchSession = () => {
+      fetch("http://localhost:3000/session", {
+          credentials: "include",
+      })
+          .then((response) => {
+              if (!response.ok) {
+                  throw new Error(`Error ${response.status}`);
+              }
+              return response.json();
+          })
+          .then((data) => {
+              console.log(data);
+              setSessionData(data);
+          })
+          .catch((err) => {
+              console.error(err.message);
+          });
+  }
+  
+  useEffect(() => {
+      fetchSession();
+  }, [])
+  
+    useEffect(() => {
+      fetch(`http://localhost:3000/getAccountById`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify( {accountId: sessionData.accountId} )
+      })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`Error ${response.status}`)
+              }
+              return response.json();
+          })
+          .then(data => {
+              if (data) {
+                  setUser(data);
+                  console.log(data);
+              } else {
+                  // Handle the case where data is falsy
+              }
+          })
+          .catch(err => {
+              console.error(err.message);
+          })
+  }, [sessionData])
     
     const handleClose = () => {
         setShowAppointmentCard(false);
@@ -71,7 +123,7 @@ const Calendar = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar user={user} sessionData={sessionData} fetchSession={fetchSession} />
             <AppointmentCard appointmentVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments}/>
             <Contents>
                 <Routes>
