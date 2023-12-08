@@ -68,9 +68,9 @@ const calendarMonthView = (props) => {
                     isVisible={props.modal}
                     handleClose={handleClose}
                 />
-                <EditAppointment 
+                <EditAppointment
                     isVisible={props.editMode}
-                    handleClose={() => props.setShowEdit(false)}/>
+                    handleClose={() => props.setShowEdit(false)} />
             </div>
 
             <div className="p-8">
@@ -172,19 +172,18 @@ const calendarMonthView = (props) => {
                                             const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
                                             const formattedTime = `${formattedHours}:${minutes}`;
                                             return (
-                                                <div 
-                                                    key={index} 
-                                                    className="flex flex-col gap-2 text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in p-2" 
+                                                <div
+                                                    key={index}
+                                                    className={`flex flex-col gap-2 text-sm mt-2 rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in p-2 ${event.status === "cancelled" ? "bg-red-400" : "bg-custom-blue"
+                                                        }`}
                                                     onClick={() => {
-                                                        props.setShowCard(true)
-                                                        console.log(event)
+                                                        props.setShowCard(true);
+                                                        console.log(event);
                                                         props.setAppointmentDetails(event);
-
-                                                    }}>
-                                                        <p className="font-semibold">{formattedTime} {amPm}</p>
-                                                        <p>{event.purpose}</p>
-
-                                                    {/* <AppointmentCard isVisible={props.appointmentCard} /> */}
+                                                    }}
+                                                >
+                                                    <p className="font-semibold">{formattedTime} {amPm}</p>
+                                                    <p>{event.purpose}</p>
                                                 </div>
                                             )
                                         })

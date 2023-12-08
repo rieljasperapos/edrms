@@ -57,8 +57,8 @@ const CalendarWeekView = (props) => {
                 <h1 className="text-black font-bold text-3xl uppercase">Calendar</h1>
                 <button className="bg-custom-green text-white font-medium rounded-lg p-3" onClick={() => props.setShowModal(true)}>Add appointment</button>
 
-                <AddAppointment 
-                    isVisible={props.modal} 
+                <AddAppointment
+                    isVisible={props.modal}
                     handleClose={() => props.setShowModal(false)} />
             </div>
 
@@ -66,19 +66,19 @@ const CalendarWeekView = (props) => {
                 <div className="flex justify-between items-center bg-custom-gray border p-6 min-w-full">
                     <div className='flex items-center gap-4 p-2'>
                         <GrFormPrevious
-                                size={25}
-                                className=" hover:bg-gray-300 rounded-full"
-                                onClick={prevWeek}
+                            size={25}
+                            className=" hover:bg-gray-300 rounded-full"
+                            onClick={prevWeek}
                         />
                         <GrFormNext
-                                size={25}
-                                className=" hover:bg-gray-300 rounded-full"
-                                onClick={nextWeek}
+                            size={25}
+                            className=" hover:bg-gray-300 rounded-full"
+                            onClick={nextWeek}
                         />
-                        <button className='border py-2 px-4 bg-white rounded-lg hover:bg-gray-100 cursor-pointer' onClick={() => {setCurrentWeek(today.startOf('week'))}}>
+                        <button className='border py-2 px-4 bg-white rounded-lg hover:bg-gray-100 cursor-pointer' onClick={() => { setCurrentWeek(today.startOf('week')) }}>
                             Today
                         </button>
-                        
+
                         <h1 className="font-medium text-xl">{currentWeek.format("MMMM YYYY")}</h1>
                     </div>
                     <div className="relative inline-block text-left ml-4">
@@ -114,7 +114,7 @@ const CalendarWeekView = (props) => {
                     </div>
                 </div>
                 <div className='overflow-x-auto h-screen border'>
-                    <table className='min-w-full'>
+                    <table className='divide-y divide-gray-200 min-w-full'>
                         <thead>
                             <tr>
                                 {daysOfWeek.map(day => (
@@ -127,33 +127,37 @@ const CalendarWeekView = (props) => {
                                 ))}
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className='h-screen divide-gray-200'>
                             <tr>
                                 {daysOfWeek.map(day => (
-                                    <td key={day.format('YYYY-MM-DD')} className='px-6 py-4 whitespace-no-wrap border-gray-200'>
-                                        {props.appointments
-                                            .filter(event => day.isSame((event.date_schedule), 'day'))
-                                            .map((event, index) => {
-                                                const timeParts = event.time_schedule.split(':');
-                                                const hours = parseInt(timeParts[0], 10);
-                                                const minutes = timeParts[1];
-                                                const amPm = hours >= 12 ? 'PM' : 'AM';
-                                                const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-                                                const formattedTime = `${formattedHours}:${minutes}`;
-                                                return (
-                                                    <div 
-                                                        key={index} 
-                                                        className='justify-between bg-custom-blue mb-2 rounded-lg text-white p-2 w-44' 
-                                                        onClick={() => {
-                                                            props.setShowCard(true)
-                                                            console.log(event)
-                                                            props.setAppointmentDetails(event);
-                                                        }}>
-                                                        <p className='mb-2'>{formattedTime} {amPm}</p>
-                                                        <p>{event.purpose}</p>
-                                                    </div>
-                                                )
-                                        })}
+                                    <td key={day.format('YYYY-MM-DD')} className='px-6 py-4 whitespace-no-wrap border w-20 border-gray-200'>
+                                        <div className='flex-col h-screen'>
+                                            {props.appointments
+                                                .filter(event => day.isSame((event.date_schedule), 'day'))
+                                                .map((event, index) => {
+                                                    const timeParts = event.time_schedule.split(':');
+                                                    const hours = parseInt(timeParts[0], 10);
+                                                    const minutes = timeParts[1];
+                                                    const amPm = hours >= 12 ? 'PM' : 'AM';
+                                                    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+                                                    const formattedTime = `${formattedHours}:${minutes}`;
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`justify-between mb-2 rounded-lg text-white p-2 ${event.status === 'cancelled' ? 'bg-red-400' : 'bg-custom-blue'
+                                                                }`}
+                                                            onClick={() => {
+                                                                props.setShowCard(true);
+                                                                console.log(event);
+                                                                props.setAppointmentDetails(event);
+                                                            }}
+                                                        >
+                                                            <p className='mb-2'>{formattedTime} {amPm}</p>
+                                                            <p>{event.purpose}</p>
+                                                        </div>
+                                                    )
+                                                })}
+                                        </div>
                                     </td>
                                 ))}
                             </tr>
