@@ -40,79 +40,84 @@ const Calendar = () => {
             })
     }
 
-    useEffect(() => {
-        fetch('http://localhost:3000/session', {
-            credentials: 'include',
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (!data.valid) {
-                navigate('/signin');
-                console.log(data);
-            }
-        })
-        .catch((err) => {
-            console.error(err.message);
-        })
+    // useEffect(() => {
+    //     fetch('http://localhost:3000/session', {
+    //         credentials: 'include',
+    //     })
+    //         .then((response) => {
+    //             if (!response.ok) {
+    //                 throw new Error(`Error ${response.status}`);
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((data) => {
+    //             if (!data.valid) {
+    //                 navigate('/signin');
+    //                 console.log(data);
+    //             }
+    //         })
+    //         .catch((err) => {
+    //             console.error(err.message);
+    //         })
 
+    //     fetchAppointments();
+    // }, [showAddAppointmentsModal])
+
+    const fetchSession = () => {
+        fetch("http://localhost:3000/session", {
+            credentials: "include",
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (!data.valid) {
+                    navigate('/signin');
+                } else {
+                    console.log(data);
+                    setSessionData(data);
+                }
+            })
+            .catch((err) => {
+                console.error(err.message);
+            });
+    }
+
+    useEffect(() => {
+        fetchSession();
         fetchAppointments();
     }, [showAddAppointmentsModal])
 
-    const fetchSession = () => {
-      fetch("http://localhost:3000/session", {
-          credentials: "include",
-      })
-          .then((response) => {
-              if (!response.ok) {
-                  throw new Error(`Error ${response.status}`);
-              }
-              return response.json();
-          })
-          .then((data) => {
-              console.log(data);
-              setSessionData(data);
-          })
-          .catch((err) => {
-              console.error(err.message);
-          });
-  }
-  
-  useEffect(() => {
-      fetchSession();
-  }, [])
-  
     useEffect(() => {
-      fetch(`http://localhost:3000/getAccountById`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify( {accountId: sessionData.accountId} )
-      })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error(`Error ${response.status}`)
-              }
-              return response.json();
-          })
-          .then(data => {
-              if (data) {
-                  setUser(data);
-                  console.log(data);
-              } else {
-                  // Handle the case where data is falsy
-              }
-          })
-          .catch(err => {
-              console.error(err.message);
-          })
-  }, [sessionData])
-    
+        fetch(`http://localhost:3000/getAccountById`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accountId: sessionData.accountId })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`)
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    setUser(data);
+                    console.log(data);
+                } else {
+                    // Handle the case where data is falsy
+                }
+            })
+            .catch(err => {
+                console.error(err.message);
+            })
+    }, [sessionData])
+
     const handleClose = () => {
         setShowAppointmentCard(false);
     }
@@ -124,36 +129,36 @@ const Calendar = () => {
     return (
         <>
             <Navbar user={user} sessionData={sessionData} fetchSession={fetchSession} />
-            <AppointmentCard appointmentVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments}/>
+            <AppointmentCard appointmentVisible={showAppointmentCard} setShowCard={handleClose} appointmentDetails={appointmentDetails} fetchAppointments={fetchAppointments} />
             <Contents>
                 <Routes>
-                    <Route 
-                        path='/month' 
-                        element={<MonthView 
-                                    appointments={appointments} 
-                                    modal={showAddAppointmentsModal} 
-                                    setShowModal={setShowAddAppointmentsModal}
-                                    setShowCard={setShowAppointmentCard}
-                                    appointmentCard={showAppointmentCard}
-                                    setAppointmentDetails={setAppointmentDetails} />} />
-                    <Route 
-                        path="/" 
-                        element={<MonthView 
-                                    appointments={appointments} 
-                                    modal={showAddAppointmentsModal} 
-                                    setShowModal={setShowAddAppointmentsModal}
-                                    setShowCard={setShowAppointmentCard}
-                                    appointmentCard={showAppointmentCard}
-                                    setAppointmentDetails={setAppointmentDetails} />} />
-                    <Route 
-                        path="week" 
-                        element={<WeekView 
-                                    appointments={appointments} 
-                                    modal={showAddAppointmentsModal} 
-                                    setShowModal={setShowAddAppointmentsModal}
-                                    setShowCard={setShowAppointmentCard}
-                                    appointmentCard={showAppointmentCard}
-                                    setAppointmentDetails={setAppointmentDetails} />} />
+                    <Route
+                        path='/month'
+                        element={<MonthView
+                            appointments={appointments}
+                            modal={showAddAppointmentsModal}
+                            setShowModal={setShowAddAppointmentsModal}
+                            setShowCard={setShowAppointmentCard}
+                            appointmentCard={showAppointmentCard}
+                            setAppointmentDetails={setAppointmentDetails} />} />
+                    <Route
+                        path="/"
+                        element={<MonthView
+                            appointments={appointments}
+                            modal={showAddAppointmentsModal}
+                            setShowModal={setShowAddAppointmentsModal}
+                            setShowCard={setShowAppointmentCard}
+                            appointmentCard={showAppointmentCard}
+                            setAppointmentDetails={setAppointmentDetails} />} />
+                    <Route
+                        path="week"
+                        element={<WeekView
+                            appointments={appointments}
+                            modal={showAddAppointmentsModal}
+                            setShowModal={setShowAddAppointmentsModal}
+                            setShowCard={setShowAppointmentCard}
+                            appointmentCard={showAppointmentCard}
+                            setAppointmentDetails={setAppointmentDetails} />} />
                 </Routes>
                 <Outlet />
             </Contents>
