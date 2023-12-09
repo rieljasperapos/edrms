@@ -15,11 +15,11 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { MdViewList } from "react-icons/md";
 import { FaTooth } from "react-icons/fa6";
 import { FaHeartbeat } from "react-icons/fa";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 import ToothChartModal from "../components/ToothChartModal.jsx";
 
 function PatientRecord() {
-  const { authenticated } = useAuth();
+  const { authenticated, username, isAdmin } = useAuth();
   const [modalHealthHistoryVisible, setModalHealthHistoryVisible] =
     useState(false);
   const [DeleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -64,15 +64,19 @@ function PatientRecord() {
           <h1 className=" font-Montserrat text-3xl font-bold uppercase text-white">
             {personalInfo.lastName}, {personalInfo.firstName}
           </h1>
-          <button
-            className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline"
-            onClick={() => {
-              setDeleteModalVisible(true);
-            }}
-          >
-            <MdOutlineDeleteForever className="mr-1" />
-            Delete
-          </button>
+          {isAdmin ? (
+            <button
+              className="inline-flex items-center font-Karla text-xl font-bold text-red-500 hover:text-red-800 hover:underline"
+              onClick={() => {
+                setDeleteModalVisible(true);
+              }}
+            >
+              <MdOutlineDeleteForever className="mr-1" />
+              Delete
+            </button>
+          ) : (
+            ""
+          )}
         </div>
 
         <div className="grid w-full justify-center gap-4 border-2  px-12 py-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
@@ -126,7 +130,10 @@ function PatientRecord() {
         )}
 
         {DeleteModalVisible && (
-          <ConfirmDeleteModal propSetModalVisible={setDeleteModalVisible} />
+          <ConfirmDeleteModal
+            propSetModalVisible={setDeleteModalVisible}
+            propPatientId={patientId}
+          />
         )}
       </Contents>
 

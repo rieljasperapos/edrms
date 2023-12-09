@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 import Logo from "../assets/dentalClinicLogo.png";
 import Matched from "../assets/icon-check.png";
 import EyeIcon from "../assets/eye-icon.png";

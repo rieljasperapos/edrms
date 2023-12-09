@@ -9,6 +9,8 @@ const sessionSecret = uuidv4();
 const app = express();
 const multer = require("multer");
 const path = require("path");
+const authRoutes = require("./routes/authRoutes");
+const appointmentRoutes = require("./routes/appointmentsRoute");
 
 app.use(
   cors({
@@ -146,6 +148,7 @@ WHERE
       (err, isPasswordMatch) => {
         if (isPasswordMatch) {
           req.session.authorized = true;
+          req.session.accountId = rows[0].account_id;
           req.session.username = rows[0].username;
           req.session.lastName = rows[0].last_name;
           req.session.firstName = rows[0].first_name;
@@ -170,6 +173,7 @@ app.get("/dashboard", (req, res) => {
     console.log("User found in session. Username:", req.session.username);
     res.send({
       valid: req.session.authorized,
+      accountId: req.session.accountId,
       username: req.session.username,
       isAdmin: req.session.isAdmin,
     });
@@ -185,8 +189,9 @@ app.get("/sessionInfo", (req, res) => {
     console.log("User found in session. Username:", req.session.username);
     res.send({
       valid: req.session.authorized,
+      accountId: req.session.accountId,
       username: req.session.username,
-      lastname: req.session.lastName,
+      lastName: req.session.lastName,
       firstName: req.session.firstName,
       middleName: req.session.middleName,
       birthdate: req.session.birthdate,
@@ -994,8 +999,8 @@ app.put("/patientHealthHistory/:healthHistoryId", (req, res) => {
   );
 });
 
-//Get appointments
-app.get("/appointments", (req, res) => {
+// Get appointments
+app.get("/appointments1", (req, res) => {
   const sql = `SELECT * FROM appointment`;
   connection.query(sql, (err, rows) => {
     if (err) {
@@ -1272,6 +1277,261 @@ app.put("/teethChart/:patientId", (req, res) => {
     },
   );
 });
+
+//Soft Delete Patient Record and all related to it
+// Endpoint to soft delete a patient and related records
+app.put("/softDeletePatient/:patientId", (req, res) => {
+  const patientId = req.params.patientId;
+
+  // Start the transaction
+  connection.beginTransaction((err) => {
+    if (err) {
+      console.error("Error starting transaction:", err);
+      res.status(500).send({ message: "Internal Server Error" });
+      return;
+    }
+
+    // Define the queries
+    const queries = [
+      `UPDATE patient SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+      `UPDATE insurance_info SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+      `UPDATE health_history SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+      `UPDATE visit SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+      `UPDATE vital_signs SET is_deleted = 1 WHERE visit_id IN (SELECT visit_id FROM visit WHERE patient_id = ${patientId});`,
+      `UPDATE treatment_rendered SET is_deleted = 1 WHERE visit_id IN (SELECT visit_id FROM visit WHERE patient_id = ${patientId});`,
+      `UPDATE teeth_status SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+      `UPDATE xray SET is_deleted = 1 WHERE patient_id = ${patientId};`,
+    ];
+
+    // Execute the queries in a loop
+    queries.forEach((query) => {
+      connection.query(query, (error, results) => {
+        if (error) {
+          connection.rollback(() => {
+            console.error("Error executing query:", query, error);
+            res.status(500).send({ message: "Internal Server Error" });
+          });
+        }
+      });
+    });
+
+    // Commit the transaction if all queries succeed
+    connection.commit((commitError) => {
+      if (commitError) {
+        connection.rollback(() => {
+          console.error("Error committing transaction:", commitError);
+          res.status(500).send({ message: "Internal Server Error" });
+        });
+      } else {
+        res.status(200).send({ message: "Soft delete successful" });
+      }
+    });
+  });
+});
+
+//Get visitList
+app.get("/visits/:patientID", (req, res) => {
+  const sqlQuery = `
+    SELECT
+    DATE_FORMAT(v.date_visit, '%m-%d-%Y') AS date_visit,
+    v.visit_id,
+    v.notes,
+    v.visit_purpose,
+    v.prescription,
+    v.additional_fees,
+    v.amount_paid,
+    v.discount,
+    GROUP_CONCAT(t.treatment_name SEPARATOR ', ') AS treatment,
+    (SUM(t.treatment_fee) + v.additional_fees - v.amount_paid - v.discount) AS balance
+FROM
+    visit v
+INNER JOIN treatment_rendered tr ON v.visit_id = tr.visit_id
+INNER JOIN treatment t ON tr.treatment_id = t.treatment_id
+WHERE
+    v.patient_id = ?
+GROUP BY
+    v.visit_id  -- Assuming visit_id is the primary key of the visit table
+ORDER BY
+    v.date_visit DESC; -- Order by date_visit in descending order (most recent first)
+    `;
+
+  connection.query(sqlQuery, [req.params.patientID], (error, rows, fields) => {
+    if (error) {
+      console.error("Error executing SQL query:", error);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+//Get vital signs list
+app.get("/vital_signs/:visitID", (req, res) => {
+  const sqlQuery = `
+    SELECT
+        temperature,
+        pulse_rate,
+        systolic_bp,
+        diastolic_bp,
+        time_taken
+    FROM
+        vital_signs
+    WHERE
+        visit_id = ?;
+    `;
+
+  connection.query(sqlQuery, [req.params.visitID], (error, rows, fields) => {
+    if (error) {
+      console.error("Error executing SQL query:", error);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+//Add Visit Post
+app.post("/addVisit/:patientId", (req, res) => {
+  const patient_id = req.params.patientId;
+  const {
+    date_visit,
+    visit_purpose,
+    prescription,
+    notes,
+    additional_fees,
+    discount,
+    amount_paid,
+    treatments, // Array of selected treatments
+  } = req.body;
+
+  console.log(req.body);
+  console.log(patient_id);
+
+  const visitInsertQuery = `
+        INSERT INTO visit (
+            patient_id,
+            visit_purpose,
+            date_visit,
+            additional_fees,
+            amount_paid,
+            discount,
+            prescription,
+            notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+
+  connection.beginTransaction((err) => {
+    if (err) {
+      console.error("Error starting transaction:", err);
+      res.status(500).send({ message: "Internal Server Error" });
+      return;
+    }
+
+    connection.query(
+      visitInsertQuery,
+      [
+        patient_id,
+        visit_purpose,
+        date_visit,
+        additional_fees,
+        amount_paid,
+        discount,
+        prescription,
+        notes,
+      ],
+      (error, results, fields) => {
+        if (error) {
+          connection.rollback(() => {
+            console.error("Error inserting visit data:", error);
+            res
+              .status(400)
+              .send({ message: "Error: Data incomplete or invalid." });
+          });
+        } else {
+          const visitId = results.insertId;
+
+          // Insert selected treatments into treatment_rendered table
+          const treatmentInsertQuery = `INSERT INTO treatment_rendered (visit_id, treatment_id) VALUES (?, ?)`;
+
+          for (let i = 0; i < treatments.length; i++) {
+            const treatmentId = treatments[i];
+
+            connection.query(
+              treatmentInsertQuery,
+              [visitId, treatmentId],
+              (treatmentError, treatmentResult) => {
+                if (treatmentError) {
+                  connection.rollback(() => {
+                    console.error("Error inserting treatment:", treatmentError);
+                    res
+                      .status(400)
+                      .send({ message: "Error inserting treatment." });
+                  });
+                } else {
+                  // Handle success if needed
+                }
+              },
+            );
+          }
+
+          connection.commit((commitError) => {
+            if (commitError) {
+              connection.rollback(() => {
+                console.error("Error committing transaction:", commitError);
+                res.status(500).send({ message: "Internal Server Error" });
+              });
+            } else {
+              res.status(200).send({ message: "Visit added successfully." });
+            }
+          });
+        }
+      },
+    );
+  });
+});
+
+app.get("/treatmentDropdownOptions", (req, res) => {
+  const sqlQuery = `
+    SELECT
+        treatment_id,
+        treatment_name,
+        treatment_fee
+    FROM
+        treatment;
+    `;
+
+  connection.query(sqlQuery, (error, rows, fields) => {
+    if (error) {
+      console.error("Error executing SQL query:", error);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.send(rows);
+    }
+  });
+});
+
+// For the vital sign modal
+// http://localhost:3000/addVitalSigns
+app.post("/addVitalSigns/:visitId", (req, res) => {
+  const { temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken } =
+    req.body;
+  const visit_id = req.params.visitId;
+  connection.query(
+    "INSERT INTO vital_signs (visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken, is_deleted) VALUES (?, ?, ?, ?, ?, ?, 0)",
+    [visit_id, temperature, pulse_rate, systolic_bp, diastolic_bp, time_taken],
+    (error, results, fields) => {
+      if (error) {
+        console.error("Error inserting vital signs data: " + error.stack);
+        res.status(400).send({ message: "Error: Data incomplete or invalid." });
+      } else {
+        res.status(200).send({ message: "Vital signs added successfully." });
+      }
+    },
+  );
+});
+
+app.use("/", authRoutes);
+app.use("/appointments", appointmentRoutes);
 
 app.listen(port, () => {
   console.log(`App is listening to port ${port}`);

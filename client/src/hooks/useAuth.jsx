@@ -5,6 +5,7 @@ const useAuth = () => {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
+  const [isAdmin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:3000/dashboard", {
@@ -26,6 +27,7 @@ const useAuth = () => {
             navigate("/dashboard");
           }
           setUsername(data.username);
+          setAdmin(data.isAdmin);
         } else {
           setAuthenticated(false);
           // Only navigate to the signin page if not on the login or signup page
@@ -43,7 +45,7 @@ const useAuth = () => {
       });
   }, [navigate]);
 
-  return { authenticated, username };
+  return { authenticated, username, isAdmin };
 };
 
 export default useAuth;

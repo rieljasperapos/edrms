@@ -11,10 +11,12 @@ import { FaUserCircle } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 
 import { useNavigate } from "react-router-dom";
+import UserInfoModal from "./UserInfoModal.jsx";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
+  const [showUserModal, setShowUserModal] = useState(false);
   const handleLogout = () => {
     fetch("http://localhost:3000/signout", {
       credentials: "include",
@@ -63,7 +65,10 @@ const Navbar = () => {
           {user.isAdmin ? <NavItem text="Manage" /> : ""}
         </div>
         <div className="mb-10 flex flex-col ">
-          <div className="flex flex-col items-center gap-1 rounded-xl p-4 hover:bg-custom-gray hover:shadow-inner-dark">
+          <div
+            className="flex flex-col items-center gap-1 rounded-xl p-4 hover:bg-custom-gray hover:shadow-inner-dark"
+            onClick={() => setShowUserModal(true)}
+          >
             <FaUserCircle className="text-4xl" />
             <p className="text-xl">{user.username}</p>
           </div>
@@ -78,6 +83,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {showUserModal && (
+        <UserInfoModal user={user} onClose={() => setShowUserModal(false)} />
+      )}
     </div>
   );
 };

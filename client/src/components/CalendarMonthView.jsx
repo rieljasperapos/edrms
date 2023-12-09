@@ -2,18 +2,19 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { generateDate, months } from "../utils/calendar";
 import dayjs from "dayjs";
 import cn from "../utils/cn";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddAppointment from "./AddAppointmentsModal.jsx";
+import AddAppointment from "./addAppointmentsModal";
+import AppointmentCard from "./AppointmentCardModal";
+import EditAppointment from "./editAppointmentModal";
+import { AiOutlinePlus } from "react-icons/ai";
 
-const CalendarMonthView = () => {
+const CalendarMonthView = (props) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const currentDate = dayjs();
   const [today, setToday] = useState(currentDate);
   const [selectDate, setSelectDate] = useState(currentDate);
-  const [showModal, setShowModal] = useState(false);
-  const [appointments, setAppointments] = useState([]);
-  // console.log(showModal);
+  console.log(props.appointments);
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const hours = Array.from({ length: 24 }, (_, index) => index);
@@ -28,38 +29,11 @@ const CalendarMonthView = () => {
   };
 
   const handleClose = () => {
-    setShowModal(false);
+    props.setShowModal(false);
   };
 
-  useEffect(() => {
-    fetch("http://localhost:3000/appointments", {
-      method: "GET",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data) {
-          // console.log(data);
-          setAppointments(data.data);
-        } else {
-          console.log("No data found");
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  }, [showModal]);
-
-  console.log(appointments);
-  appointments.map((event) => {
-    console.log(event.date_schedule);
-  });
-
-  console.log(showModal);
+  console.log(props.modal);
+  console.log(props.appointmentCard);
 
   // console.log(`Current Date: ${currentDate.format("HH:mm")}`);
   // console.log(hours);
@@ -75,14 +49,19 @@ const CalendarMonthView = () => {
       <div className="flex items-center justify-between border-b p-6">
         <h1 className="text-3xl font-bold uppercase text-black">Calendar</h1>
         <button
-          className="rounded-lg bg-custom-green p-3 font-medium text-white"
+          className="flex items-center gap-1 rounded-lg bg-custom-green p-3 font-medium text-white"
           onClick={() => {
-            setShowModal(true);
+            props.setShowModal(true);
           }}
         >
+          <AiOutlinePlus />
           Add appointment
         </button>
-        <AddAppointment isVisible={showModal} handleClose={handleClose} />
+        <AddAppointment isVisible={props.modal} handleClose={handleClose} />
+        <EditAppointment
+          isVisible={props.editMode}
+          handleClose={() => props.setShowEdit(false)}
+        />
       </div>
 
       <div className="p-8">
@@ -114,10 +93,10 @@ const CalendarMonthView = () => {
               {months[today.month()]} {today.year()}
             </h1>
           </div>
-          <div className="relative ml-4 inline-block text-left">
+          <div className="ml-4 text-left">
             <button
               type="button"
-              className="inline-flex items-center rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black hover:bg-gray-200 focus:outline-none"
+              className="inline-flex items-center rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black hover:bg-gray-200"
               onClick={toggleDropdown}
             >
               Month
@@ -139,7 +118,7 @@ const CalendarMonthView = () => {
               </svg>
             </button>
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+              <div className="absolute right-0 mr-16 mt-2 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="py-1">
                   <a
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -186,9 +165,9 @@ const CalendarMonthView = () => {
                       today ? "bg-red-500 text-white" : "",
                       selectDate.toDate().toDateString() ===
                         date.toDate().toDateString()
-                        ? "bg-primary-green text-white"
+                        ? "bg-custom-green text-white"
                         : "",
-                      "hover:bg-primary-green mt-2 grid h-10 w-10 cursor-pointer place-content-center rounded-full transition-all hover:text-white",
+                      "mt-2 grid h-10 w-10 cursor-pointer place-content-center rounded-full transition-all hover:bg-custom-green hover:text-white",
                     )}
                     onClick={() => {
                       setSelectDate(date);
@@ -197,30 +176,42 @@ const CalendarMonthView = () => {
                     {date.date()}
                   </h1>
                   <div className="p-2">
-                    {Array.isArray(appointments) &&
-                      appointments
-                        .filter(
-                          (event) => date.isSame(event.date_schedule),
-                          "day",
-                        )
-                        .map((event, index) => {
-                          const timeParts = event.time_schedule.split(":");
-                          const hours = parseInt(timeParts[0], 10);
-                          const minutes = timeParts[1];
-                          const amPm = hours >= 12 ? "PM" : "AM";
-                          const formattedHours =
-                            hours % 12 === 0 ? 12 : hours % 12;
-                          const formattedTime = `${formattedHours}:${minutes}`;
-                          return (
-                            <div className="mt-2 flex cursor-pointer flex-col gap-2 rounded-lg bg-custom-blue p-2 text-sm text-white transition-transform ease-in hover:scale-105">
-                              <p className="font-semibold">
-                                {formattedTime} {amPm}
-                              </p>
-                              <p>{event.purpose}</p>
-                            </div>
-                          );
-                        })}
-                    {/* <p className={`text-sm mt-2 bg-custom-blue rounded-lg text-white cursor-pointer hover:scale-105 transition-transform ease-in ${today ? 'p-2' : ''}`}>{cn(today ? `Static Appointment, ${currentDate.format("HH:mm")}` : "")}</p> */}
+                    {props.appointments
+                      ? props.appointments
+                          .filter(
+                            (event) => date.isSame(event.date_schedule),
+                            "day",
+                          )
+                          .map((event, index) => {
+                            const timeParts = event.time_schedule.split(":");
+                            const hours = parseInt(timeParts[0], 10);
+                            const minutes = timeParts[1];
+                            const amPm = hours >= 12 ? "PM" : "AM";
+                            const formattedHours =
+                              hours % 12 === 0 ? 12 : hours % 12;
+                            const formattedTime = `${formattedHours}:${minutes}`;
+                            return (
+                              <div
+                                key={index}
+                                className={`mt-2 flex cursor-pointer flex-col gap-2 rounded-lg p-2 text-sm text-white transition-transform ease-in hover:scale-105 ${
+                                  event.status === "cancelled"
+                                    ? "bg-red-400"
+                                    : "bg-custom-blue"
+                                }`}
+                                onClick={() => {
+                                  props.setShowCard(true);
+                                  console.log(event);
+                                  props.setAppointmentDetails(event);
+                                }}
+                              >
+                                <p className="font-semibold">
+                                  {formattedTime} {amPm}
+                                </p>
+                                <p>{event.purpose}</p>
+                              </div>
+                            );
+                          })
+                      : ""}
                   </div>
                 </div>
               );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AddVisitModal from "./AddVisitModal";
-import ViewModal from "./ViewVisitModal";
+import ViewModal from "./ViewModal";
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,7 +18,6 @@ import {
   RxChevronRight,
 } from "react-icons/rx";
 import { PiKeyReturnBold } from "react-icons/pi";
-import { useNavigate } from "react-router-dom";
 
 function VisitTable({ propPatientId }) {
   const [visits, setVisits] = useState([]);
@@ -25,15 +25,12 @@ function VisitTable({ propPatientId }) {
   const [sorting, setSorting] = useState([]);
   const [showModal, setShowModal] = useState(false); // AddVisitModal
   const [showModal2, setShowModal2] = useState(false); // ViewModal
+
   const [selectedRowData, setSelectedRowData] = useState(null);
-
   const navigate = useNavigate();
-  // Fetch API Mock Data
+  // Fetch data from the database
   const fetchVisitData = () => {
-    const jsonFileUrl =
-      "https://raw.githubusercontent.com/hello-isa/react-dental-record-management-system/main/visit-page-mock-data.json";
-
-    fetch(jsonFileUrl)
+    fetch(`http://localhost:3000/visits/${propPatientId}`)
       .then((response) => {
         return response.json();
       })
@@ -44,7 +41,7 @@ function VisitTable({ propPatientId }) {
 
   useEffect(() => {
     fetchVisitData();
-  }, []);
+  }, [propPatientId]);
 
   const data = visits;
 
@@ -53,7 +50,7 @@ function VisitTable({ propPatientId }) {
   const columns = [
     {
       header: "Date",
-      accessorKey: "date",
+      accessorKey: "date_visit",
     },
     {
       header: "Visit Purpose",
@@ -86,7 +83,7 @@ function VisitTable({ propPatientId }) {
 
   return (
     <>
-      <div className="mx-12 mb-10 mt-6">
+      <div className="mx-12 mb-10 mt-10">
         <div className="flex flex-col gap-2">
           <button
             className="hover:text-blue-900-900 inline-flex items-center gap-2 self-end text-xl text-blue-900 hover:underline"
@@ -99,26 +96,30 @@ function VisitTable({ propPatientId }) {
           </button>
           <div className="mb-6 flex flex-row justify-between">
             {/* Add Visit */}
-            <button
-              className="inline-flex h-10 w-40 items-center rounded-lg border-2 bg-green-400 px-8 text-white hover:bg-green-600"
-              onClick={() => setShowModal(true)}
-            >
-              <AiOutlinePlus className="mr-2" />
-              Add Visit
-            </button>
+            <div>
+              <button
+                className="inline-flex h-10 w-40 items-center rounded-lg border-2 bg-green-400 px-8 text-white hover:bg-green-600"
+                onClick={() => setShowModal(true)}
+              >
+                <AiOutlinePlus className="mr-2" />
+                Add Visit
+              </button>
+            </div>
 
             {/* Add Visit Modal */}
             <div>
               <AddVisitModal
                 isVisible={showModal}
                 onClose={() => setShowModal(false)}
+                propFetchVisitTable={fetchVisitData}
+                propPatientId={propPatientId}
               />
             </div>
 
             {/* Filtering */}
-            <div className="flex flex-col gap-3">
+            <div>
               <input
-                className="h-10 w-80 rounded-lg border-2 border-gray-300 pl-2"
+                className="h-10 w-40 rounded-lg border-2 border-gray-300 pl-2"
                 type="text"
                 placeholder="Search"
                 value={filtering}

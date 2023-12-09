@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar.jsx";
 import AccountsDataTable from "../components/AccountsDataTable.jsx";
 import { FaAddressBook } from "react-icons/fa6";
 import { FaTooth } from "react-icons/fa";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 import TreatmentListTable from "../components/TreatmentListTable.jsx";
 
 function Manage() {

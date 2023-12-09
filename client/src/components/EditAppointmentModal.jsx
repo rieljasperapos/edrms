@@ -1,48 +1,45 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AddAppointmentsModal = ({ handleClose, isVisible }) => {
+const EditAppointmentsModal = ({
+  handleClose,
+  EditVisible,
+  appointmentDetails,
+  fetchAppointments,
+}) => {
   const [date, setDate] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [timeSchedule, setTimeSchedule] = useState("");
   const [purpose, setPurpose] = useState("");
   const [name, setName] = useState("");
-  const [patientExist, setPatientExist] = useState(false);
-  const [validNumber, setValidNumber] = useState(false);
   const navigate = useNavigate();
+  console.log(date);
+  console.log(contactNumber);
+  console.log(timeSchedule);
+  console.log(purpose);
+  console.log(name);
 
-  const regex = /^\d{11}$/;
-
-  // console.log(contactNumber)
-  // console.log(timeSchedule)
-  // console.log(date)
-  // console.log(purpose);
-  // console.log(name);
-
-  // useEffect(() => {
-  //         setDate('')
-  //         setContactNumber('')
-  //         setTimeSchedule('')
-  //         setPurpose('')
-  //         setName('')
-  // }, []);
+  console.log("Appointment ID");
+  console.log(appointmentDetails?.appointment_id);
 
   const handleClick = (e) => {
     e.preventDefault();
-    fetch("http://localhost:3000/appointments/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    fetch(
+      `http://localhost:3000/appointments/edit/${appointmentDetails?.appointment_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date,
+          timeSchedule,
+          name,
+          contactNumber,
+          purpose,
+        }),
       },
-      credentials: "include",
-      body: JSON.stringify({
-        date,
-        timeSchedule,
-        name,
-        contactNumber,
-        purpose,
-      }),
-    })
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Error ${response.status}`);
@@ -53,75 +50,54 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
         if (data) {
           console.log(data);
           handleClose();
-          setDate("");
-          setContactNumber("");
-          setTimeSchedule("");
-          setPurpose("");
-          setName("");
-          setPatientExist(false);
+        } else {
+          // Handle the case where data is falsy
         }
       })
       .catch((err) => {
         console.error(err.message);
+      })
+      .finally(() => {
+        fetchAppointments();
       });
   };
 
-  const handleChange = (e) => {
-    const newName = e.target.value;
-    setName(newName);
+  console.log(appointmentDetails);
 
-    fetch(`http://localhost:3000/appointments/patient`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: newName }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setPatientExist(data.exist);
-      })
-      .catch((error) => {
-        console.error(`Error cannot find user: ${error.message}`);
-      });
+  const formatDate = (dateString) => {
+    const originalDate = new Date(dateString);
+
+    // Format the date to "yyyy-MM-dd"
+    const year = originalDate.getFullYear();
+    const month = (originalDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = originalDate.getDate().toString().padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
   };
-
-  const validateContactNumber = (contactNumber) => {
-    if (regex.test(contactNumber)) {
-      console.log("VALID CONTACT NUMBER");
-      setValidNumber(true);
-    } else if (contactNumber === "") {
-      setValidNumber(true);
-    } else {
-      setValidNumber(false);
-    }
-  };
-
-  console.log(validNumber);
-
   useEffect(() => {
-    validateContactNumber(contactNumber);
-  });
+    if (appointmentDetails) {
+      setDate(formatDate(appointmentDetails.date_schedule));
+      setContactNumber(appointmentDetails.contact_number);
+      setTimeSchedule(appointmentDetails.time_schedule);
+      setPurpose(appointmentDetails.purpose);
+      setName(appointmentDetails.name);
+    }
+  }, [appointmentDetails]);
 
   return (
     <>
-      {isVisible && (
+      {EditVisible && (
         <div
           id="default-modal"
-          className="fixed left-0 right-0 top-0 z-50 flex h-[calc(100%)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden backdrop-brightness-50 md:inset-0"
+          className="fixed left-0 right-0 top-0 z-50 flex h-[calc(100%)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0"
         >
           <div className="relative max-h-full w-full max-w-3xl p-4">
-            <div className="relative rounded-lg bg-white shadow ">
+            <div className="relative rounded-lg bg-white shadow-xl">
               {/* Modal header */}
               <div className="flex items-center justify-between rounded-t border-b bg-custom-blue p-4 dark:border-gray-600 md:p-5">
                 <h3 className="text-xl font-semibold text-white dark:text-white">
-                  Add appointment
+                  Edit appointment
                 </h3>
                 <button
                   type="button"
@@ -173,15 +149,9 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
                     value={name}
                     type="text"
                     className="w-96 rounded-lg border p-4"
-                    placeholder="e.g Morales, Stanleigh"
-                    pattern="[A-Za-z]+,\s[A-Za-z]+"
-                    onChange={handleChange}
+                    placeholder="e.g John Doe"
+                    onChange={(e) => setName(e.target.value)}
                   ></input>
-                  {patientExist && (
-                    <p className="text-green-500">
-                      A previous patient, this name exist in the records
-                    </p>
-                  )}
                 </div>
                 <div className="flex flex-col gap-1">
                   <p>Contact Number</p>
@@ -192,11 +162,6 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
                     placeholder="09XXXXXXXXX"
                     onChange={(e) => setContactNumber(e.target.value)}
                   ></input>
-                  {validNumber || (
-                    <p className="text-red-500">
-                      Please enter a valid 11-digit phone number
-                    </p>
-                  )}
                 </div>
                 <div className="flex flex-col gap-1">
                   <p>Purpose</p>
@@ -214,7 +179,7 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
                     className="w-96 rounded-lg bg-custom-green p-4 text-white hover:bg-green-300"
                     onClick={handleClick}
                   >
-                    Add
+                    Save
                   </button>
                 </div>
               </div>
@@ -226,4 +191,4 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
   );
 };
 
-export default AddAppointmentsModal;
+export default EditAppointmentsModal;

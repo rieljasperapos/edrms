@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FiLock } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";

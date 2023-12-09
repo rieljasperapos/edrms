@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
 
 import { MdError } from "react-icons/md";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 
 function AddRecord() {
   const { authenticated } = useAuth();

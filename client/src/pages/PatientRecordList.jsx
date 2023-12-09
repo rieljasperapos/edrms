@@ -18,7 +18,7 @@ import { MdViewList } from "react-icons/md";
 import Contents from "../components/Contents.jsx";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
-import useAuth from "../hooks/useAuth.js";
+import useAuth from "../hooks/useAuth.jsx";
 import { FaCheckCircle } from "react-icons/fa";
 
 function PatientRecordList() {

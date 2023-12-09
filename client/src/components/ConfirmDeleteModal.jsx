@@ -1,17 +1,38 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
-import { LuUpload } from "react-icons/lu";
 
-function XrayAddModal({ propSetModalVisible }) {
+function ConfirmDeleteModal({ propSetModalVisible, propPatientId }) {
   const closeModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
   };
 
-  const handleSubmitConfirm = () => {
-    // Close the modal by setting its visibility to false
-    propSetModalVisible(false);
+  const handleSubmitConfirmDelete = () => {
+    // Assuming you have the patientId
+    // Make the API request to the soft delete endpoint
+    fetch(`http://localhost:3000/softDeletePatient/${propPatientId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Soft delete successful", data);
+        // Optionally: Perform any additional actions after successful soft delete
+        // Close the modal by setting its visibility to false
+        propSetModalVisible(false);
+      })
+      .catch((error) => {
+        console.error("Error during soft delete:", error.message);
+        // Handle error if needed
+      });
   };
 
   return (
@@ -36,7 +57,7 @@ function XrayAddModal({ propSetModalVisible }) {
             </div>
             <button
               className="rounded-lg border-2 bg-red-400 px-5 py-1 text-lg  text-white hover:bg-red-700"
-              onClick={handleSubmitConfirm}
+              onClick={handleSubmitConfirmDelete}
             >
               Confirm
             </button>
@@ -47,4 +68,4 @@ function XrayAddModal({ propSetModalVisible }) {
   );
 }
 
-export default XrayAddModal;
+export default ConfirmDeleteModal;

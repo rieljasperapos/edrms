@@ -69,10 +69,21 @@ function AccountsDataTable({}) {
   }, [isPasswordResetSuccess]);
 
   const handleUpdate = (id) => {
-    const accountObject = data.find((account) => account.account_id === id);
-    // Set the account_id state
-    if (accountObject) {
-      setViewAccountData(accountObject);
+    // Check if data is not empty
+    if (data && data.length > 0) {
+      const accountObject = data.find((account) => account.account_id === id);
+
+      // Check if the accountObject is found
+      if (accountObject) {
+        // Set the account_id state
+        setViewAccountData(accountObject);
+      } else {
+        // Handle the case where the account with the specified id is not found
+        console.log(`Account with id ${id} not found.`);
+      }
+    } else {
+      // Handle the case where data is empty
+      console.log("Data is empty.");
     }
   };
 
