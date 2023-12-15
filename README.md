@@ -77,7 +77,14 @@ npm i multer
 npm i path
 ```
 
-## 5. Run the development server
+## 5. Import Database in Xampp mySQL
+Importing DB
+
+File name: DENTAL_RECORDS.sql located at edrms/DENTAL_RECORDS.sql
+
+Import sql file to Xampp
+
+## 6. Run the development server
 Client
 ```bash
 cd client
@@ -88,6 +95,18 @@ Server
 cd server
 npm start
 ```
+
+## 7. Import Database in Xampp mySQL
+Accessing the System (2 ways)
+
+1. Access by Admin (follow lettering and capitalization)
+
+    username: jericho
+
+    password: Jericho123*
+
+    NOTE: Admin account has the management page
+2. Create new account (non-admin) through signing up
 
 
 # File Structure
