@@ -96,7 +96,13 @@ cd server
 npm start
 ```
 
-## 7. Import Database in Xampp mySQL
+## 6. Run the development server
+Client
+
+Go to browser and search
+http://localhost:5173/
+
+## 8. Import Database in Xampp mySQL
 Accessing the System (2 ways)
 
 1. Access by Admin (follow lettering and capitalization)
