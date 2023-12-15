@@ -104,33 +104,6 @@ const Signup = () => {
     return isValid;
   };
 
-  // const handleChange = (e) => {
-  //   const newUserName = e.target.value;
-  //   setUserName(newUserName);
-  //   console.log(newUserName);
-  //
-  //   fetch(`http://localhost:3000/accounts`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ userName: newUserName }),
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error(`Error ${response.status}`);
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       console.log(data);
-  //       setUserExist(data.exist);
-  //     })
-  //     .catch((error) => {
-  //       console.error(`Error registering user: ${error.message}`);
-  //     });
-  // };
-
   useEffect(() => {
     setMatchStatus(
       password === confirmPassword &&

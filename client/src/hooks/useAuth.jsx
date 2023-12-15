@@ -22,13 +22,20 @@ const useAuth = () => {
         if (data.valid) {
           setUsername(data.username);
           setAdmin(data.isAdmin);
+          if (
+            data.valid &&
+            (window.location.pathname.includes("/signin") ||
+              window.location.pathname.includes("/signup"))
+          ) {
+            navigate("/dashboard"); // Redirect to dashboard if the session is ongoing and trying to access sign-in or sign-up
+          }
         } else {
           setAuthenticated(false);
           if (
             !window.location.pathname.includes("/signin") &&
             !window.location.pathname.includes("/signup")
           ) {
-            navigate("/signin");
+            navigate("/signin"); // Redirect to sign-in if the session is not ongoing and trying to access other pages
           }
         }
       })
@@ -39,7 +46,7 @@ const useAuth = () => {
       .finally(() => {
         setLoading(false); // Set loading to false once the data is retrieved
       });
-  }, [navigate]); // Include navigate in the dependencies array
+  }, [navigate]);
 
   // Use useDebugValue to provide additional information for React DevTools
   useDebugValue({
