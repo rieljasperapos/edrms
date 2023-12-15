@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
-import { FaEdit } from "react-icons/fa";
-import { PiKeyReturnBold } from "react-icons/pi";
-import { AiOutlinePlus } from "react-icons/ai";
 import Matched from "../assets/icon-check.png";
 import EyeIcon from "../assets/eye-icon.png";
 import { MdError } from "react-icons/md";

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
-import personalInfoModal from "./PersonalInfoModal.jsx";
 import { MdError } from "react-icons/md";
 function PersonalInfoEditModal({
   propSetModalVisible,

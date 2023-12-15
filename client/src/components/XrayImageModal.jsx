@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
 import { IoMdCloseCircle } from "react-icons/io";
 
 function XrayImageModal({ propSetModalVisible, propXrayId }) {

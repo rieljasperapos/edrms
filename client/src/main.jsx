@@ -14,12 +14,5 @@ import PatientRecordList from "./pages/PatientRecordList.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
-    {/*<Login />*/}
-    {/* <Visit />*/}
-    {/* <Signup />*/}
-    {/* <Dashboard />*/}
-    {/* <PatientRecordList />*/}
-    {/* <AddRecord />*/}
-    {/* <PatientRecord />*/}
   </React.StrictMode>,
 );

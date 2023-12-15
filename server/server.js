@@ -1490,6 +1490,7 @@ app.post("/addVisit/:patientId", (req, res) => {
   });
 });
 
+//treatment options for Adding Visits
 app.get("/treatmentDropdownOptions", (req, res) => {
   const sqlQuery = `
     SELECT
@@ -1497,7 +1498,8 @@ app.get("/treatmentDropdownOptions", (req, res) => {
         treatment_name,
         treatment_fee
     FROM
-        treatment;
+        treatment
+    WHERE is_deleted = 0;
     `;
 
   connection.query(sqlQuery, (error, rows, fields) => {

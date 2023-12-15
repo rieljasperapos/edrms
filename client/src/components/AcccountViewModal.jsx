@@ -3,7 +3,6 @@ import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
 import { PiKeyReturnBold } from "react-icons/pi";
-import { AiOutlinePlus } from "react-icons/ai";
 
 function AccountViewModal({
   propAccountData,

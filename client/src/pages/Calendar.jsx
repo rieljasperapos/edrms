@@ -2,9 +2,7 @@ import MonthView from "../components/calendarMonthView";
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
 import WeekView from "../components/calendarWeekView";
 import Navbar from "../components/navbar";
-import AddAppointment from "../components/addAppointmentsModal";
 import AppointmentCard from "../components/appointmentCardModal";
-import EditAppointment from "../components/editAppointmentModal";
 import Contents from "../components/contents";
 import { useEffect, useState } from "react";
 

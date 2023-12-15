@@ -5,7 +5,6 @@ import cn from "../utils/cn";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddAppointment from "./addAppointmentsModal";
-import AppointmentCard from "./AppointmentCardModal";
 import EditAppointment from "./editAppointmentModal";
 import { AiOutlinePlus } from "react-icons/ai";
 

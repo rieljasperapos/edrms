@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-import { AiOutlinePlus } from "react-icons/ai";
 import {
   RxDoubleArrowLeft,
   RxDoubleArrowRight,
@@ -24,7 +23,6 @@ import { MdViewList } from "react-icons/md";
 import useAuth from "../hooks/useAuth.jsx";
 
 const Dashboard = (props) => {
-  // const [data, setData] = useState([]);
   const { authenticate } = useAuth();
   const [totalCancelled, setTotalCancelled] = useState(0);
   const [totalConfirmed, setTotalConfirmed] = useState(0);

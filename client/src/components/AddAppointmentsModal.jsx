@@ -13,20 +13,6 @@ const AddAppointmentsModal = ({ handleClose, isVisible }) => {
 
   const regex = /^\d{11}$/;
 
-  // console.log(contactNumber)
-  // console.log(timeSchedule)
-  // console.log(date)
-  // console.log(purpose);
-  // console.log(name);
-
-  // useEffect(() => {
-  //         setDate('')
-  //         setContactNumber('')
-  //         setTimeSchedule('')
-  //         setPurpose('')
-  //         setName('')
-  // }, []);
-
   const handleClick = (e) => {
     e.preventDefault();
     fetch("http://localhost:3000/appointments/add", {

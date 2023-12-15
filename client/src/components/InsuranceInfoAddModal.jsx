@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import patientRecord from "../pages/PatientRecord.jsx";
 
 function InsuranceInfoAddModal({
   propSetModalVisible,
