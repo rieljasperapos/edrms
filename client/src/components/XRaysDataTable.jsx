@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-import XraysData from "../assets/XRaysData.js";
 import {
   useReactTable,
   getCoreRowModel,

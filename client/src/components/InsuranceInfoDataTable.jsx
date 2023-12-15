@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
-// import InsuranceInfoData from "../assets/InsuranaceInfoData.js";
 import {
   useReactTable,
   getCoreRowModel,
