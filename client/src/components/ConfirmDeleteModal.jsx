@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { IoMdCloseCircle } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 function ConfirmDeleteModal({ propSetModalVisible, propPatientId }) {
+  const navigate = useNavigate();
   const closeModal = () => {
     // Close the modal by setting its visibility to false
     propSetModalVisible(false);
@@ -28,6 +30,7 @@ function ConfirmDeleteModal({ propSetModalVisible, propPatientId }) {
         // Optionally: Perform any additional actions after successful soft delete
         // Close the modal by setting its visibility to false
         propSetModalVisible(false);
+        navigate("/patientRecordList");
       })
       .catch((error) => {
         console.error("Error during soft delete:", error.message);

@@ -6,11 +6,21 @@ import { FaAddressBook } from "react-icons/fa6";
 import { FaTooth } from "react-icons/fa";
 import useAuth from "../hooks/useAuth.jsx";
 import TreatmentListTable from "../components/TreatmentListTable.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Manage() {
-  const { authenticated } = useAuth();
+  const { authenticated, username, isAdmin, loading } = useAuth();
   const [accountsMgtView, setAccountsMgtView] = useState(true);
   const [treatmentListView, setTreatmentListView] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!isAdmin) {
+        navigate("/dashboard");
+      }
+    }
+  }, [loading, isAdmin, navigate]);
 
   return (
     <>

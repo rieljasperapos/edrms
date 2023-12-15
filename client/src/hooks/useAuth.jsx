@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useDebugValue } from "react";
 import { useNavigate } from "react-router-dom";
 
 const useAuth = () => {
@@ -6,6 +6,7 @@ const useAuth = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [isAdmin, setAdmin] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     fetch("http://localhost:3000/dashboard", {
@@ -19,18 +20,10 @@ const useAuth = () => {
       })
       .then((data) => {
         if (data.valid) {
-          // Only navigate to the dashboard if not on the login or signup page
-          if (
-            window.location.pathname.includes("/signin") &&
-            window.location.pathname.includes("/signup")
-          ) {
-            navigate("/dashboard");
-          }
           setUsername(data.username);
           setAdmin(data.isAdmin);
         } else {
           setAuthenticated(false);
-          // Only navigate to the signin page if not on the login or signup page
           if (
             !window.location.pathname.includes("/signin") &&
             !window.location.pathname.includes("/signup")
@@ -42,10 +35,21 @@ const useAuth = () => {
       .catch((err) => {
         console.error(err.message);
         setAuthenticated(false);
+      })
+      .finally(() => {
+        setLoading(false); // Set loading to false once the data is retrieved
       });
-  }, [navigate]);
+  }, [navigate]); // Include navigate in the dependencies array
 
-  return { authenticated, username, isAdmin };
+  // Use useDebugValue to provide additional information for React DevTools
+  useDebugValue({
+    authenticated,
+    username,
+    isAdmin,
+    loading,
+  });
+
+  return { authenticated, username, isAdmin, loading };
 };
 
 export default useAuth;
